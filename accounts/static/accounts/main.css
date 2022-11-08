@@ -1,0 +1,50 @@
+.main-padding {
+    padding: 7px 40px;
+}
+
+.project-name {
+    display: inline;
+    font-weight: bold;
+    font-size: 30px;
+    font-family: 'Sora', sans-serif;
+    color: #00146A !important;
+}
+
+.active {
+    font-weight: 600;
+    color: #000034 !important;
+    background: #f0f3fd;
+    border-radius: 5px;
+}
+
+.navbar-main {
+    background: #ffffff;
+    box-shadow: 0 1px 1px #e2e8ff;
+}
+
+.custom-nav-item {
+    font-size: 17px;
+    color: #1d2852 !important;
+}
+
+.custom-nav-item:hover {
+    color: #000034 !important;
+    background: #f0f3fd;
+    border-radius: 5px;
+}
+
+.nav-item-margin-right {
+    margin-right: 10px;
+}
+
+.sora-font {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+}
+
+.signinbtn {
+    background: #FCD94A;
+    color: black;
+    transition: .5s;
+    text-transform: none;
+}
