@@ -1,0 +1,15 @@
+<div className="form-group col-lg-6 col-md-8 col-sm-6 col-8">
+    <label>{props.labelText}</label>
+    <input
+            type={props.type}
+            className="form-control loginInputField"
+            id={props.id}
+            onChange={(event) => {
+    if (props.id === "inputEmail") {
+    email = event.target.value;
+    } else if (props.id === "inputPassword") {
+    password = event.target.value;
+    }
+    }}
+    />
+</div>

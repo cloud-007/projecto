@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container mt-3">
+        <div class="row">
+            <div class="login-padding col-md-6 col-lg-6 mt-4">
+                <div class="leftImage card border-0">
+                    <img class="rounded-circle account-img"
+                         src={% static 'media/loginimg.png' %} alt=''>
+                </div>
+            </div>
+
+            <form class=" login-padding loginForm col-md-6 col-lg-6"
+                  method="post">
+                {% csrf_token %}
+
+                {% for message in messages %}
+                    <p class="alert alert-danger"> {{ message }} </p>
+                {% endfor %}
+
+                <h3 class="loginHeading">Create your projecto account!</h3>
+                <div class="form-group col-lg-6 col-md-8 col-sm-6 col-8">
+                    <label>Username</label>
+                    <input
+                            type="text"
+                            class="form-control loginInputField"
+                            id="username_field"
+                            name="username"
+                            required
+                            {% if username %}
+                            value="{{ username }}"
+                            {% endif %}
+                    />
+                </div>
+                <div class="form-group col-lg-6 col-md-8 col-sm-6 col-8">
+                    <label>Student ID</label>
+                    <input
+                            type="text"
+                            class="form-control loginInputField"
+                            id="student_id_field"
+                            name="student_id"
+                            required
+                            {% if student_id %}
+                            value="{{ student_id }}"
+                            {% endif %}
+                    />
+                </div>
+                <div class="needs-validation form-group col-lg-6 col-md-8 col-sm-6 col-8">
+                    <label>Email</label>
+                    <input
+                            type="email"
+                            class="form-control loginInputField"
+                            id="emailField"
+                            name="email"
+                            required
+                            {% if email %}
+                            value="{{ email }}"
+                            {% endif %}
+                    />
+                </div>
+                <div class="needs-validation form-group col-lg-6 col-md-8 col-sm-6 col-8">
+                    <label>Password</label>
+                    <input
+                            type="password"
+                            class="form-control loginInputField"
+                            id="passwordField"
+                            name="password"
+                            required
+                            {% if password %}
+                            value="{{ password }}"
+                            {% endif %}
+                    />
+                </div>
+                <div class="needs-validation form-group col-lg-6 col-md-8 col-sm-6 col-8">
+                    <label>Confirm Password</label>
+                    <input
+                            type="password"
+                            class="form-control loginInputField"
+                            id="confirmPasswordField"
+                            name="confirm_password"
+                            required
+                            {% if confirm_password %}
+                            value="{{ confirm_password }}"
+                            {% endif %}
+                    />
+                </div>
+                {% if confirm_password and password != confirm_password %}
+                    <p class="error-text mt-1">
+                        Password and Confirm Password should be same!</p>
+                {% endif %}
+                <button
+                        type="submit"
+                        class="mt-4 col-lg-6 col-md-8 col-sm-6 col-8 signInBtn"
+                >
+                    Register
+                </button>
+                <div class="mt-2">
+                    <small class="text-muted newUser">
+                        Already hava an account? <a class="ml-2 register"
+                                                    href="{% url 'login' %}">Sign
+                        in</a>
+                    </small>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+
+{% endblock %}

@@ -1,0 +1,71 @@
+.main-padding {
+    padding: 7px 40px;
+}
+
+body {
+    /*background-image: url("../media/background.png");*/
+}
+
+.project-name {
+    display: inline;
+    font-weight: bold;
+    font-size: 30px;
+    font-family: 'Sora', sans-serif;
+    color: #FAC213 !important;
+}
+
+.active {
+    font-weight: 600;
+    color: #FAC213 !important;
+    background: #fdfaf2;
+    border-radius: 5px;
+}
+
+.navbar-main {
+    background: white;
+    box-shadow: 0 1px 1px #e2e8ff;
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+.custom-nav-item {
+    font-size: 17px;
+    color: #707A8A;
+    padding: 5px 20px !important;
+    margin-left: 20px;
+}
+
+.custom-nav-item:hover {
+    color: #FAC213 !important;
+    background: #fdfaf2;
+    border-radius: 5px;
+}
+
+.sora-font {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+}
+
+
+.sign-in-btn, .sign-in-btn:hover {
+    background: #FAC213;
+    color: #ffffff;
+    transition: .5s;
+    text-transform: none;
+    font-size: 15px;
+    border-radius: 5px;
+    padding: 5px 15px;
+    border: none;
+}
+
+.sign-in-btn:hover {
+    background: #fdc71e;
+    color: #ffffff;
+}
+
+.sign-out-btn, .sign-out-btn:hover {
+    background: red;
+}
+
+
+
