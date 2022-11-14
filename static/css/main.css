@@ -1,9 +1,27 @@
+.color-primary {
+    color: #251B37;
+}
+
+.background-primary {
+    background: #251B37;
+}
+
+.background-secondary {
+    background: #2B4865;
+}
+
+.color-primary-second {
+    color: #2B4865;
+}
+
+
 .main-padding {
-    padding: 7px 40px;
+    /*padding: 7px 40px;*/
 }
 
 body {
     /*background-image: url("../media/background.png");*/
+    background: #f2f4f6;
 }
 
 .project-name {
@@ -11,21 +29,20 @@ body {
     font-weight: bold;
     font-size: 30px;
     font-family: 'Sora', sans-serif;
-    color: #FAC213 !important;
+    color: #251B37 !important;
 }
 
 .active {
     font-weight: 600;
-    color: #FAC213 !important;
-    background: #fdfaf2;
+    color: #251B37 !important;
     border-radius: 5px;
 }
 
 .navbar-main {
-    background: white;
+    background: #f2f4f6;
     box-shadow: 0 1px 1px #e2e8ff;
-    margin-left: 50px;
-    margin-right: 50px;
+    padding-left: 50px;
+    padding-right: 50px;
 }
 
 .custom-nav-item {
@@ -36,8 +53,7 @@ body {
 }
 
 .custom-nav-item:hover {
-    color: #FAC213 !important;
-    background: #fdfaf2;
+    color: #251B37 !important;
     border-radius: 5px;
 }
 
@@ -48,7 +64,7 @@ body {
 
 
 .sign-in-btn, .sign-in-btn:hover {
-    background: #FAC213;
+    background: #251B37;
     color: #ffffff;
     transition: .5s;
     text-transform: none;
@@ -59,12 +75,35 @@ body {
 }
 
 .sign-in-btn:hover {
-    background: #fdc71e;
+    background: #2B4865;
     color: #ffffff;
 }
 
-.sign-out-btn, .sign-out-btn:hover {
+.sign-out-btn {
     background: red;
+}
+
+.sign-out-btn:hover {
+    background: #ff4c4c;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+    position: relative;
+}
+
+header {
+    min-height: 50px;
+    background: lightcyan;
+}
+
+.footer {
+    background: #f2f4f6;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
 }
 
 

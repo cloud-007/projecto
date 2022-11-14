@@ -20,6 +20,9 @@ class Student(models.Model):
         on_delete=models.PROTECT
     )
 
+    def __str__(self):
+        return self.full_name
+
 
 class Teacher(models.Model):
     full_name = models.CharField(verbose_name=_('Full Name'), max_length=128)
@@ -30,5 +33,8 @@ class Teacher(models.Model):
         related_name='teacher',
         on_delete=models.PROTECT
     )
+
+    def __str__(self):
+        return self.full_name
 
     # full_name = models.CharField(verbose_name=_('Full Name'), max_length=128)

@@ -5,10 +5,13 @@ from accounts.models import Student, Teacher
 
 
 class Course(models.Model):
-    course_id = models.CharField(verbose_name=_('Course ID'), max_length=16)
+    course_id = models.IntegerField(verbose_name=_('Course ID'))
     title = models.CharField(verbose_name=_('Course Title'), max_length=64)
     semester = models.CharField(verbose_name=_('Semester'), max_length=32)
     deadline = models.DateTimeField(verbose_name=_('Deadline'))
+
+    def __str__(self):
+        return self.title
 
 
 class Proposal(models.Model):
@@ -31,6 +34,7 @@ class Proposal(models.Model):
         verbose_name=_('Assigned Supervisor'),
         to='accounts.Teacher',
         related_name='assigned_proposals',
+        null=True,
         on_delete=models.PROTECT
     )
     # assigned_by = models.CharField(verbose_name=_('Assigned By'), max_length=16)
@@ -54,6 +58,9 @@ class Proposal(models.Model):
         on_delete=models.PROTECT
     )
 
+    def __str__(self):
+        return self.proposal_id
+
 
 class Result(models.Model):
     proposal = models.ForeignKey(
@@ -72,6 +79,9 @@ class Result(models.Model):
         verbose_name=_('Total Marks'),
         max_length=32
     )
+
+    def __str__(self):
+        return self.proposal.proposal_id
 
 
 class Marksheet(models.Model):
@@ -98,3 +108,6 @@ class Marksheet(models.Model):
     criteria_1 = models.CharField(verbose_name=_('Criteria 1 Mark'), max_length=128)
     criteria_2 = models.CharField(verbose_name=_('Criteria 2 Mark'), max_length=128)
     supervisor = models.CharField(verbose_name=_('Supervisor Mark'), max_length=128)
+
+    def __str__(self):
+        return self.proposal.proposal_id

@@ -3,30 +3,27 @@
     text-align: center;
 }
 
+
 .login-padding {
     padding: 3% 2%;
 }
 
-.loginHeading {
-    color: #54595e;
-    font-family: BinancePlex, Segoe UI, Arial, Arial, sans-serif, open sans, Helvetica Neue, Helvetica, A;
-    font-weight: bold;
-}
 
 .loginForm {
     text-align: left;
 }
 
+
 .loginInputField {
     border-radius: 3px;
     margin-top: 1%;
     height: 45px;
-    border: 0.5px solid #dbdada;
+    border: 1px solid #dbdada;
     color: rgb(90, 89, 89);
 }
 
 .loginInputField:invalid, .loginInputField:focus, .loginInputField:active {
-    border: 0.5px solid #dbdada;
+    border: 1px solid #dbdada;
 }
 
 .form-group {
@@ -39,23 +36,11 @@
 }
 
 .loginInputField:focus {
-    outline: 0 solid #FCD94A;
     box-shadow: none;
     outline: none !important;
     border: 2px solid #FCD94A;
 }
 
-.leftImage {
-    text-align: center;
-    width: 100%;
-    height: auto;
-    padding: 15%;
-    padding-top: 0px;
-}
-
-.rightDiv {
-    text-align: left;
-}
 
 .blockDisplay {
     display: block;
@@ -152,7 +137,7 @@
 .my-check-box:not(:checked),
 .my-check-box:checked:before {
     box-shadow: none;
-    font-family: "poppins";
+    font-family: "poppins", serif;
     color: rgb(51, 50, 50);
     font-weight: 500;
     border-radius: 3px;
@@ -173,3 +158,144 @@
     font-size: 13px;
     margin-bottom: -8px;
 }
+
+/* new css added from this line */
+.block-login-container {
+    border-radius: 10px;
+    width: 60%;
+    margin-bottom: 50px;
+}
+
+.block-login-form {
+    margin: 5%;
+    text-align: start;
+}
+
+.block-login-row {
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+    display: grid;
+    grid-auto-flow: column;
+    margin-bottom: 50px;
+}
+
+.leftImage {
+    text-align: center;
+    display: flex;
+    background: #F7F7F7;
+    border-radius: 15px 0 0 15px;
+}
+
+.loginHeading {
+    color: #251B37;
+    font-family: 'Poppins', 'Sora', sans-serif, open sans, Helvetica Neue, Helvetica, A;
+    font-weight: bold;
+}
+
+.rightDiv {
+    text-align: left;
+    border-radius: 0 15px 15px 0;
+    background: white;
+}
+
+
+.input-field {
+    background: #F7F7F7;
+    border-radius: 3px;
+    margin-top: 1%;
+    height: 45px;
+    border: 1px solid #dbdada;
+    color: rgb(90, 89, 89);
+}
+
+.input-field:invalid, .loginInputField:focus, .loginInputField:active {
+    background: #F7F7F7;
+    border: 1px solid #dbdada;
+}
+
+.input-field:hover {
+    outline: 1px solid #251B37;
+}
+
+.input-field:focus {
+    box-shadow: none;
+    outline: none !important;
+    border: 1px solid #251B37;
+}
+
+.signInBtn {
+    background: #251B37;
+    color: #ffffff;
+    box-shadow: none;
+    font-family: "Poppins", serif;
+    height: 40px;
+    border: none;
+    font-weight: 500;
+    font-size: 15px;
+    border-radius: 5px;
+}
+
+.signInBtn:hover {
+    height: 40px;
+    background: #3e2e5b;
+}
+
+@media (max-width: 991px) {
+
+    .block-login-container {
+        border-radius: 10px;
+        width: 70%;
+        margin-bottom: 50px;
+    }
+
+    .loginHeading {
+        font-size: 25px;
+    }
+
+    .input-field {
+        background: #F7F7F7;
+        border-radius: 3px;
+        margin-top: 1%;
+        height: 40px;
+        border: 1px solid #dbdada;
+        color: rgb(90, 89, 89);
+    }
+
+    .rightDiv {
+        text-align: left;
+        border-radius: 10px;
+        background: white;
+    }
+
+}
+
+@media (max-width: 767px) {
+
+    .block-login-container {
+        border-radius: 10px;
+        width: 80%;
+        margin-bottom: 50px;
+    }
+
+    .loginHeading {
+        font-size: 20px;
+    }
+
+    .rightDiv {
+        text-align: left;
+        border-radius: 10px;
+        background: white;
+    }
+
+    .block-login-form {
+        margin: 10%;
+        text-align: start;
+    }
+
+}
+
+
+
+
+
+
