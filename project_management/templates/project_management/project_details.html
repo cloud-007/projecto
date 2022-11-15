@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container mb-5 block-body-container" onclick="">
+        {# running project and manage #}
+        <div class="d-flex justify-content-between">
+            <h3 class="color-primary-second">CSE - {{ course.course_id }}
+                submissions({{ proposals.count }})</h3>
+            {% if user.is_staff %}
+                <div class=" d-flex align-items-center">
+                    <a style="text-decoration: none"
+                       href="{% url 'course-details' course.id 'assigned' %}">
+                        <button class="ms-2 btn btn-sm btn-primary"
+                        >
+                            Assigned
+                        </button>
+                    </a>
+                    <a style="text-decoration: none"
+                       href="{% url 'course-details' course.id 'unassigned' %}">
+                        <button class="ms-2 btn btn-sm btn-info">
+                            Unassigned
+                        </button>
+                    </a>
+                    <a style="text-decoration: none"
+                       href="{% url 'course-update' course.id  course.semester %}">
+                        <button class="ms-2 btn btn-sm btn-danger">
+                            Update
+                        </button>
+                    </a>
+
+                </div>
+            {% endif %}
+        </div>
+        {% include 'divider.html' %}
+        {# submission details of a project body #}
+        {% if proposals %}
+            {% for proposal in proposals %}
+                {% include 'project_management/project_details_card.html' with proposal=proposal teachers=teachers %}
+            {% endfor %}
+        {% else %}
+            <h3 style="height: 40%"
+                class=" container text-muted d-flex align-items-center justify-content-center">
+                No unassigned proposals</h3>
+        {% endif %}
+
+    </div>
+{% endblock %}

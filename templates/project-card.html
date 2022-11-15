@@ -1,0 +1,18 @@
+{% load static %}
+<div class="card-block col mb-3">
+    <a href="{% if user.is_staff %}
+                    {% url 'course-details' course.id 'all' %}
+                {% else %}
+                        {% url 'proposal-submission' course.id course.semester %}
+                {% endif %}"
+       style=" text-decoration: none">
+        <div class="container card-block-container p-3">
+            <span class="card-heading color-primary-second">CSE - {{ course.course_id }}</span>
+            {% include 'divider.html' %}
+            <h6 class="text-muted card-project-title">{{ course.title }}</h6>
+            <h6 class="mt-4 text-muted card-deadline-semester">{{ course.semester }}</h6>
+            <h6 class="text-muted card-deadline-semester">
+                Deadline: {{ course.deadline }}</h6>
+        </div>
+    </a>
+</div>

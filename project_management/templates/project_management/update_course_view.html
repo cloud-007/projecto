@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class=" d-flex justify-content-center">
+        <div class="profile-block p-3 mb-5">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for message in messages %}
+                    <p class="alert alert-success">
+                        {{ message }}
+                    </p>
+                {% endfor %}
+                <h3 class="text-black-70">Add a new course</h3>
+
+                <div class="form-group ">
+                    <label for="id_course_code">Course Code</label>
+                    <input
+                            type="number"
+                            class="form-control input-field"
+                            id="id_course_code"
+                            name="course_code"
+                            required
+                            value="{{ course.course_id }}"
+                            placeholder="3300/4800/4801"
+                    />
+                    <label for="id_course_title" class="mt-1">Course
+                        Title
+                    </label>
+                    <input
+                            type="text"
+                            class="form-control input-field"
+                            id="id_course_title"
+                            name="course_title"
+                            required
+                            placeholder="Project i"
+                            value="{{ course.title }}"
+                    />
+                    <label for="id_semester" class="mt-1">Semester</label>
+                    <input
+                            type="text"
+                            class="form-control input-field"
+                            id="id_semester"
+                            name="semester"
+                            required
+                            placeholder="Summer 2022"
+                            value="{{ course.semester }}"
+                    />
+                    <label for="id_deadline" class="mt-1">Deadline</label>
+                    <input
+                            type="date"
+                            class="form-control input-field"
+                            id="id_deadline"
+                            name="deadline"
+                            required
+                            value="{{ course.deadline|date:'Y-m-d' }}"
+                    />
+                    <button
+                            type="submit"
+                            name="submit_button"
+                            class="btn btn-success mt-2"
+                            style="width: 100%; margin-bottom: -10px"
+                    >
+                        Update Course
+                    </button>
+
+                    {# Delete Course Button #}
+                    <div>
+                        <!-- Button trigger modal -->
+                        <button type="button"
+                                class="btn btn-danger mt-3"
+                                style="width: 100%; margin-bottom: -10px"
+                                data-bs-toggle="modal"
+                                data-bs-target="#exampleModal">
+                            Delete Course
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal" tabindex="-1"
+                             aria-labelledby="exampleModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title"
+                                            id="exampleModalLabel">
+                                            Delete {{ course.title }}</h5>
+                                        <button type="button" class="btn-close"
+                                                data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure you want to
+                                        delete {{ course.title }}?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button"
+                                                class="btn btn-sm btn-secondary"
+                                                data-bs-dismiss="modal">No
+                                        </button>
+                                        <button type="submit"
+                                                class="btn btn-sm btn-danger"
+                                                name="delete_button"
+                                        >
+                                            Yes! Delete.
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {#                    <button#}
+                    {#                            type="button"#}
+                    {#                            name="delete_button"#}
+                    {#                            class="btn btn-danger mt-3"#}
+                    {#                            style="width: 100%; margin-bottom: -10px"#}
+                    {#                    >#}
+                    {#                        Delete Course#}
+                    {#                    </button>#}
+                </div>
+            </form>
+
+
+        </div>
+    </div>
+
+    <script>
+        function deleteFunction() {
+            const result = confirm("Want to delete?");
+            if (result) {
+
+            }
+        }
+    </script>
+
+{% endblock %}

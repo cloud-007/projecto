@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container mt-5 mb-5 block-login-container">
+        <div class="row">
+            {% for message in messages %}
+                {% if message.tags == 'warning' %}
+                    <p class="alert alert-warning"
+                       style="padding-left: 10px !important;">
+                        {{ message }}
+                    </p>
+                {% elif message.tags == 'success' %}
+                    <p class="alert alert-success"
+                       style="padding-left: 10px !important;"
+                    >
+                        {{ message }}
+                    </p>
+                {% endif %}
+            {% endfor %}
+            <div class="leftImage card border-0 col-lg-6 d-none d-lg-flex justify-content-center">
+                <img style="margin: 5%" class=""
+                     src={% static 'media/loginimg.png' %} alt='{% static 'media/defaultProfile.png' %}'>
+            </div>
+            <div class="col-lg-6 rightDiv d-flex justify-content-center align-items-center">
+                <div class="block-login-form">
+                    <h3 class="loginHeading">Welcome to PROJECTO!</h3>
+                    <p
+                            style="font-weight: 500;
+                             font-family: 'Poppins', sans-serif;
+                             margin-top: -10px;
+                             font-size: 15px"
+                            class="text-muted"
+                    >
+                        Please Login to continue.</p>
+                    <form method="post" class="col-lg-10 col-md-10">
+                        {% csrf_token %}
+                        <label for="id_username"
+                               class="text-muted">Username</label>
+                        <input
+                                type="text"
+                                class="form-control input-field"
+                                id="id_username"
+                                name="username"
+                                required
+
+                        >
+                        <label class="mt-2 text-muted" for="id_password">Password</label>
+                        <input
+                                type="password"
+                                class="form-control input-field"
+                                id="id_password"
+                                name="password"
+                                required
+                        />
+                        <p class="mt-2">
+                            <a style="text-decoration: none" class="text-muted"
+                               href="#">Forgot your password?</a>
+                        </p>
+                        <button
+                                type="submit"
+                                class="signInBtn"
+                                style="width: 100%; margin-top: -5px;"
+                        >
+                            Login
+                        </button>
+                    </form>
+                    <p style="margin-top: -10px;">
+                        <a style="text-decoration: none !important;"
+                           class="text-muted "
+                           href="{% url 'register' %}"
+                        >New User? Sign Up Here.</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

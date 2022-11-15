@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container mt-5 mb-5 block-login-container">
+        <div class="row ">
+
+            <div class="leftImage card border-0 col-lg-6 d-none d-lg-flex justify-content-center">
+                <img style="margin: 5%" class=""
+                     src={% static 'media/loginimg.png' %} alt="">
+            </div>
+            <div class="col-lg-6 rightDiv d-flex justify-content-center align-items-center">
+                <div class="block-login-form">
+                    {% for message in messages %}
+                        {% if message.tags == 'warning' %}
+                            <p class="alert alert-warning"
+                               style="padding-left: 10px !important;">
+                                {{ message }}
+                            </p>
+                        {% endif %}
+                    {% endfor %}
+                    <h3 class="loginHeading">Create your PROJECTO Account!</h3>
+                    <form method="post" class="col-lg-10 col-md-10">
+                        {% csrf_token %}
+                        <label for="id_username"
+                               class="text-muted">Username</label>
+                        <input
+                                type="text"
+                                class="form-control input-field"
+                                id="id_username"
+                                name="username"
+                                required
+
+                        >
+                        <label for="id_student_id"
+                               class="mt-2 text-muted">Student ID</label>
+                        <input
+                                type="text"
+                                class="form-control input-field"
+                                id="id_student_id"
+                                name="student_id"
+                                required
+
+                        >
+                        <label for="id_email"
+                               class="mt-2 text-muted">Email</label>
+                        <input
+                                type="email"
+                                class="form-control input-field"
+                                id="id_email"
+                                name="email"
+                                required
+
+                        >
+                        <label class="mt-2 text-muted" for="id_password">Password</label>
+                        <input
+                                type="password"
+                                class="form-control input-field"
+                                id="id_password"
+                                name="password"
+                                required
+                        />
+                        <label class="mt-2 text-muted"
+                               for="id_confirm_password">Confirm
+                            Password</label>
+                        <input
+                                type="password"
+                                class="form-control input-field"
+                                id="id_confirm_password"
+                                name="confirm_password"
+                                required
+                        />
+                        <button
+                                type="submit"
+                                class="signInBtn mt-3"
+                                style="width: 100%; margin-top: -5px;"
+                        >
+                            Sign Up
+                        </button>
+                    </form>
+                    <p style="margin-top: -10px;">
+                        <a style="text-decoration: none !important;"
+                           class="text-muted "
+                           href="{% url 'login' %}"
+                        >Already have an account? Sign In Here.</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

@@ -8,14 +8,13 @@ class Course(models.Model):
     course_id = models.IntegerField(verbose_name=_('Course ID'))
     title = models.CharField(verbose_name=_('Course Title'), max_length=64)
     semester = models.CharField(verbose_name=_('Semester'), max_length=32)
-    deadline = models.DateTimeField(verbose_name=_('Deadline'))
+    deadline = models.DateField(verbose_name=_('Deadline'))
 
     def __str__(self):
         return self.title
 
 
 class Proposal(models.Model):
-    proposal_id = models.CharField(verbose_name=_('Proposal Id'), max_length=128)
     title = models.CharField(verbose_name=_('Title'), max_length=256)
     course = models.ForeignKey(Course, on_delete=models.PROTECT)
     students = models.ManyToManyField(
@@ -59,7 +58,7 @@ class Proposal(models.Model):
     )
 
     def __str__(self):
-        return self.proposal_id
+        return self.title
 
 
 class Result(models.Model):

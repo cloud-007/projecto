@@ -1,0 +1,104 @@
+<div class="container block-project-details mt-3">
+    <div class="d-flex justify-content-between">
+        <h5 class="color-primary-second">{{ proposal.title }}</h5>
+        <h6 class="text-muted">Submitted on: 31 December 2022</h6>
+    </div>
+    <div class="row">
+        <div class="col col-xs-12 col-sm-12 col-lg-6 ">
+            {% for student in proposal.students.all %}
+                <div class="row d-flex justify-content-between">
+                    <h6 class="col text-muted">{{ student.full_name }}</h6>
+                    <h6 class="col  text-muted">{{ student.student_id }}</h6>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="col col-xs-12 col-sm-12 col-lg-6">
+            <div class="row d-flex justify-content-between">
+                <div class="col col-xs-12 col-sm-12 col-lg-6 ">
+                    <h6 class="text-muted">Preferred
+                        Supervisors:
+                        {% for supervisor in proposal.preferred_supervisors.all %}
+                            {{ supervisor.initials }},
+                        {% endfor %}
+                    </h6>
+                    <h6 class="text-muted">Assigned Supervisor: EBH</h6>
+                </div>
+                <div class="col col-xs-12 col-sm-12 col-lg-6">
+
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle"
+                                type="button" id="dropdownMenuButton1"
+                                data-bs-toggle="dropdown"
+                                style="width: 100%"
+                                aria-expanded="false">
+                            Assign Supervisor
+                        </button>
+                        <div class="dropdown-menu"
+                             aria-labelledby="dropdownMenuButton1"
+                        >
+                            {% for teacher in teachers %}
+                                <li>
+                                    <button class="dropdown-item"
+                                            type="submit">{{ teacher.full_name }}</button>
+                                </li>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <button class=" btn btn-sm btn-primary"
+                                style="width: 100%">Update
+                        </button>
+                        {# Delete Proposal Button #}
+                        <div style="width: 100%">
+                            <!-- Button trigger modal -->
+                            <button type="button"
+                                    class="btn btn-sm btn-danger"
+                                    style="width: 100%;"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal">
+                                Delete
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModal"
+                                 tabindex="-1"
+                                 aria-labelledby="exampleModalLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title"
+                                                id="exampleModalLabel">
+                                                Delete {{ proposal.title }}?</h5>
+                                            <button type="button"
+                                                    class="btn-close"
+                                                    data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you sure you want to
+                                            delete {{ proposal.title }}?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button"
+                                                    class="btn btn-sm btn-secondary"
+                                                    data-bs-dismiss="modal">No
+                                            </button>
+                                            <button type="submit"
+                                                    class="btn btn-sm btn-danger"
+                                                    name="delete_button"
+                                            >
+                                                Yes! Delete.
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

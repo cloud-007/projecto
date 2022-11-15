@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class=" d-flex justify-content-center">
+        <div class="profile-block p-3 mb-5">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% for message in messages %}
+                    <p class="alert alert-warning">
+                        {{ message }}
+                    </p>
+                {% endfor %}
+                <h3 class="text-black-70">Add a new course</h3>
+
+                <div class="form-group ">
+                    <label for="id_course_code">Course Code</label>
+                    <input
+                            type="number"
+                            class="form-control input-field"
+                            id="id_course_code"
+                            name="course_code"
+                            required
+                            value="{{ course.course_id }}"
+                            placeholder="3300/4800/4801"
+                    />
+                    <label for="id_course_title" class="mt-1">Course
+                        Title
+                    </label>
+                    <input
+                            type="text"
+                            class="form-control input-field"
+                            id="id_course_title"
+                            name="course_title"
+                            required
+                            placeholder="Project i"
+                            value="{{ course.title }}"
+                    />
+                    <label for="id_semester" class="mt-1">Semester</label>
+                    <input
+                            type="text"
+                            class="form-control input-field"
+                            id="id_semester"
+                            name="semester"
+                            required
+                            placeholder="Summer 2022"
+                            value="{{ course.semester }}"
+                    />
+                    <label for="id_deadline" class="mt-1">Deadline</label>
+                    <input
+                            type="date"
+                            class="form-control input-field"
+                            id="id_deadline"
+                            name="deadline"
+                            required
+                            placeholder="date/month/year"
+                            value="{{ course.deadline }}"
+
+                    />
+                    <button
+                            type="submit"
+                            class="signInBtn"
+                            style="width: 100%; margin-bottom: -10px"
+                    >
+                        Add Course
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

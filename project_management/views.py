@@ -1,25 +1,40 @@
+import datetime
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.views import View
 
 from accounts.models import Teacher
-from project_management.models import Course
+from project_management.models import Course, Proposal
 
 
 class HomeView(View):
     template_name = 'home.html'
 
     def get(self, request, *args, **kwargs):
-        courses = Course.objects.all()
-        return render(request, self.template_name, {'courses': courses})
+        running_courses = Course.objects.filter(
+            deadline__range=(datetime.datetime.now().date(), datetime.date(2500, 1, 1))).order_by('deadline')
+        archived_courses = Course.objects.filter(
+            deadline__range=(datetime.date(2000, 1, 1), datetime.datetime.now().date())).order_by('deadline')
 
-    def post(self, request, *args, **kwargs):
-        return render(request, self.template_name, {})
+        return render(request, self.template_name,
+                      {'courses': running_courses, 'archived': archived_courses})
+
+
+def post(self, request, *args, **kwargs):
+    return render(request, self.template_name, {})
 
 
 class ProjectDetailsView(LoginRequiredMixin, View):
     template_name = 'project_management/project_details.html'
+
+    context = {
+        'course': Course(),
+        'proposals': Proposal(),
+        'filter_by': 'all',
+        'teachers': Teacher.objects.all()
+    }
 
     def get(self, request, *args, **kwargs):
         print(args)
@@ -39,17 +54,18 @@ class ProjectDetailsView(LoginRequiredMixin, View):
         print(proposals)
 
         print(course)
-        context = {
+        self.context = {
             'course': course,
             'proposals': proposals,
             'filter_by': filter_by,
             'teachers': Teacher.objects.all()
         }
 
-        return render(request, self.template_name, context)
+        return render(request, self.template_name, self.context)
 
     def post(self, request, *args, **kwargs):
-        return render(request, self.template_name, {})
+        print(request.POST)
+        return render(request, self.template_name, self.context)
 
 
 class CreateNewCourse(LoginRequiredMixin, View):
@@ -60,7 +76,6 @@ class CreateNewCourse(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         course = Course()
-        print(request)
         course.course_id = request.POST.get("course_code")
         course.title = request.POST.get("course_title")
         course.semester = request.POST.get("semester")
@@ -82,38 +97,59 @@ class CreateNewCourse(LoginRequiredMixin, View):
 class UpdateCourseView(LoginRequiredMixin, View):
     template_name = 'project_management/update_course_view.html'
 
+    context = {
+        'course': ''
+    }
+
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('id')
-        semester = kwargs.get('semester')
-        print(kwargs)
-        print(id)
-        print(semester)
         course = Course.objects.get(id=pk)
         if course:
-            print(course)
-            context = {
+            self.context = {
                 'course': course
             }
 
-        return render(request, self.template_name, context=context)
+        return render(request, self.template_name, context=self.context)
 
     def post(self, request, *args, **kwargs):
-        course_id = request.POST.get("course_code")
-        title = request.POST.get("course_title")
-        semester = request.POST.get("semester")
-        deadline = request.POST.get("deadline")
+        pk = kwargs.get('id')
+        course = Course.objects.get(id=pk)
 
-        course = Course.objects.filter(course_id=course_id, semester=semester).first()
+        print(request.POST)
+        print(request.POST.get("submit_button"))
+        print(request.POST.get("delete_button"))
 
-        context = {
+        if request.POST.get("submit_button") is None:
+            course.delete()
+            messages.success(request, course.title + " deleted successfully")
+            return redirect('home')
+        course.course_id = request.POST.get("course_code")
+        course.title = request.POST.get("course_title")
+        course.semester = request.POST.get("semester")
+        course.deadline = request.POST.get("deadline")
+
+        course.save()
+
+        self.context = {
             'course': course
         }
 
-        course.course_id = course_id
-        course.title = title
-        course.semester = semester
-        course.deadline = deadline
-
-        course.save()
         messages.success(request, course.title + " updated successfully")
-        return redirect('home')
+
+        return render(request, self.template_name, context=self.context)
+
+
+class ProposalSubmissionView(LoginRequiredMixin, View):
+    template_name = 'project_management/proposal_submission.html'
+
+    context = {
+        ''
+    }
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {})
+
+    def post(self, request, *args, **kwargs):
+        print(request.POST)
+
+        return render(request, self.template_name, {})

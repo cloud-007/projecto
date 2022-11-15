@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class=" d-flex justify-content-center">
+        <div class="profile-block p-3 mb-5">
+            {% for message in messages %}
+                <p class="alert alert-success">
+                    {{ message }}
+                </p>
+            {% endfor %}
+            <form id="id_form" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <h5>Project proposal submission form</h5>
+
+                <div class="form-group ">
+                    <label for="id_title">Project/Theses Title</label>
+                    <input
+                            type="text"
+                            class="form-control input-field"
+                            id="id_title"
+                            name="title"
+                            required
+                            value="{{ title }}"
+                    />
+
+                    <label for="id_preferred_supervisors" class="mt-1">Preferred
+                        Supervisors</label>
+                    <input
+                            type="text"
+                            class="form-control input-field"
+                            id="id_preferred_supervisors"
+                            name="preferred_supervisors"
+                            required
+                            value="{{ preferred_supervisors }}"
+                    />
+                    <label for="formFile"
+                           class="form-label mt-2" style="margin-bottom: -2px">Proposal
+                        File</label>
+                    <input class="form-control input-field" type="file"
+                           id="formFile"
+                           required
+                    >
+                    <div id="team-members">
+                        <div class="mt-2">
+                            <h5 style="color: black">Team lead details</h5>
+                            <label for="id_full_name1">Full Name</label>
+                            <input
+                                    type="text"
+                                    class="form-control input-field"
+                                    id="id_full_name1"
+                                    name="full_name1"
+                                    required
+                                    value="{{ user.student.full_name }}"
+                            />
+                            <label for="id_student_id1" class="mt-1">Student
+                                ID</label>
+                            <input
+                                    type="text"
+                                    class="form-control input-field"
+                                    id="id_student_id1"
+                                    name="student_id1"
+                                    required
+                                    value="{{ user.student.student_id }}"
+                            />
+                            <label for="id_batch_number1"
+                                   class="mt-1">Batch</label>
+                            <input
+                                    type="number"
+                                    class="form-control input-field"
+                                    id="id_batch_number1"
+                                    name="batch1"
+                                    required
+                                    value="{{ user.student.batch }}"
+                            />
+                            <label for="id_section1"
+                                   class="mt-1">Section</label>
+                            <input
+                                    type="text"
+                                    class="form-control input-field"
+                                    id="id_section1"
+                                    name="section1"
+                                    value="{{ user.student.section }}"
+                            />
+                        </div>
+                    </div>
+                    <button
+                            type="button"
+                            class="btn btn-primary mt-2"
+                            onclick="addAnotherMember()"
+                            style="width: 100%; margin-bottom: -10px"
+                    >
+                        Add another team member
+                    </button>
+                    <button
+                            type="submit"
+                            class="signInBtn"
+                            style="width: 100%; margin-bottom: -10px"
+                    >
+                        Submit Proposal
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        let totalTeamMember = 1;
+        const myForm = document.getElementById("id_form")
+
+
+        function myFunction() {
+            totalTeamMember = document.getElementById('id_team_member').value
+            console.log(totalTeamMember)
+        }
+
+        function addAnotherMember() {
+            totalTeamMember++
+
+            console.log("Button Clicked")
+            $("#team-members").append(
+                `<div class="mt-2 mb-2"">
+                    <h5 style="color: black">Team member ` + totalTeamMember + ` details</h5>
+                    <label for="id_full_name` + totalTeamMember + `">Full Name</label>
+                    <input
+                        type="text"
+                        class="form-control input-field"
+                        id="id_full_name` + totalTeamMember + `"
+                        name="full_name` + totalTeamMember + `"
+                        required
+                    />
+                    <label for="id_student_id` + totalTeamMember + `" class="mt-1">Student
+                        ID</label>
+                    <input
+                        type="text"
+                        class="form-control input-field"
+                        id="id_student_id` + totalTeamMember + `"
+                        name="student_id` + totalTeamMember + `"
+                        required
+                    />
+                    <label for="id_batch_number` + totalTeamMember + `"
+                           class="mt-1">Batch</label>
+                    <input
+                        type="number"
+                        class="form-control input-field"
+                        id="id_batch_number` + totalTeamMember + `"
+                        name="batch` + totalTeamMember + `"
+                        required
+                    />
+                    <label for="id_section` + totalTeamMember + `" class="mt-1">Section</label>
+                    <input
+                        type="text"
+                        class="form-control input-field"
+                        id="id_section` + totalTeamMember + `"
+                        name="section` + totalTeamMember + `"
+                    />
+                </div>
+        </div>`
+            )
+        }
+
+
+    </script>
+{% endblock %}
