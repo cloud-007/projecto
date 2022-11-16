@@ -1,4 +1,4 @@
-<div class="container block-project-details mt-3">
+<div class="container block-project-details mt-3 ">
     <div class="d-flex justify-content-between">
         <h5 class="color-primary-second">{{ proposal.title }}</h5>
         <h6 class="text-muted">Submitted on: 31 December 2022</h6>
@@ -21,7 +21,8 @@
                             {{ supervisor.initials }},
                         {% endfor %}
                     </h6>
-                    <h6 class="text-muted">Assigned Supervisor: EBH</h6>
+                    <h6 class="text-muted">Assigned
+                        Supervisor: {{ proposal.assigned_supervisor }}</h6>
                 </div>
                 <div class="col col-xs-12 col-sm-12 col-lg-6">
 
@@ -38,8 +39,10 @@
                         >
                             {% for teacher in teachers %}
                                 <li>
-                                    <button class="dropdown-item"
-                                            type="submit">{{ teacher.full_name }}</button>
+                                    <button
+                                            name="assign_button"
+                                            class="dropdown-item"
+                                            type="button">{{ teacher.full_name }}</button>
                                 </li>
                             {% endfor %}
                         </div>
@@ -84,7 +87,8 @@
                                                     class="btn btn-sm btn-secondary"
                                                     data-bs-dismiss="modal">No
                                             </button>
-                                            <button type="submit"
+                                            <button type="button"
+                                                    id="delete_button{{ proposal.id }}"
                                                     class="btn btn-sm btn-danger"
                                                     name="delete_button"
                                             >
@@ -101,4 +105,47 @@
         </div>
     </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"
+        integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="text/javascript">
+    function assign_button(teacher_name) {
+        console.log("Assign button clicked ")
+    }
+
+    $(document).ready(function () {
+
+
+        $('#delete_button{{ proposal.id }}').on('click', function (e) {
+            e.preventDefault();
+            console.log("delete button clicked {{ proposal.id }}")
+            $.ajax({
+                type: 'POST',
+                url: '{% url 'proposal-submission' proposal.course.id proposal.course.semester %}',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                data: {
+                    // plus other data
+                    'delete_button': true,
+                    'team_lead_id': '{{ proposal.team_lead.student_id }}',
+                    'course_id': '{{ proposal.course.id }}'
+                },
+                success: function () {
+                    window.location.reload();
+                }
+            })
+        })
+
+
+        $('#dropdownMenuButton1').on('click', function (e) {
+            e.preventDefault();
+            console.log("assign delete button clicked")
+        })
+
+
+    });
+
+
+</script>
 

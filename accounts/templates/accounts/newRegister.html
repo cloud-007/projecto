@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
     <div class="container mt-5 mb-5 block-login-container">
-        <div class="row ">
+        <div class="row mb-5">
 
             <div class="leftImage card border-0 col-lg-6 d-none d-lg-flex justify-content-center">
                 <img style="margin: 5%" class=""
@@ -21,16 +21,6 @@
                     <h3 class="loginHeading">Create your PROJECTO Account!</h3>
                     <form method="post" class="col-lg-10 col-md-10">
                         {% csrf_token %}
-                        <label for="id_username"
-                               class="text-muted">Username</label>
-                        <input
-                                type="text"
-                                class="form-control input-field"
-                                id="id_username"
-                                name="username"
-                                required
-
-                        >
                         <label for="id_student_id"
                                class="mt-2 text-muted">Student ID</label>
                         <input
@@ -69,6 +59,32 @@
                                 name="confirm_password"
                                 required
                         />
+                        <label for="id_full_name"
+                               class="mt-2 text-muted">Full Name</label>
+                        <input
+                                type="text"
+                                class="form-control input-field"
+                                id="id_full_name"
+                                name="full_name"
+                                required
+                        >
+                        <label for="id_batch"
+                               class="mt-2 text-muted">Batch</label>
+                        <input
+                                type="number"
+                                class="form-control input-field"
+                                id="id_batch"
+                                name="batch"
+                                required
+                        >
+                        <label for="id_section"
+                               class="mt-2 text-muted">Section</label>
+                        <input
+                                type="text"
+                                class="form-control input-field"
+                                id="id_section"
+                                name="section"
+                        >
                         <button
                                 type="submit"
                                 class="signInBtn mt-3"

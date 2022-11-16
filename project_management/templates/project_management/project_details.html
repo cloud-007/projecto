@@ -35,7 +35,7 @@
         {# submission details of a project body #}
         {% if proposals %}
             {% for proposal in proposals %}
-                {% include 'project_management/project_details_card.html' with proposal=proposal teachers=teachers %}
+                {% include 'project_management/project_details_card.html' with proposal=proposal teachers=teachers id=proposal.id %}
             {% endfor %}
         {% else %}
             <h3 style="height: 40%"

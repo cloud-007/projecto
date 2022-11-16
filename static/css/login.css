@@ -153,7 +153,6 @@
 .block-login-container {
     border-radius: 10px;
     width: 60%;
-    margin-bottom: 50px;
 }
 
 .block-login-form {
@@ -228,6 +227,7 @@
 .signInBtn:hover {
     height: 40px;
     background: #3e2e5b;
+    border-radius: 5px;
 }
 
 @media (max-width: 991px) {

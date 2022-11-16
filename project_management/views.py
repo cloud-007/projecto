@@ -1,11 +1,12 @@
 import datetime
+import json
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.views import View
 
-from accounts.models import Teacher
+from accounts.models import Teacher, Student
 from project_management.models import Course, Proposal
 
 
@@ -20,6 +21,10 @@ class HomeView(View):
 
         return render(request, self.template_name,
                       {'courses': running_courses, 'archived': archived_courses})
+
+    @property
+    def is_past_due(self):
+        return datetime.date.today() > self.date
 
 
 def post(self, request, *args, **kwargs):
@@ -143,13 +148,77 @@ class ProposalSubmissionView(LoginRequiredMixin, View):
     template_name = 'project_management/proposal_submission.html'
 
     context = {
-        ''
+        'students': Student.objects.all(),
+        'teachers': Teacher.objects.all(),
+        'proposal': '',
     }
 
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name, {})
+        pk = kwargs.get('id')
+        course = Course.objects.get(id=pk)
+        proposal = Proposal.objects.filter(students=request.user.student, course_id=course.id).first()
+
+        self.context = {
+            'students': Student.objects.exclude(proposal__course=course),
+            'teachers': Teacher.objects.all(),
+            'proposal': proposal
+        }
+
+        return render(request, self.template_name, context=self.context)
 
     def post(self, request, *args, **kwargs):
         print(request.POST)
+        pk = kwargs.get('id')
+        course = Course.objects.get(id=pk)
+        # check if the user requested has permission to delete it and return to proposal page
+        if request.POST.get("delete_button") and request.user.is_staff:
+            print("Came from delete button")
+            for_course = request.POST.get("course_id")
+            student_id = request.POST.get("team_lead_id")
+            student = Student.objects.get(student_id=student_id)
+            proposal = Proposal.objects.get(team_lead=student, course_id=for_course)
+            proposal.delete()
+            # check the redirect url proposal gets deleted but redirection doesn't work
+            return render(request, self.template_name, context=self.context)
 
-        return render(request, self.template_name, {})
+        # if it is a normal POST method then create/update the proposal
+
+        proposal = Proposal.objects.filter(team_lead=request.user.student, course_id=course.id).first()
+        if proposal is None:
+            proposal = Proposal()
+
+        print(course)
+
+        proposal.title = request.POST.get("title")
+        proposal.course = course
+        proposal.submitted_by = request.user.student
+        proposal.team_lead = request.user.student
+        proposal.file = request.FILES['proposal_file']
+        print(proposal.file)
+        proposal.save()
+        student_list = []
+
+        for student in json.loads(request.POST.get("tagify_student")):
+            student_list.append(student['value'])
+
+        students = Student.objects.filter(student_id__in=student_list)
+        proposal.students.set(students)
+
+        teacher_list = []
+
+        for teacher in json.loads(request.POST.get("tagify_teacher")):
+            teacher_list.append(teacher['value'])
+        teachers = Teacher.objects.filter(full_name__in=teacher_list)
+        proposal.preferred_supervisors.set(teachers)
+
+        messages.success(request, "Your response has been recorded")
+
+        proposal.save()
+
+        self.context = {
+            'students': Student.objects.all(),
+            'teachers': Teacher.objects.all(),
+            'proposal': proposal
+        }
+
+        return redirect('home')

@@ -25,7 +25,7 @@
         <div class="row mt-3 row-cols-lg-4 row-cols-sm-2 row-cols-xs-2 d-flex justify-content-start">
             {% if courses %}
                 {% for course in courses %}
-                    {% include 'project-card.html' with course=course %}
+                    {% include 'project-card.html' with course=course has_deadline=True %}
                 {% endfor %}
             {% else %}
                 <h3 style="height: 40%"
@@ -36,7 +36,7 @@
 
         {# archieved projects #}
         <h3 class="color-primary-second mt-3">Archived Project</h3>
-        {# running project body #}
+        {# archieved project body #}
 
         <div class="row mt-3 row-cols-lg-4 row-cols-sm-2 row-cols-xs-2 d-flex justify-content-start">
             {% if courses %}

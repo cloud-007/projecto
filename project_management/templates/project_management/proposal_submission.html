@@ -1,162 +1,208 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-    <div class=" d-flex justify-content-center">
-        <div class="profile-block p-3 mb-5">
-            {% for message in messages %}
-                <p class="alert alert-success">
-                    {{ message }}
-                </p>
-            {% endfor %}
-            <form id="id_form" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <h5>Project proposal submission form</h5>
+    {% if not proposal %}
+        <div class=" d-flex justify-content-center">
+            <div class="profile-block p-3">
+                {% for message in messages %}
+                    <p class="alert alert-success">
+                        {{ message }}
+                    </p>
+                {% endfor %}
 
-                <div class="form-group ">
-                    <label for="id_title">Project/Theses Title</label>
-                    <input
-                            type="text"
-                            class="form-control input-field"
-                            id="id_title"
-                            name="title"
-                            required
-                            value="{{ title }}"
-                    />
+                <form id="id_form" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <h5>Project proposal submission form</h5>
 
-                    <label for="id_preferred_supervisors" class="mt-1">Preferred
-                        Supervisors</label>
-                    <input
-                            type="text"
-                            class="form-control input-field"
-                            id="id_preferred_supervisors"
-                            name="preferred_supervisors"
-                            required
-                            value="{{ preferred_supervisors }}"
-                    />
-                    <label for="formFile"
-                           class="form-label mt-2" style="margin-bottom: -2px">Proposal
-                        File</label>
-                    <input class="form-control input-field" type="file"
-                           id="formFile"
-                           required
-                    >
-                    <div id="team-members">
-                        <div class="mt-2">
-                            <h5 style="color: black">Team lead details</h5>
-                            <label for="id_full_name1">Full Name</label>
-                            <input
-                                    type="text"
-                                    class="form-control input-field"
-                                    id="id_full_name1"
-                                    name="full_name1"
-                                    required
-                                    value="{{ user.student.full_name }}"
-                            />
-                            <label for="id_student_id1" class="mt-1">Student
-                                ID</label>
-                            <input
-                                    type="text"
-                                    class="form-control input-field"
-                                    id="id_student_id1"
-                                    name="student_id1"
-                                    required
-                                    value="{{ user.student.student_id }}"
-                            />
-                            <label for="id_batch_number1"
-                                   class="mt-1">Batch</label>
-                            <input
-                                    type="number"
-                                    class="form-control input-field"
-                                    id="id_batch_number1"
-                                    name="batch1"
-                                    required
-                                    value="{{ user.student.batch }}"
-                            />
-                            <label for="id_section1"
-                                   class="mt-1">Section</label>
-                            <input
-                                    type="text"
-                                    class="form-control input-field"
-                                    id="id_section1"
-                                    name="section1"
-                                    value="{{ user.student.section }}"
-                            />
+                    <div class="form-group ">
+                        <label for="id_title">Project/Theses Title</label>
+                        <input
+                                id="id_title"
+                                type="text"
+                                class="form-control input-field"
+                                name="title"
+                                required
+                                value="{{ title }}"
+                        />
+                        {# here is the tagify student element #}
+                        <label for="id_tagify_student" class="mt-2">Team
+                            Members</label>
+                        <input
+                                id="id_tagify_student"
+                                name='tagify_student'
+                                class='input-field tagify-field'
+                                placeholder="Type student id's"
+                                value="{{ user.student.student_id }}"
+                                required
+                        >
+
+                        {# here is the tagify teachers element #}
+                        <label for="id_tagify_teacher" class="mt-2">Preferred
+                            Teachers</label>
+                        <input
+                                id="id_tagify_teacher"
+                                name='tagify_teacher'
+                                class='input-field tagify-field'
+                                placeholder="Type teachers name"
+                                required
+                        >
+                        {# proposal file #}
+                        <label for="id_proposal_file"
+                               class="form-label mt-2">Upload
+                            proposal</label>
+                        <input id="id_proposal_file"
+                               class="form-control input-field" type="file"
+                               name="proposal_file"
+                               accept=".doc, .docx, .pdf"
+                               required
+                        />
+                        {#                        Previous working submit proposal button#}
+                        {#                        <button#}
+                        {#                                type="submit"#}
+                        {#                                class="signInBtn"#}
+                        {#                                style="width: 100%; margin-bottom: -16px"#}
+                        {#                        >#}
+                        {#                            Submit Proposal#}
+                        {#                        </button>#}
+
+                        {# submit proposal with warning Button #}
+                        <div>
+                            <!-- Button trigger modal -->
+                            <button type="button"
+                                    class="signInBtn"
+                                    data-bs-toggle="modal"
+                                    style="width: 100%; margin-bottom: -16px"
+                                    data-bs-target="#exampleModal">
+                                Submit Proposal
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModal"
+                                 tabindex="-1"
+                                 aria-labelledby="exampleModalLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title"
+                                                id="exampleModalLabel">
+                                                Submit {{ proposal.course.title }}</h5>
+                                            <button type="button"
+                                                    class="btn-close"
+                                                    data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body alert alert-warning">
+                                            Make sure given information is
+                                            correct. You won't be able to update
+                                            the form!
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button"
+                                                    class="btn btn-sm btn-secondary"
+                                                    data-bs-dismiss="modal">No,
+                                                Update
+                                            </button>
+                                            <button type="submit"
+                                                    class="btn btn-sm btn-warning"
+                                                    name="delete_button"
+                                            >
+                                                Yes! Submit.
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+
+
+            </div>
+        </div>
+
+    {% else %}
+
+        <div class="block-body-container container">
+
+            <div class="container  " onclick="">
+                {# running project and manage #}
+                <div class="d-flex justify-content-between">
+                    <h3 class="color-primary-second">Your Submission</h3>
+                </div>
+                {% include 'divider.html' %}
+            </div>
+
+            <div class="container block-project-details mt-3 ">
+                <div class="d-flex justify-content-between">
+                    <h5 class="color-primary-second">{{ proposal.title }}</h5>
+                    <h6 class="text-muted">Submitted on: 31 December
+                        2022</h6>
+                </div>
+                <div class="row">
+                    <div class="col col-xs-12 col-sm-12 col-lg-8 ">
+                        {% for student in proposal.students.all %}
+                            <div class="row d-flex justify-content-between">
+                                <h6 class="col text-muted">{{ student.full_name }}</h6>
+                                <h6 class="col  text-muted">{{ student.student_id }}</h6>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="col col-xs-12 col-sm-12 col-lg-4">
+                        <div class="row d-flex justify-content-between">
+                            <div class="col col-xs-12 col-sm-12 col-lg-6 ">
+                                <h6 class="text-muted">Preferred
+                                    Supervisors:
+                                    {% for supervisor in proposal.preferred_supervisors.all %}
+                                        {{ supervisor.initials }},
+                                    {% endfor %}
+                                </h6>
+                                <h6 class="text-muted">Assigned
+                                    Supervisor: {{ proposal.assigned_supervisor }}</h6>
+                            </div>
                         </div>
                     </div>
-                    <button
-                            type="button"
-                            class="btn btn-primary mt-2"
-                            onclick="addAnotherMember()"
-                            style="width: 100%; margin-bottom: -10px"
-                    >
-                        Add another team member
-                    </button>
-                    <button
-                            type="submit"
-                            class="signInBtn"
-                            style="width: 100%; margin-bottom: -10px"
-                    >
-                        Submit Proposal
-                    </button>
                 </div>
-            </form>
+            </div>
         </div>
-    </div>
+    {% endif %}
 
+    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
     <script type="text/javascript">
-        let totalTeamMember = 1;
-        const myForm = document.getElementById("id_form")
 
+        const student_list = [
+            {% for student in students %}
+                "{{student.student_id}}",
+            {% endfor %}
+        ];
 
-        function myFunction() {
-            totalTeamMember = document.getElementById('id_team_member').value
-            console.log(totalTeamMember)
-        }
+        student_list.sort()
 
-        function addAnotherMember() {
-            totalTeamMember++
+        const studentInputElm = document.querySelector('input[name=tagify_student]');
 
-            console.log("Button Clicked")
-            $("#team-members").append(
-                `<div class="mt-2 mb-2"">
-                    <h5 style="color: black">Team member ` + totalTeamMember + ` details</h5>
-                    <label for="id_full_name` + totalTeamMember + `">Full Name</label>
-                    <input
-                        type="text"
-                        class="form-control input-field"
-                        id="id_full_name` + totalTeamMember + `"
-                        name="full_name` + totalTeamMember + `"
-                        required
-                    />
-                    <label for="id_student_id` + totalTeamMember + `" class="mt-1">Student
-                        ID</label>
-                    <input
-                        type="text"
-                        class="form-control input-field"
-                        id="id_student_id` + totalTeamMember + `"
-                        name="student_id` + totalTeamMember + `"
-                        required
-                    />
-                    <label for="id_batch_number` + totalTeamMember + `"
-                           class="mt-1">Batch</label>
-                    <input
-                        type="number"
-                        class="form-control input-field"
-                        id="id_batch_number` + totalTeamMember + `"
-                        name="batch` + totalTeamMember + `"
-                        required
-                    />
-                    <label for="id_section` + totalTeamMember + `" class="mt-1">Section</label>
-                    <input
-                        type="text"
-                        class="form-control input-field"
-                        id="id_section` + totalTeamMember + `"
-                        name="section` + totalTeamMember + `"
-                    />
-                </div>
-        </div>`
-            )
-        }
+        // initialize Tagify on the above input node reference
+        const tagify_student = new Tagify(studentInputElm, {
+            enforceWhitelist: true,
+            whitelist: student_list // Array of values. stackoverflow.com/a/43375571/104380
+        })
+
+        const teacherList = [
+            {% for teacher in teachers %}
+                "{{teacher.full_name}}",
+            {% endfor %}
+        ];
+
+        teacherList.sort()
+
+        const teacherInputElm = document.querySelector('input[name=tagify_teacher]');
+
+        // initialize Tagify on the above input node reference
+        const tagify_teacher = new Tagify(teacherInputElm, {
+            enforceWhitelist: true,
+            whitelist: teacherList // Array of values. stackoverflow.com/a/43375571/104380
+        })
 
 
     </script>

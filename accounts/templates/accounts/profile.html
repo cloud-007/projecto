@@ -4,18 +4,30 @@
     <div class=" d-flex justify-content-center">
         <div class="profile-block p-3 mb-5">
             {% for message in messages %}
-                <p class="alert alert-success">
-                    {{ message }}
-                </p>
+                {% if  message.tags == 'success' %}
+                    <p class="alert alert-success">
+                        {{ message }}
+                    </p>
+                {% else %}
+                    <p class="alert alert-warning">
+                        {{ message }}
+                    </p>
+                {% endif %}
             {% endfor %}
             <div class="d-flex justify-content-center">
-                <img class="rounded-circle account-img img-thumbnail mt-2 profile-image shadow p-1"
+                {% if user.student.profile_image %}
+                    <img class="rounded-circle account-img img-thumbnail mt-2 profile-image shadow p-1"
+                         src="{{ user.student.profile_image.url }}"
+                         alt="{% static 'media/defaultProfile.png' %}">
+                {% else %}
+                    <img class="rounded-circle account-img img-thumbnail mt-2 profile-image shadow p-1"
+                         src="{% static 'media/defaultProfile.png' %}"
+                         alt="">
+                {% endif %}
 
-                     src={% static 'media/defaultProfile.png' %}  alt="{% static 'media/loginimg.png' %}">
             </div>
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-
                 <div class="form-group ">
                     <label for="id_full_name">Full Name</label>
                     <input
@@ -24,7 +36,7 @@
                             id="id_full_name"
                             name="full_name"
                             required
-                            value="{{ full_name }}"
+                            value="{{ student.full_name }}"
                     />
                     <label for="id_student_id" class="mt-1">Student ID</label>
                     <input
@@ -33,7 +45,7 @@
                             id="id_student_id"
                             name="student_id"
                             required
-                            value="{{ student_id }}"
+                            value="{{ student.student_id }}"
                     />
                     <label for="id_batch_number" class="mt-1">Batch</label>
                     <input
@@ -42,7 +54,7 @@
                             id="id_batch_number"
                             name="batch"
                             required
-                            value="{{ batch }}"
+                            value="{{ student.batch }}"
                     />
                     <label for="id_section" class="mt-1">Section</label>
                     <input
@@ -50,12 +62,13 @@
                             class="form-control input-field"
                             id="id_section"
                             name="section"
-                            value="{{ section }}"
+                            value="{{ student.section }}"
 
                     />
                     <label for="formFile"
                            class="form-label ">Profile Image</label>
                     <input class="form-control input-field" type="file"
+                           name='profile_image'
                            id="formFile">
                     <button
                             type="submit"

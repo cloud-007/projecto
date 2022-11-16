@@ -41,7 +41,9 @@ class Proposal(models.Model):
         verbose_name=_('Assigned By'),
         to='accounts.Teacher',
         related_name='+',
-        on_delete=models.PROTECT
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True
     )
     # submitted_by = models.CharField(verbose_name=_('Submitted By'), max_length=32)
     submitted_by = models.ForeignKey(
@@ -56,6 +58,8 @@ class Proposal(models.Model):
         related_name='+',
         on_delete=models.PROTECT
     )
+
+    file = models.FileField(upload_to='proposals/')
 
     def __str__(self):
         return self.title
@@ -109,4 +113,4 @@ class Marksheet(models.Model):
     supervisor = models.CharField(verbose_name=_('Supervisor Mark'), max_length=128)
 
     def __str__(self):
-        return self.proposal.proposal_id
+        return self.proposal.title
