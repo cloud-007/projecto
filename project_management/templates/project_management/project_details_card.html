@@ -55,15 +55,20 @@
                         <div style="width: 100%">
                             <!-- Button trigger modal -->
                             <button type="button"
+                                    id="delete-btn{{ proposal.id }}"
                                     class="btn btn-sm btn-danger"
                                     style="width: 100%;"
                                     data-bs-toggle="modal"
+                                    onclick="delete_id = {{ proposal.id }};
+                                            team_lead_student_id = {{ proposal.team_lead.student_id }};
+                                            "
                                     data-bs-target="#exampleModal">
                                 Delete
                             </button>
 
                             <!-- Modal -->
-                            <div class="modal fade" id="exampleModal"
+                            <div class="modal fade"
+                                 id="exampleModal"
                                  tabindex="-1"
                                  aria-labelledby="exampleModalLabel"
                                  aria-hidden="true">
@@ -72,15 +77,16 @@
                                         <div class="modal-header">
                                             <h5 class="modal-title"
                                                 id="exampleModalLabel">
-                                                Delete {{ proposal.title }}?</h5>
+                                                Delete?</h5>
                                             <button type="button"
                                                     class="btn-close"
                                                     data-bs-dismiss="modal"
                                                     aria-label="Close"></button>
                                         </div>
-                                        <div class="modal-body">
+                                        <div class="modal-body"
+                                             id="modal_main_body">
                                             Are you sure you want to
-                                            delete {{ proposal.title }}?
+                                            delete this proposal?
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button"
@@ -88,8 +94,8 @@
                                                     data-bs-dismiss="modal">No
                                             </button>
                                             <button type="button"
-                                                    id="delete_button{{ proposal.id }}"
                                                     class="btn btn-sm btn-danger"
+                                                    onclick="deleteButton()"
                                                     name="delete_button"
                                             >
                                                 Yes! Delete.
@@ -109,42 +115,67 @@
         integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script type="text/javascript">
-    function assign_button(teacher_name) {
-        console.log("Assign button clicked ")
-    }
+    delete_id = -1;
+    team_lead_student_id = -1;
 
-    $(document).ready(function () {
+    function deleteButton(e) {
+        console.log("delete button clicked ")
+        console.log(delete_id)
+        console.log(team_lead_student_id)
 
-
-        $('#delete_button{{ proposal.id }}').on('click', function (e) {
-            e.preventDefault();
-            console.log("delete button clicked {{ proposal.id }}")
-            $.ajax({
+        $.ajax({
                 type: 'POST',
-                url: '{% url 'proposal-submission' proposal.course.id proposal.course.semester %}',
+                url: '{% url 'course-details' course.id 'all' %}',
                 headers: {
                     'X-CSRFToken': '{{ csrf_token }}'
                 },
                 data: {
                     // plus other data
                     'delete_button': true,
-                    'team_lead_id': '{{ proposal.team_lead.student_id }}',
-                    'course_id': '{{ proposal.course.id }}'
+                    'team_lead_id': team_lead_student_id,
+                    'proposal_id': delete_id
                 },
                 success: function () {
-                    window.location.reload();
+                    window.location.reload({{ course.id }}, 'all');
+                    console.log("Successfully")
                 }
-            })
-        })
+            }
+        )
+
+    }
+
+    {#$(document).ready(function () {#}
+    {##}
+    {##}
+    {#    $('#delete_button{{ proposal.id }}').on('click', function (e, proposal_id) {#}
+    {#        e.preventDefault();#}
+    {#        console.log("delete button clicked" + proposal_id)#}
+    {#        $.ajax({#}
+    {#            type: 'POST',#}
+    {#            url: '{% url 'proposal-submission' proposal.course.id proposal.course.semester %}',#}
+    {#            headers: {#}
+    {#                'X-CSRFToken': '{{ csrf_token }}'#}
+    {#            },#}
+    {#            data: {#}
+    {#                // plus other data#}
+    {#                'delete_button': true,#}
+    {#                'team_lead_id': '{{ proposal.team_lead.student_id }}',#}
+    {#                'course_id': '{{ proposal.course.id }}'#}
+    {#            },#}
+    {#            success: function () {#}
+    {#                window.location.reload();#}
+    {#            }#}
+    {#        })#}
+    {#    })#}
+    {##}
+    {##}
+    {#    $('#dropdownMenuButton1').on('click', function (e) {#}
+    {#        e.preventDefault();#}
+    {#        console.log("assign delete button clicked")#}
+    {#    })#}
 
 
-        $('#dropdownMenuButton1').on('click', function (e) {
-            e.preventDefault();
-            console.log("assign delete button clicked")
-        })
-
-
-    });
+    {# }); #}
 
 
 </script>

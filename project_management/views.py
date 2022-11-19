@@ -70,6 +70,30 @@ class ProjectDetailsView(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         print(request.POST)
+        # delete proposal if the admin tries to delete it
+        if request.is_ajax() and request.user.is_staff:
+            print("Came from ajax")
+            proposal_id = request.POST.get("proposal_id")
+            proposal = Proposal.objects.get(id=proposal_id)
+            proposal.delete()
+
+            course_id = kwargs.get('id')
+            course = Course.objects.get(id=course_id)
+            filter_by = kwargs.get('filter_by')
+
+            if filter_by == 'all':
+                proposals = course.proposal_set.all()
+            elif filter_by == 'assigned':
+                proposals = course.proposal_set.filter(assigned_supervisor__isnull=False)
+            else:
+                proposals = course.proposal_set.filter(assigned_supervisor__isnull=True)
+            self.context = {
+                'course': course,
+                'proposals': proposals,
+                'filter_by': filter_by,
+                'teachers': Teacher.objects.all()
+            }
+
         return render(request, self.template_name, self.context)
 
 
