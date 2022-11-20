@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container mb-5 block-body-container" onclick="">
+        {# running project and manage #}
+        <div class="d-flex justify-content-between">
+            <h3 class="color-primary-second">Teacher List</h3>
+            <a style="text-decoration: none">
+                <button class="ms-2 btn btn-sm btn-primary"
+                        onclick="location.href='{% url 'add-teacher' %}'"
+                >
+                    Add Teacher
+                </button>
+            </a>
+        </div>
+
+        {% include 'divider.html' %}
+
+        <table class="table table-striped mt-2">
+            <thead>
+            <tr>
+                <th scope="col">Sl</th>
+                <th scope="col">Full Name</th>
+                <th scope="col">Initials</th>
+                <th scope="col">Email</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for teacher in teachers %}
+                <tr>
+                    <th scope="row">1</th>
+                    <td>{{ teacher.full_name }}</td>
+                    <td>{{ teacher.initials }}</td>
+                    <td>{{ teacher.email }}</td>
+                    <td>{{ teacher.phone }}</td>
+                    <td>
+                        <a class="btn btn-sm me-1" href="#">
+                            <i class="fas fa-pen"></i>
+                        </a>
+                        <a class="btn btn-sm text-danger" href="#">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+    <script type="text/javascript">
+        sl = 1;
+    </script>
+{% endblock %}
+

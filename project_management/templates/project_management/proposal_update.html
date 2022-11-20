@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class=" d-flex justify-content-center">
+        <div class="profile-block p-3">
+            {% for message in messages %}
+                <p class="alert alert-success">
+                    {{ message }}
+                    <a href="{% url 'course-details' proposal.course.id 'all' %}">Go
+                        back to course details</a>
+                </p>
+            {% endfor %}
+
+            <form id="id_form" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <h5>Project proposal update form</h5>
+
+                <div class="form-group ">
+                    <label for="id_title">Project/Theses Title</label>
+                    <input
+                            id="id_title"
+                            type="text"
+                            class="form-control input-field"
+                            name="title"
+                            required
+                            value="{{ proposal.title }}"
+                    />
+                    {# here is the tagify student element #}
+                    <label for="id_tagify_student" class="mt-2">Team
+                        Members</label>
+                    <input
+                            id="id_tagify_student"
+                            name='tagify_student'
+                            class='input-field tagify-field'
+                            placeholder="Type student id's"
+                            value="{{ list }}"
+                            required
+                    >
+
+                    {# here is the tagify teachers element #}
+                    <label for="id_tagify_teacher" class="mt-2">Preferred
+                        Teachers</label>
+                    <input
+                            id="id_tagify_teacher"
+                            name='tagify_teacher'
+                            class='input-field tagify-field'
+                            placeholder="Type teachers name"
+                            value="{{ curTeacherList }}"
+                            required
+                    >
+                    {# proposal file #}
+                    <label for="id_proposal_file"
+                           class="form-label mt-2">Upload
+                        proposal</label>
+                    <input id="id_proposal_file"
+                           class="form-control input-field" type="file"
+                           name="proposal_file"
+                           value="{{ proposal.file }}"
+                           accept=".doc, .docx, .pdf"
+                    />
+                    {# submit proposal with warning Button #}
+                    <div>
+                        <!-- Button trigger modal -->
+                        <button type="button"
+                                class="signInBtn"
+                                data-bs-toggle="modal"
+                                style="width: 100%; margin-bottom: -16px"
+                                data-bs-target="#exampleModal">
+                            Update Proposal
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal"
+                             tabindex="-1"
+                             aria-labelledby="exampleModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title text-dark"
+                                            id="exampleModalLabel">
+                                            Update {{ proposal.title }}</h5>
+                                        <button type="button"
+                                                class="btn-close"
+                                                data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body alert alert-warning">
+                                        Are you sure want to make changes to
+                                        this proposal file?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button"
+                                                class="btn btn-sm btn-secondary"
+                                                data-bs-dismiss="modal">Cancel
+                                        </button>
+                                        <button type="submit"
+                                                class="btn btn-sm btn-warning"
+                                                name="delete_button"
+                                        >
+                                            Save Changes.
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+
+
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
+    <script type="text/javascript">
+
+
+        const student_list = [
+            {% for student in students %}
+                "{{student.student_id}}",
+            {% endfor %}
+            {% for student in proposal.students.all %}
+                "{{student.student_id}}",
+            {% endfor %}
+        ];
+
+        student_list.sort()
+
+        const curStudentList = [
+            {% for student in proposal.students.all %}
+                "{{student.student_id}}",
+            {% endfor %}
+        ];
+        console.log(curStudentList)
+
+        const studentInputElm = document.querySelector('input[name=tagify_student]');
+        studentInputElm.value = curStudentList
+
+        // initialize Tagify on the above input node reference
+        const tagify_student = new Tagify(studentInputElm, {
+            enforceWhitelist: true,
+            whitelist: student_list // Array of values. stackoverflow.com/a/43375571/104380
+        })
+
+
+        const teacherList = [
+            {% for teacher in teachers %}
+                "{{teacher.full_name}}",
+            {% endfor %}
+        ];
+
+        teacherList.sort()
+
+        const curTeacherList = [
+            {% for teacher in proposal.preferred_supervisors.all %}
+                "{{teacher.full_name}}",
+            {% endfor %}
+        ];
+
+        console.log(curTeacherList)
+
+        const teacherInputElm = document.querySelector('input[name=tagify_teacher]');
+        teacherInputElm.value = curTeacherList;
+
+        // initialize Tagify on the above input node reference
+        const tagify_teacher = new Tagify(teacherInputElm, {
+            enforceWhitelist: true,
+            whitelist: teacherList // Array of values. stackoverflow.com/a/43375571/104380
+        })
+
+    </script>
+{% endblock %}

@@ -14,71 +14,108 @@
                     </p>
                 {% endif %}
             {% endfor %}
-            <div class="d-flex justify-content-center">
-                {% if user.student.profile_image %}
-                    <img class="rounded-circle account-img img-thumbnail mt-2 profile-image shadow p-1"
-                         src="{{ user.student.profile_image.url }}"
-                         alt="{% static 'media/defaultProfile.png' %}">
-                {% else %}
-                    <img class="rounded-circle account-img img-thumbnail mt-2 profile-image shadow p-1"
-                         src="{% static 'media/defaultProfile.png' %}"
-                         alt="">
-                {% endif %}
+            {% if teacher is None %}
+                <h5>Student Profile</h5>
+                {% include 'divider.html' %}
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group ">
+                        <label for="id_full_name">Full Name</label>
+                        <input
+                                type="text"
+                                class="form-control input-field"
+                                id="id_full_name"
+                                name="full_name"
+                                required
+                                value="{{ student.full_name }}"
+                        />
+                        <label for="id_student_id" class="mt-1">Student
+                            ID</label>
+                        <input
+                                type="text"
+                                class="form-control input-field"
+                                id="id_student_id"
+                                name="student_id"
+                                required
+                                value="{{ student.student_id }}"
+                        />
+                        <label for="id_batch_number" class="mt-1">Batch</label>
+                        <input
+                                type="number"
+                                class="form-control input-field"
+                                id="id_batch_number"
+                                name="batch"
+                                required
+                                value="{{ student.batch }}"
+                        />
+                        <label for="id_section" class="mt-1">Section</label>
+                        <input
+                                type="text"
+                                class="form-control input-field"
+                                id="id_section"
+                                name="section"
+                                value="{{ student.section }}"
 
-            </div>
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="form-group ">
-                    <label for="id_full_name">Full Name</label>
-                    <input
-                            type="text"
-                            class="form-control input-field"
-                            id="id_full_name"
-                            name="full_name"
-                            required
-                            value="{{ student.full_name }}"
-                    />
-                    <label for="id_student_id" class="mt-1">Student ID</label>
-                    <input
-                            type="text"
-                            class="form-control input-field"
-                            id="id_student_id"
-                            name="student_id"
-                            required
-                            value="{{ student.student_id }}"
-                    />
-                    <label for="id_batch_number" class="mt-1">Batch</label>
-                    <input
-                            type="number"
-                            class="form-control input-field"
-                            id="id_batch_number"
-                            name="batch"
-                            required
-                            value="{{ student.batch }}"
-                    />
-                    <label for="id_section" class="mt-1">Section</label>
-                    <input
-                            type="text"
-                            class="form-control input-field"
-                            id="id_section"
-                            name="section"
-                            value="{{ student.section }}"
-
-                    />
-                    <label for="formFile"
-                           class="form-label ">Profile Image</label>
-                    <input class="form-control input-field" type="file"
-                           name='profile_image'
-                           id="formFile">
-                    <button
-                            type="submit"
-                            class="signInBtn"
-                            style="width: 100%"
-                    >
-                        Update Profile
-                    </button>
-                </div>
-            </form>
+                        />
+                        <button
+                                type="submit"
+                                class="signInBtn mt-3"
+                                style="width: 100%; margin-bottom: -14px"
+                        >
+                            Update Profile
+                        </button>
+                    </div>
+                </form>
+            {% else %}
+                <h5>Teacher Profile</h5>
+                {% include 'divider.html' %}
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group ">
+                        <label for="id_full_name">Full Name</label>
+                        <input
+                                type="text"
+                                class="form-control input-field"
+                                id="id_full_name"
+                                name="full_name"
+                                required
+                                value="{{ teacher.full_name }}"
+                        />
+                        <label for="id_initials" class="mt-1">Initials</label>
+                        <input
+                                type="text"
+                                class="form-control input-field"
+                                id="id_initials"
+                                name="initials"
+                                required
+                                value="{{ teacher.initials }}"
+                        />
+                        <label for="id_email" class="mt-1">Email</label>
+                        <input
+                                type="email"
+                                class="form-control input-field"
+                                id="id_email"
+                                name="email"
+                                value="{{ teacher.email }}"
+                        />
+                        <label for="id_phone" class="mt-1">Phone</label>
+                        <input
+                                type="tel"
+                                class="form-control input-field"
+                                id="id_phone"
+                                name="phone"
+                                value="{{ teacher.phone }}"
+                        />
+                        <button
+                                type="submit"
+                                class="signInBtn mt-3"
+                                style="width: 100%; margin-bottom: -14px"
+                        >
+                            Update Profile
+                        </button>
+                    </div>
+                </form>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

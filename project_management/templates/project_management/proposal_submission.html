@@ -84,7 +84,7 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title"
+                                            <h5 class="modal-title text-dark"
                                                 id="exampleModalLabel">
                                                 Submit {{ proposal.course.title }}</h5>
                                             <button type="button"
@@ -93,9 +93,15 @@
                                                     aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body alert alert-warning">
-                                            Make sure given information is
+                                            Make sure following information is
                                             correct. You won't be able to update
                                             the form!
+                                            <ul>
+                                                <li>Title</li>
+                                                <li>Team members</li>
+                                                <li>Preferred Supervisors</li>
+                                                <li>Proposal file</li>
+                                            </ul>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button"
@@ -137,11 +143,12 @@
             <div class="container block-project-details mt-3 ">
                 <div class="d-flex justify-content-between">
                     <h5 class="color-primary-second">{{ proposal.title }}</h5>
-                    <h6 class="text-muted">Submitted on: 31 December
-                        2022</h6>
+                    <h6 class="text-muted"> Submitted
+                        on: {{ proposal.created_date }}
+                    </h6>
                 </div>
                 <div class="row">
-                    <div class="col col-xs-12 col-sm-12 col-lg-8 ">
+                    <div class="col col-xs-12 col-sm-12 col-lg-7 ">
                         {% for student in proposal.students.all %}
                             <div class="row d-flex justify-content-between">
                                 <h6 class="col text-muted">{{ student.full_name }}</h6>
@@ -149,7 +156,7 @@
                             </div>
                         {% endfor %}
                     </div>
-                    <div class="col col-xs-12 col-sm-12 col-lg-4">
+                    <div class="col col-xs-12 col-sm-12 col-lg-5">
                         <div class="row d-flex justify-content-between">
                             <div class="col col-xs-12 col-sm-12 col-lg-6 ">
                                 <h6 class="text-muted">Preferred
@@ -160,6 +167,8 @@
                                 </h6>
                                 <h6 class="text-muted">Assigned
                                     Supervisor: {{ proposal.assigned_supervisor }}</h6>
+                                <a href="{{ proposal.file.url }}">Proposal
+                                    File</a>
                             </div>
                         </div>
                     </div>

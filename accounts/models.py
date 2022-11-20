@@ -19,7 +19,6 @@ class Student(models.Model):
         related_name='student',
         on_delete=models.PROTECT
     )
-    profile_image = models.ImageField(verbose_name=_('Profile'), upload_to='profile/', null=True, blank=True)
 
     def __str__(self):
         return self.full_name
@@ -28,6 +27,8 @@ class Student(models.Model):
 class Teacher(models.Model):
     full_name = models.CharField(verbose_name=_('Full Name'), max_length=128)
     initials = models.CharField(verbose_name=_('Initials'), max_length=20)
+    email = models.CharField(verbose_name=_('Email'), max_length=56)
+    phone = models.IntegerField(verbose_name=_('Phone'), null=True, blank=True)
     user = models.OneToOneField(
         verbose_name=_('User'),
         to='accounts.User',

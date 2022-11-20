@@ -81,11 +81,11 @@ body {
 }
 
 .sign-out-btn {
-    background: red;
+    background: #dc3545;
 }
 
 .sign-out-btn:hover {
-    background: #ff4c4c;
+    background: #b71828;
 }
 
 body {

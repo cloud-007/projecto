@@ -1,14 +1,18 @@
 <div class="container block-project-details mt-3 ">
     <div class="d-flex justify-content-between">
         <h5 class="color-primary-second">{{ proposal.title }}</h5>
-        <h6 class="text-muted">Submitted on: 31 December 2022</h6>
+        <a class="text-muted text-decoration-none"
+           style="font-size: 12px">
+            Submitted: {{ proposal.created_date }}
+        </a>
     </div>
     <div class="row">
         <div class="col col-xs-12 col-sm-12 col-lg-6 ">
             {% for student in proposal.students.all %}
-                <div class="row d-flex justify-content-between">
-                    <h6 class="col text-muted">{{ student.full_name }}</h6>
-                    <h6 class="col  text-muted">{{ student.student_id }}</h6>
+                <div class="d-flex justify-content-between" style="width: 100%">
+                    <h6 class="d-inline text-muted">{{ student.full_name }}
+                        - </h6>
+                    <h6 class="d-inline  text-muted">{{ student.student_id }}</h6>
                 </div>
             {% endfor %}
         </div>
@@ -23,6 +27,8 @@
                     </h6>
                     <h6 class="text-muted">Assigned
                         Supervisor: {{ proposal.assigned_supervisor }}</h6>
+                    <a href="{{ proposal.file.url }}">Proposal
+                        File</a>
                 </div>
                 <div class="col col-xs-12 col-sm-12 col-lg-6">
 
@@ -42,24 +48,30 @@
                                     <button
                                             name="assign_button"
                                             class="dropdown-item"
+                                            onclick="
+                                                    teacher_id = {{ teacher.id }};
+                                                    proposal_id = {{ proposal.id }};
+                                                    assignSupervisor(event);"
                                             type="button">{{ teacher.full_name }}</button>
                                 </li>
                             {% endfor %}
                         </div>
                     </div>
-                    <div class="d-flex justify-content-between">
-                        <button class=" btn btn-sm btn-primary"
-                                style="width: 100%">Update
+                    <div class="d-flex justify-content-between mt-1">
+                        <button class="btn btn-sm btn-primary"
+                                style="width: 100%; margin-right: 1px"
+                                type="button"
+                                onclick="location.href='{% url 'proposal-update' course.id  course.semester proposal.id %}'"
+                        >Update
                         </button>
-                        {# Delete Proposal Button #}
-                        <div style="width: 100%">
+                        <div style="width: 100%; margin-left: 1px">
                             <!-- Button trigger modal -->
                             <button type="button"
                                     id="delete-btn{{ proposal.id }}"
                                     class="btn btn-sm btn-danger"
                                     style="width: 100%;"
                                     data-bs-toggle="modal"
-                                    onclick="delete_id = {{ proposal.id }};
+                                    onclick="proposal_id = {{ proposal.id }};
                                             team_lead_student_id = {{ proposal.team_lead.student_id }};
                                             "
                                     data-bs-target="#exampleModal">
@@ -91,14 +103,15 @@
                                         <div class="modal-footer">
                                             <button type="button"
                                                     class="btn btn-sm btn-secondary"
-                                                    data-bs-dismiss="modal">No
+                                                    data-bs-dismiss="modal">
+                                                Cancel
                                             </button>
                                             <button type="button"
                                                     class="btn btn-sm btn-danger"
                                                     onclick="deleteButton()"
                                                     name="delete_button"
                                             >
-                                                Yes! Delete.
+                                                Confirm
                                             </button>
                                         </div>
                                     </div>
@@ -115,12 +128,17 @@
         integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script type="text/javascript">
-    delete_id = -1;
+    proposal_title = '';
+    selectedStudents = [];
+    selectedTeachers = [];
+    proposal_id = -1;
     team_lead_student_id = -1;
+
+    teacher_id = '';
 
     function deleteButton(e) {
         console.log("delete button clicked ")
-        console.log(delete_id)
+        console.log(proposal_id)
         console.log(team_lead_student_id)
 
         $.ajax({
@@ -131,9 +149,9 @@
                 },
                 data: {
                     // plus other data
-                    'delete_button': true,
+                    'delete_button': 'true',
                     'team_lead_id': team_lead_student_id,
-                    'proposal_id': delete_id
+                    'proposal_id': proposal_id
                 },
                 success: function () {
                     window.location.reload({{ course.id }}, 'all');
@@ -144,38 +162,30 @@
 
     }
 
-    {#$(document).ready(function () {#}
-    {##}
-    {##}
-    {#    $('#delete_button{{ proposal.id }}').on('click', function (e, proposal_id) {#}
-    {#        e.preventDefault();#}
-    {#        console.log("delete button clicked" + proposal_id)#}
-    {#        $.ajax({#}
-    {#            type: 'POST',#}
-    {#            url: '{% url 'proposal-submission' proposal.course.id proposal.course.semester %}',#}
-    {#            headers: {#}
-    {#                'X-CSRFToken': '{{ csrf_token }}'#}
-    {#            },#}
-    {#            data: {#}
-    {#                // plus other data#}
-    {#                'delete_button': true,#}
-    {#                'team_lead_id': '{{ proposal.team_lead.student_id }}',#}
-    {#                'course_id': '{{ proposal.course.id }}'#}
-    {#            },#}
-    {#            success: function () {#}
-    {#                window.location.reload();#}
-    {#            }#}
-    {#        })#}
-    {#    })#}
-    {##}
-    {##}
-    {#    $('#dropdownMenuButton1').on('click', function (e) {#}
-    {#        e.preventDefault();#}
-    {#        console.log("assign delete button clicked")#}
-    {#    })#}
+    function assignSupervisor(e) {
+        console.log(teacher_id)
+        console.log(proposal_id)
 
+        $.ajax({
+                type: 'POST',
+                url: '{% url 'course-details' course.id 'all' %}',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                data: {
+                    // plus other data
+                    'delete_button': 'false',
+                    'teacher_id': teacher_id,
+                    'proposal_id': proposal_id
+                },
+                success: function () {
+                    window.location.reload({{ course.id }}, 'all');
+                    console.log("Successfully")
+                }
+            }
+        )
 
-    {# }); #}
+    }
 
 
 </script>

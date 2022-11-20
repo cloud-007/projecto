@@ -4,7 +4,16 @@ from django.utils.text import gettext_lazy as _
 from accounts.models import Student, Teacher
 
 
-class Course(models.Model):
+class AbstractTimestampModel(models.Model):
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+        ordering = ['-id']
+
+
+class Course(AbstractTimestampModel):
     course_id = models.IntegerField(verbose_name=_('Course ID'))
     title = models.CharField(verbose_name=_('Course Title'), max_length=64)
     semester = models.CharField(verbose_name=_('Semester'), max_length=32)
@@ -14,7 +23,7 @@ class Course(models.Model):
         return self.title
 
 
-class Proposal(models.Model):
+class Proposal(AbstractTimestampModel):
     title = models.CharField(verbose_name=_('Title'), max_length=256)
     course = models.ForeignKey(Course, on_delete=models.PROTECT)
     students = models.ManyToManyField(
@@ -65,7 +74,7 @@ class Proposal(models.Model):
         return self.title
 
 
-class Result(models.Model):
+class Result(AbstractTimestampModel):
     proposal = models.ForeignKey(
         verbose_name=_('Proposal Name'),
         to='Proposal',
@@ -87,7 +96,7 @@ class Result(models.Model):
         return self.proposal.proposal_id
 
 
-class Marksheet(models.Model):
+class Marksheet(AbstractTimestampModel):
     proposal = models.ForeignKey(
         verbose_name=_('Proposals'),
         to='Proposal',
@@ -108,9 +117,9 @@ class Marksheet(models.Model):
     )
 
     # add marks field
-    criteria_1 = models.CharField(verbose_name=_('Criteria 1 Mark'), max_length=128)
-    criteria_2 = models.CharField(verbose_name=_('Criteria 2 Mark'), max_length=128)
-    supervisor = models.CharField(verbose_name=_('Supervisor Mark'), max_length=128)
+    criteria_1 = models.FloatField(verbose_name=_('Criteria 1 Mark'), max_length=128)
+    criteria_2 = models.FloatField(verbose_name=_('Criteria 2 Mark'), max_length=128)
+    supervisor = models.FloatField(verbose_name=_('Supervisor Mark'), max_length=128)
 
     def __str__(self):
         return self.proposal.title
