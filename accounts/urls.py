@@ -6,7 +6,7 @@ from .views import (
     RegisterView,
     ProfileView,
     TeacherManagementView,
-    AddTeacherView
+    AddTeacherView,
 )
 
 urlpatterns = [

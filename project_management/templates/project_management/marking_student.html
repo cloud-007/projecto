@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container block-body-container">
+        {# running project and manage #}
+        <div class="d-flex justify-content-between">
+            <h3 class="color-primary-second">Mark Students</h3>
+            <div>
+                <label for="id_checkbox">Assign Same Mark</label>
+                <input id="id_checkbox" type="checkbox"/>
+            </div>
+        </div>
+        {% include 'divider.html' %}
+        {# running project body #}
+
+        <div class="d-flex justify-content-center mt-3">
+            <div class="container mt-2 marks-block">
+                <form class="row g-2" method="post"
+                      enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% for student in proposal.students.all %}
+                        <div class="col-12">
+
+                            <div class="p-3 border bg-light"
+                                 style="border-radius: 10px">
+                                <h5>Student ID: {{ student.student_id }}</h5>
+                                {% include 'divider.html' %}
+                                <label for="id_full_marks{{ student.student_id }}"
+                                       class="mt-1">Full
+                                    Marks</label>
+                                <input
+                                        type="number"
+                                        max="40"
+                                        class="form-control input-field"
+                                        id="id_full_marks{{ student.student_id }}"
+                                        name="full_marks{{ student.student_id }}"
+                                />
+                                <label for="id_criteria1{{ student.student_id }}"
+                                       class="mt-1">Criteria
+                                    1(Presentation/Viva)</label>
+                                <input
+                                        type="number"
+                                        max="40"
+                                        class="form-control input-field"
+                                        id="id_criteria1{{ student.student_id }}"
+                                        name="criteria1{{ student.student_id }}"
+                                />
+                                <label for="id_criteria2{{ student.student_id }}"
+                                       class="mt-1">Criteria 1(Coding
+                                    Depth)</label>
+                                <input
+                                        type="number"
+                                        max="40"
+                                        class="form-control input-field"
+                                        id="id_criteria2{{ student.student_id }}"
+                                        name="criteria2{{ student.student_id }}"
+                                />
+                                {% if user.teacher == proposal.assigned_supervisor %}
+                                    <label for="id_supervisor_mark{{ student.student_id }}"
+                                           class="mt-1">Supervisor Mark</label>
+                                    <input
+                                            type="number"
+                                            max="40"
+                                            class="form-control input-field"
+                                            id="id_supervisor_mark{{ student.student_id }}"
+                                            name="supervisor_mark{{ student.student_id }}"
+                                    />
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <button
+                            type="submit"
+                            class="signInBtn mt-3"
+                            style="width: 100%; margin-bottom: -14px"
+                    >
+                        Submit Mark
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

@@ -1,6 +1,9 @@
+import json
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
 
@@ -159,12 +162,17 @@ class ProfileView(LoginRequiredMixin, View):
             initials = request.POST.get("initials")
             email = request.POST.get("email")
             phone = request.POST.get("phone")
+            if len(str(phone)) == 0:
+                phone = 880
             teacher_profile.full_name = full_name
             teacher_profile.initials = initials
             teacher_profile.email = email
             teacher_profile.phone = phone
-            teacher_profile.save()
-            messages.success(request, "Your profile has been updated.")
+            if Teacher.objects.filter(initials=initials).first():
+                messages.warning(request, "This initials already exists")
+            else:
+                teacher_profile.save()
+                messages.success(request, "Your profile has been updated.")
         context = {
             'student': student_profile,
             'teacher': teacher_profile
@@ -172,17 +180,76 @@ class ProfileView(LoginRequiredMixin, View):
         return render(request, self.template_name, context=context)
 
 
-class TeacherManagementView(View):
+class TeacherManagementView(LoginRequiredMixin, View):
     template_name = 'accounts/teacher_management.html'
 
     def get(self, request, *args, **kwargs):
         context = {
             'teachers': Teacher.objects.all()
         }
-        return render(request, self.template_name, context=context)
+        return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        return render(request, self.template_name, {})
+        print(request.POST)
+        if request.is_ajax():
+            print("From ajax")
+            delete_button = request.POST.get('delete_teacher')
+            if delete_button == 'false':
+                checked = request.POST.get('is_checked')
+                teacher_id = request.POST.get('teacher_id')
+                teacher = Teacher.objects.get(id=teacher_id)
+                print(request.user)
+                print(teacher.user)
+                if checked == 'true':
+                    teacher.user.is_superuser = True
+                    teacher.user.save()
+                    dict = {
+                        'alert_type': 'success',
+                        'alert_message': teacher.full_name + ' status updated!'
+                    }
+                else:
+                    print(User.objects.filter(is_superuser=True).count())
+                    if User.objects.filter(is_superuser=True).count() > 1:
+                        teacher.user.is_superuser = False
+                        teacher.user.save()
+                        if request.user.id == teacher.user.id:
+                            dict = {
+                                'home': True,
+                                'alert_type': 'success',
+                                'alert_message': teacher.full_name + ' status updated!'
+                            }
+                        else:
+                            dict = {
+                                'alert_type': 'success',
+                                'alert_message': teacher.full_name + ' status updated!'
+                            }
+                    else:
+                        dict = {
+                            'alert_type': 'warning',
+                            'alert_message': 'There must be at least one superuser'
+                        }
+            else:
+                try:
+                    teacher_id = request.POST.get('teacher_id')
+                    teacher = Teacher.objects.get(id=teacher_id)
+                    user = teacher.user
+                    teacher.delete()
+                    user.delete()
+                    dict = {
+                        'alert_type': 'success',
+                        'alert_message': 'Teacher has been deleted successfully!'
+                    }
+                except Exception as e:
+                    dict = {
+                        'alert_type': 'warning',
+                        'alert_message': 'Error code 403, failed to delete user'
+                    }
+            return HttpResponse(json.dumps(dict), content_type='application/json')
+
+        context = {
+            'teachers': Teacher.objects.all()
+        }
+        return render(request, self.template_name, context)
 
 
 class AddTeacherView(View):
@@ -209,7 +276,7 @@ class AddTeacherView(View):
         initials = request.POST.get("initials")
         phone = request.POST.get("phone")
         if len(str(phone)) == 0:
-            phone = 0
+            phone = 880
 
         context = {
             'username': username,
@@ -227,6 +294,8 @@ class AddTeacherView(View):
             messages.warning(request, "Password and confirm password should be same")
         else:
             user = User.objects.create_user(username=username, password=password, email=email)
+            user.is_staff = True
+            user.save()
             teacher = Teacher(full_name=full_name, initials=initials, user=user, email=email, phone=phone)
             teacher.save()
             messages.success(request, full_name + " has been added")

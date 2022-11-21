@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 
 from accounts.models import Teacher, Student
-from project_management.models import Course, Proposal
+from project_management.models import Course, Proposal, Result
 
 
 class HomeView(View):
@@ -17,7 +17,8 @@ class HomeView(View):
         running_courses = Course.objects.filter(
             deadline__range=(datetime.datetime.now().date(), datetime.date(2500, 1, 1))).order_by('deadline')
         archived_courses = Course.objects.filter(
-            deadline__range=(datetime.date(2000, 1, 1), datetime.datetime.now().date())).order_by('deadline')
+            deadline__range=(
+                datetime.date(2000, 1, 1), datetime.datetime.now().date() - datetime.timedelta(1))).order_by('deadline')
 
         return render(request, self.template_name,
                       {'courses': running_courses, 'archived': archived_courses})
@@ -210,6 +211,11 @@ class ProposalSubmissionView(LoginRequiredMixin, View):
             student_list.append(student['value'])
 
         students = Student.objects.filter(student_id__in=student_list)
+
+        for student in students:
+            result = Result(proposal=proposal, student=student, marks=0)
+            result.save()
+
         proposal.students.set(students)
 
         teacher_list = []
@@ -276,3 +282,21 @@ class ProposalUpdateView(LoginRequiredMixin, View):
         }
 
         return render(request, self.template_name, context=context)
+
+
+class MarkingStudentView(LoginRequiredMixin, View):
+    template_name = 'project_management/marking_student.html'
+
+    def get(self, request, *args, **kwargs):
+        course_id = kwargs.get('id')
+        proposal_id = kwargs.get('proposal_id')
+        course = Course.objects.get(id=course_id)
+        proposal = Proposal.objects.get(id=proposal_id)
+        context = {
+            'course': course,
+            'proposal': proposal
+        }
+        return render(request, self.template_name, context=context)
+
+    def post(self, request, *args, **kwargs):
+        return render(request, self.template_name, context={})

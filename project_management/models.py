@@ -93,7 +93,7 @@ class Result(AbstractTimestampModel):
     )
 
     def __str__(self):
-        return self.proposal.proposal_id
+        return self.student.student_id
 
 
 class Marksheet(AbstractTimestampModel):

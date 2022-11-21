@@ -6,8 +6,16 @@
         <div class="d-flex justify-content-between">
             <h3 class="color-primary-second">CSE - {{ course.course_id }}
                 submissions({{ proposals.count }})</h3>
-            {% if user.is_staff %}
-                <div class=" d-flex align-items-center">
+
+            <div class=" d-flex align-items-center">
+                <a style="text-decoration: none"
+                   href="#">
+                    <button class="ms-2 btn btn-sm btn-outline-info">
+                        My Supervised Projects
+                    </button>
+                </a>
+
+                {% if user.is_superuser %}
                     <a style="text-decoration: none"
                        href="{% url 'course-details' course.id 'assigned' %}">
                         <button class="ms-2 btn btn-sm btn-primary"
@@ -27,9 +35,11 @@
                             Update
                         </button>
                     </a>
+                {% endif %}
 
-                </div>
-            {% endif %}
+
+            </div>
+
         </div>
         {% include 'divider.html' %}
         {# submission details of a project body #}
