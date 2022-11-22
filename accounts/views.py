@@ -168,7 +168,8 @@ class ProfileView(LoginRequiredMixin, View):
             teacher_profile.initials = initials
             teacher_profile.email = email
             teacher_profile.phone = phone
-            if Teacher.objects.filter(initials=initials).first():
+            check_teacher = Teacher.objects.filter(initials=initials).first()
+            if check_teacher and request.user != check_teacher.user:
                 messages.warning(request, "This initials already exists")
             else:
                 teacher_profile.save()

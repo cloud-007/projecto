@@ -22,7 +22,7 @@
 body {
     /*background-image: url("../media/background.png");*/
     background: #f2f4f6;
-    margin-bottom: 100px !important;
+    margin-bottom: 0 !important;
 }
 
 .project-name {
@@ -106,6 +106,35 @@ header {
     width: 100%;
     text-align: center;
 }
+
+.sub-heading {
+    font-size: 22pt;
+}
+
+.label-naming {
+    font-size: 12pt;
+}
+
+@media (max-width: 991px) {
+    .project-name {
+        font-size: 36pt;
+    }
+
+    .sub-heading {
+        font-size: 28pt
+    }
+
+    .label-naming {
+        font-size: 18pt;
+    }
+
+    .custom-nav-item {
+        font-size: 24pt;
+        padding: 3% 0 !important;
+    }
+}
+
+
 
 
 

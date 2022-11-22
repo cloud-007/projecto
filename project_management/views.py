@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 
 from accounts.models import Teacher, Student
-from project_management.models import Course, Proposal, Result
+from project_management.models import Course, Proposal, Result, Marksheet
 
 
 class HomeView(View):
@@ -299,4 +299,124 @@ class MarkingStudentView(LoginRequiredMixin, View):
         return render(request, self.template_name, context=context)
 
     def post(self, request, *args, **kwargs):
-        return render(request, self.template_name, context={})
+        print(request.POST)
+
+        course_id = kwargs.get('id')
+        proposal_id = kwargs.get('proposal_id')
+        course = Course.objects.get(id=course_id)
+        proposal = Proposal.objects.get(id=proposal_id)
+
+        full_marks = request.POST.get('full_marks')
+        criteria1 = request.POST.get('criteria1')
+        is_absent = request.POST.get('isAbsent')
+
+        # marking the student one by one
+        if len(str(full_marks)) == 0 and len(str(criteria1)) == 0 and is_absent is None:
+            for student in proposal.students.all():
+                full_marks = request.POST.get('full_marks' + student.student_id)
+                criteria1 = request.POST.get('criteria1' + student.student_id)
+                criteria2 = request.POST.get('criteria2' + student.student_id)
+                detailed_marking = request.POST.get('detailed_marking' + student.student_id)
+                s_mark = request.POST.get('supervisor_mark' + student.student_id)
+                is_absent = request.POST.get('isAbsent' + student.student_id)
+                print('full marks ' + str(full_marks))
+                print('criteria1 ' + str(criteria1))
+                print('criteria2 ' + str(criteria2))
+                print('detailed_marking ' + str(detailed_marking))
+                # if student is not absent create a marksheet for him
+                if is_absent is None:
+                    # id detailed marking is none, then set criteria1 = full marks, criteria2 = 0
+                    if detailed_marking is None:
+                        criteria1 = full_marks
+                        criteria2 = 0
+                    if len(str(s_mark)) == 0:
+                        supervisor_mark = 0
+                    else:
+                        supervisor_mark = s_mark
+                    marksheet = Marksheet.objects.filter(proposal=proposal, student=student,
+                                                         teacher=request.user.teacher).first()
+                    if marksheet is None:
+                        marksheet = Marksheet(
+                            proposal=proposal,
+                            student=student,
+                            teacher=request.user.teacher,
+                            criteria_1=criteria1,
+                            criteria_2=criteria2,
+                            supervisor=supervisor_mark
+                        )
+                        marksheet.save()
+                    else:
+                        marksheet.criteria_1 = int(criteria1)
+                        marksheet.criteria_2 = int(criteria2)
+                        marksheet.supervisor = int(supervisor_mark)
+                        marksheet.save()
+                # set his previous marks to zero if any
+                else:
+                    marksheet = Marksheet.objects.filter(
+                        proposal=proposal,
+                        student=student,
+                        teacher=request.user.teacher
+                    ).first()
+                    if marksheet:
+                        marksheet.criteria_1 = 0
+                        marksheet.criteria_2 = 0
+                        marksheet.supervisor = 0
+                        marksheet.save()
+        else:
+            # if everyone is absent don't create any marksheet
+            if is_absent == 'on':
+                # set zero in his marksheet
+                for student in proposal.students.all():
+                    marksheet = Marksheet.objects.filter(proposal=proposal, student=student,
+                                                         teacher=request.user.teacher).first()
+                    if marksheet:
+                        marksheet.criteria_1 = 0
+                        marksheet.criteria_2 = 0
+                        marksheet.supervisor = 0
+                        marksheet.save()
+
+            # otherwise create a marksheet for every student
+            else:
+                # marked in details
+                if len(str(full_marks)) == 0:
+                    criteria1 = request.POST.get('criteria1')
+                    criteria2 = request.POST.get('criteria2')
+                # marked in full marks
+                else:
+                    full_marks = request.POST.get('full_marks')
+                    criteria1 = full_marks
+                    criteria2 = 0
+                s_mark = request.POST.get('supervisor_mark')
+                # check supervisor mark
+                if len(str(s_mark)) == 0:
+                    supervisor_mark = 0
+                else:
+                    supervisor_mark = request.POST.get('supervisor_mark')
+
+                # update student marksheet for this proposal
+                for student in proposal.students.all():
+                    marksheet = Marksheet.objects.filter(proposal=proposal, student=student,
+                                                         teacher=request.user.teacher).first()
+                    if marksheet:
+                        marksheet.criteria_1 = int(criteria1)
+                        marksheet.criteria_2 = int(criteria2)
+                        marksheet.supervisor = int(supervisor_mark)
+                        marksheet.save()
+                    else:
+                        marksheet = Marksheet(
+                            proposal=proposal,
+                            student=student,
+                            teacher=request.user.teacher,
+                            criteria_1=criteria1,
+                            criteria_2=criteria2,
+                            supervisor=supervisor_mark
+                        )
+                        marksheet.save()
+
+        messages.success(request, "Marking successful")
+        context = {
+            'course': course,
+            'proposal': proposal
+        }
+
+        return render(request, self.template_name, context=context)

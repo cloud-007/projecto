@@ -243,18 +243,17 @@
     }
 
     .input-field {
-        background: #F7F7F7;
-        border-radius: 3px;
-        margin-top: 1%;
-        height: 40px;
-        border: 1px solid #dbdada;
-        color: rgb(90, 89, 89);
+        height: 60px;
     }
 
     .rightDiv {
         text-align: left;
         border-radius: 10px;
         background: white;
+    }
+
+    .signInBtn {
+        height: 60px;
     }
 
 }

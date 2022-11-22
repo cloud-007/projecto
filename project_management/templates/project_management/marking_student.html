@@ -1,63 +1,110 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
+
     <div class="container block-body-container">
-        {# running project and manage #}
+        {% for message in messages %}
+            <p class="alert alert-success">
+                {{ message }}
+                <a href="{% url 'course-details' proposal.course.id 'all' %}">go
+                    back to project
+                    details</a>
+            </p>
+        {% endfor %}
         <div class="d-flex justify-content-between">
             <h3 class="color-primary-second">Mark Students</h3>
             <div>
-                <label for="id_checkbox">Assign Same Mark</label>
-                <input id="id_checkbox" type="checkbox"/>
+                <div class="form-check form-switch">
+                    <label class="form-check-label"
+                           for="flexSwitchCheckDefault">Assign Same Mark</label>
+                    <input class="form-check-input" type="checkbox"
+                           name="assigning_same_mark"
+                           id="flexSwitchCheckDefault" onclick="validate()">
+                </div>
             </div>
         </div>
         {% include 'divider.html' %}
-        {# running project body #}
+        {# marking student body #}
 
         <div class="d-flex justify-content-center mt-3">
             <div class="container mt-2 marks-block">
                 <form class="row g-2" method="post"
                       enctype="multipart/form-data">
                     {% csrf_token %}
-                    {% for student in proposal.students.all %}
-                        <div class="col-12">
-
-                            <div class="p-3 border bg-light"
-                                 style="border-radius: 10px">
-                                <h5>Student ID: {{ student.student_id }}</h5>
-                                {% include 'divider.html' %}
-                                <label for="id_full_marks{{ student.student_id }}"
-                                       class="mt-1">Full
-                                    Marks</label>
-                                <input
-                                        type="number"
-                                        max="40"
-                                        class="form-control input-field"
-                                        id="id_full_marks{{ student.student_id }}"
-                                        name="full_marks{{ student.student_id }}"
-                                />
-                                <label for="id_criteria1{{ student.student_id }}"
-                                       class="mt-1">Criteria
-                                    1(Presentation/Viva)</label>
-                                <input
-                                        type="number"
-                                        max="40"
-                                        class="form-control input-field"
-                                        id="id_criteria1{{ student.student_id }}"
-                                        name="criteria1{{ student.student_id }}"
-                                />
-                                <label for="id_criteria2{{ student.student_id }}"
-                                       class="mt-1">Criteria 1(Coding
-                                    Depth)</label>
-                                <input
-                                        type="number"
-                                        max="40"
-                                        class="form-control input-field"
-                                        id="id_criteria2{{ student.student_id }}"
-                                        name="criteria2{{ student.student_id }}"
-                                />
-                                {% if user.teacher == proposal.assigned_supervisor %}
+                    <div id="allStudentMark">
+                        {% for student in proposal.students.all %}
+                            <div class="col-12" style="margin-bottom: 10px">
+                                <div class="p-3 border bg-light"
+                                     style="border-radius: 10px">
+                                    <div class="d-flex justify-content-between">
+                                        <h5>Student
+                                            ID: {{ student.student_id }}</h5>
+                                        <div>
+                                            <div class="form-check form-switch">
+                                                <label class="form-check-label"
+                                                       for="assignSameMarkCheck{{ student.student_id }}">Detailed
+                                                    Marking</label>
+                                                <input class="form-check-input"
+                                                       type="checkbox"
+                                                       name="detailed_marking{{ student.student_id }}"
+                                                       checked
+                                                       id="assignSameMarkCheck{{ student.student_id }}"
+                                                       onclick="selectedStudent = {{ student.student_id }};
+                                                               showHideFullMarks();">
+                                            </div>
+                                            <div class="form-check form-switch">
+                                                <label class="form-check-label"
+                                                       for="isAbsent{{ student.student_id }}">Absent</label>
+                                                <input class="form-check-input"
+                                                       type="checkbox"
+                                                       name="isAbsent{{ student.student_id }}"
+                                                       id="isAbsent{{ student.student_id }}"
+                                                       onclick="selectedStudent = {{ student.student_id }};
+                                                               makeAbsent();">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% include 'divider.html' %}
+                                    <label for="id_full_marks{{ student.student_id }}"
+                                           class="mt-1"
+                                           style="display:none;"
+                                    >Full Marks
+                                    </label>
+                                    <input
+                                            type="number"
+                                            max="40"
+                                            class="form-control input-field"
+                                            id="id_full_marks{{ student.student_id }}"
+                                            name="full_marks{{ student.student_id }}"
+                                            style="display: none"
+                                    />
+                                    <div>
+                                        <label for="id_criteria1{{ student.student_id }}"
+                                               class="mt-1">Criteria
+                                            1(Presentation/Viva)</label>
+                                        <input
+                                                type="number"
+                                                max="40"
+                                                class="form-control input-field"
+                                                id="id_criteria1{{ student.student_id }}"
+                                                name="criteria1{{ student.student_id }}"
+                                                required
+                                        />
+                                        <label for="id_criteria2{{ student.student_id }}"
+                                               class="mt-1">Criteria 2(Coding
+                                            Depth)</label>
+                                        <input
+                                                type="number"
+                                                max="40"
+                                                class="form-control input-field"
+                                                id="id_criteria2{{ student.student_id }}"
+                                                name="criteria2{{ student.student_id }}"
+                                                required
+                                        />
+                                    </div>
                                     <label for="id_supervisor_mark{{ student.student_id }}"
-                                           class="mt-1">Supervisor Mark</label>
+                                           class="mt-1">Supervisor
+                                        Mark</label>
                                     <input
                                             type="number"
                                             max="40"
@@ -65,10 +112,90 @@
                                             id="id_supervisor_mark{{ student.student_id }}"
                                             name="supervisor_mark{{ student.student_id }}"
                                     />
-                                {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div id="sameMark" style="display: none">
+                        <div class="col-12" style="margin-bottom: 10px">
+                            <div class="p-3 border bg-light"
+                                 style="border-radius: 10px">
+                                <div class="d-flex justify-content-between">
+                                    <h5>Assigning Same Mark</h5>
+                                    <div>
+                                        <div class="form-check form-switch">
+                                            <label class="form-check-label"
+                                                   for="assignSameMarkCheck">Detailed
+                                                Marking</label>
+                                            <input class="form-check-input"
+                                                   type="checkbox"
+                                                   name="detailed_marking"
+                                                   checked
+                                                   id="assignSameMarkCheck"
+                                                   onclick="selectedStudent = '';
+                                                       showHideFullMarks();">
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <label class="form-check-label"
+                                                   for="isAbsent">Absent</label>
+                                            <input class="form-check-input"
+                                                   type="checkbox"
+                                                   name="isAbsent"
+                                                   id="isAbsent"
+                                                   onclick="selectedStudent = '';
+                                                           makeAbsent();">
+                                        </div>
+                                    </div>
+                                </div>
+                                {% include 'divider.html' %}
+                                <label for="id_full_marks"
+                                       class="mt-1"
+                                       style="display:none;"
+                                >Full Marks
+                                </label>
+                                <input
+                                        type="number"
+                                        max="40"
+                                        class="form-control input-field"
+                                        id="id_full_marks"
+                                        name="full_marks"
+                                        style="display: none"
+                                />
+                                <div>
+                                    <label for="id_criteria1"
+                                           class="mt-1">Criteria
+                                        1(Presentation/Viva)</label>
+                                    <input
+                                            type="number"
+                                            max="40"
+                                            class="form-control input-field"
+                                            id="id_criteria1"
+                                            name="criteria1"
+                                    />
+                                    <label for="id_criteria2"
+                                           class="mt-1">Criteria 2(Coding
+                                        Depth)</label>
+                                    <input
+                                            type="number"
+                                            max="40"
+                                            class="form-control input-field"
+                                            id="id_criteria2"
+                                            name="criteria2"
+                                    />
+                                </div>
+                                <label for="id_supervisor_mark"
+                                       class="mt-1">Supervisor
+                                    Mark</label>
+                                <input
+                                        type="number"
+                                        max="40"
+                                        class="form-control input-field"
+                                        id="id_supervisor_mark"
+                                        name="supervisor_mark"
+                                />
                             </div>
                         </div>
-                    {% endfor %}
+                    </div>
                     <button
                             type="submit"
                             class="signInBtn mt-3"
@@ -81,4 +208,137 @@
         </div>
 
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"
+            integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            {% if proposal.assigned_supervisor == user.teacher %}
+                {% for student in proposal.students.all %}
+                    document.getElementById("id_supervisor_mark" + {{ student.student_id }}).style.display = "block";
+                    document.getElementById("id_supervisor_mark" + {{ student.student_id }}).required = true;
+                    document.querySelector("label[for='id_supervisor_mark" + {{ student.student_id }} +"']").style.display = "block"
+                {% endfor %}
+                document.getElementById("id_supervisor_mark").required = false;
+            {% else %}
+                {% for student in proposal.students.all %}
+                    document.getElementById("id_supervisor_mark" + {{ student.student_id }}).style.display = "none";
+                    document.getElementById("id_supervisor_mark" + {{ student.student_id }}).required = false;
+                    document.querySelector("label[for='id_supervisor_mark" + {{ student.student_id }} +"']").style.display = "none"
+                {% endfor %}
+                document.getElementById("id_supervisor_mark").required = false;
+            {% endif %}
+        });
+
+        selectedStudent = '';
+
+        function validate() {
+            if (document.getElementById("flexSwitchCheckDefault").checked) {
+                document.getElementById("allStudentMark").style.display = "none";
+                document.getElementById("sameMark").style.display = "block";
+
+                {% for student in proposal.students.all %}
+                    document.getElementById("id_full_marks" + {{ student.student_id }}).required = false;
+                    document.getElementById("id_criteria1" + {{ student.student_id }}).required = false;
+                    document.getElementById("id_criteria2" + {{ student.student_id }}).required = false;
+                    document.getElementById("id_supervisor_mark" + {{ student.student_id }}).required = false;
+                {% endfor %}
+
+                document.getElementById("id_full_marks").required = false;
+                document.getElementById("id_criteria1").required = true;
+                document.getElementById("id_criteria2").required = true;
+                document.getElementById("id_supervisor_mark").required = true;
+
+
+            } else {
+                document.getElementById("allStudentMark").style.display = "block";
+                document.getElementById("sameMark").style.display = "none";
+
+                {% for student in proposal.students.all %}
+                    document.getElementById("id_criteria1" + {{ student.student_id }}).required = true;
+                    document.getElementById("id_criteria2" + {{ student.student_id }}).required = true;
+                    document.getElementById("id_supervisor_mark" + {{ student.student_id }}).required = true;
+                {% endfor %}
+
+                document.getElementById("id_full_marks").required = false;
+                document.getElementById("id_criteria1").required = false;
+                document.getElementById("id_criteria2").required = false;
+                document.getElementById("id_supervisor_mark").required = false;
+            }
+        }
+
+        function showHideFullMarks() {
+            if (document.getElementById("assignSameMarkCheck" + selectedStudent).checked) {
+
+                document.getElementById("id_full_marks" + selectedStudent).required = false;
+                document.getElementById("id_criteria1" + selectedStudent).required = true;
+                document.getElementById("id_criteria2" + selectedStudent).required = true;
+
+                document.getElementById("id_full_marks" + selectedStudent).style.display = "none";
+                document.getElementById("id_criteria1" + selectedStudent).style.display = "block";
+                document.getElementById("id_criteria2" + selectedStudent).style.display = "block";
+
+                document.querySelector("label[for='id_full_marks" + selectedStudent + "']").style.display = "none"
+                document.querySelector("label[for='id_criteria1" + selectedStudent + "']").style.display = "block"
+                document.querySelector("label[for='id_criteria2" + selectedStudent + "']").style.display = "block"
+
+            } else {
+                document.getElementById("id_full_marks" + selectedStudent).required = true;
+                document.getElementById("id_criteria1" + selectedStudent).required = false;
+                document.getElementById("id_criteria2" + selectedStudent).required = false;
+
+                document.getElementById("id_full_marks" + selectedStudent).style.display = "block";
+                document.getElementById("id_criteria1" + selectedStudent).style.display = "none";
+                document.getElementById("id_criteria2" + selectedStudent).style.display = "none";
+
+                document.querySelector("label[for='id_full_marks" + selectedStudent + "']").style.display = "block"
+                document.querySelector("label[for='id_criteria1" + selectedStudent + "']").style.display = "none"
+                document.querySelector("label[for='id_criteria2" + selectedStudent + "']").style.display = "none"
+            }
+        }
+
+        function makeAbsent() {
+            if (document.getElementById("isAbsent" + selectedStudent).checked) {
+                {#make field not required when a student is absent#}
+                document.getElementById("id_full_marks" + selectedStudent).required = false;
+                document.getElementById("id_criteria1" + selectedStudent).required = false;
+                document.getElementById("id_criteria2" + selectedStudent).required = false;
+                document.getElementById("id_supervisor_mark" + selectedStudent).required = false;
+
+
+                {# remoding input field #}
+                document.getElementById("id_full_marks" + selectedStudent).style.display = "none";
+                document.getElementById("id_criteria1" + selectedStudent).style.display = "none";
+                document.getElementById("id_criteria2" + selectedStudent).style.display = "none";
+                document.getElementById("id_supervisor_mark" + selectedStudent).style.display = "none";
+
+                {# remoding input label #}
+                document.querySelector("label[for='id_full_marks" + selectedStudent + "']").style.display = "none"
+                document.querySelector("label[for='id_criteria1" + selectedStudent + "']").style.display = "none"
+                document.querySelector("label[for='id_criteria2" + selectedStudent + "']").style.display = "none"
+                document.querySelector("label[for='id_supervisor_mark" + selectedStudent + "']").style.display = "none"
+
+
+            } else {
+                document.getElementById("id_full_marks" + selectedStudent).required = false;
+                document.getElementById("id_criteria1" + selectedStudent).required = true;
+                document.getElementById("id_criteria2" + selectedStudent).required = true;
+                document.getElementById("id_supervisor_mark" + selectedStudent).required = true;
+
+                console.log("Make absent " + selectedStudent + " :" + document.getElementById("id_supervisor_mark" + selectedStudent).required);
+
+                document.getElementById("id_criteria1" + selectedStudent).style.display = "block";
+                document.getElementById("id_criteria2" + selectedStudent).style.display = "block";
+                document.getElementById("id_supervisor_mark" + selectedStudent).style.display = "block";
+
+                document.querySelector("label[for='id_criteria1" + selectedStudent + "']").style.display = "block"
+                document.querySelector("label[for='id_criteria2" + selectedStudent + "']").style.display = "block"
+                document.querySelector("label[for='id_supervisor_mark" + selectedStudent + "']").style.display = "block"
+            }
+        }
+
+    </script>
 {% endblock %}

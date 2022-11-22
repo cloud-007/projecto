@@ -117,9 +117,9 @@ class Marksheet(AbstractTimestampModel):
     )
 
     # add marks field
-    criteria_1 = models.FloatField(verbose_name=_('Criteria 1 Mark'), max_length=128)
-    criteria_2 = models.FloatField(verbose_name=_('Criteria 2 Mark'), max_length=128)
-    supervisor = models.FloatField(verbose_name=_('Supervisor Mark'), max_length=128)
+    criteria_1 = models.IntegerField(verbose_name=_('Criteria 1 Mark'), max_length=128)
+    criteria_2 = models.IntegerField(verbose_name=_('Criteria 2 Mark'), max_length=128)
+    supervisor = models.IntegerField(verbose_name=_('Supervisor Mark'), max_length=128)
 
     def __str__(self):
-        return self.proposal.title
+        return self.proposal.title + " - " + self.student.student_id

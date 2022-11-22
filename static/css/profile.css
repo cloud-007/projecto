@@ -1,6 +1,7 @@
 .profile-block {
     width: 35%;
-    margin-top: 30px;
+    background: white;
+    margin-bottom: 60px;
     border-radius: 5px;
     padding: 28px !important;
 }
@@ -20,6 +21,7 @@
 @media screen and (min-width: 400px) {
     .profile-block{
         width: 80%;
+        margin-top: 50px
     }
 
     .marks-block {
@@ -36,6 +38,8 @@
 @media screen and (min-width: 991px) {
     .profile-block {
         width: 50%;
+        margin-top: 50px;
+        margin-bottom: 50px
     }
 
     .marks-block {

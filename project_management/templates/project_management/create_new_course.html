@@ -11,10 +11,12 @@
                         {{ message }}
                     </p>
                 {% endfor %}
-                <h3 class="text-black-70">Add a new course</h3>
+                <h5 class="text-black-70 sub-heading">Add a new course</h5>
+                {% include 'divider.html' %}
 
                 <div class="form-group ">
-                    <label for="id_course_code">Course Code</label>
+                    <label for="id_course_code" class="label-naming">Course
+                        Code</label>
                     <input
                             type="number"
                             class="form-control input-field"
@@ -24,7 +26,7 @@
                             value="{{ course.course_id }}"
                             placeholder="3300/4800/4801"
                     />
-                    <label for="id_course_title" class="mt-1">Course
+                    <label for="id_course_title" class="label-naming mt-1">Course
                         Title
                     </label>
                     <input
@@ -36,7 +38,8 @@
                             placeholder="Project i"
                             value="{{ course.title }}"
                     />
-                    <label for="id_semester" class="mt-1">Semester</label>
+                    <label for="id_semester"
+                           class="mt-1 label-naming">Semester</label>
                     <input
                             type="text"
                             class="form-control input-field"
@@ -46,7 +49,8 @@
                             placeholder="Summer 2022"
                             value="{{ course.semester }}"
                     />
-                    <label for="id_deadline" class="mt-1">Deadline</label>
+                    <label for="id_deadline"
+                           class="mt-1 label-naming">Deadline</label>
                     <input
                             type="date"
                             class="form-control input-field"
