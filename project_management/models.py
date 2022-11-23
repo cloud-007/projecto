@@ -79,7 +79,7 @@ class Result(AbstractTimestampModel):
         verbose_name=_('Proposal Name'),
         to='Proposal',
         related_name='result',
-        on_delete=models.PROTECT
+        on_delete=models.CASCADE
     )
     student = models.ForeignKey(
         verbose_name=_('Student'),
@@ -101,7 +101,7 @@ class Marksheet(AbstractTimestampModel):
         verbose_name=_('Proposals'),
         to='Proposal',
         related_name='marksheets',
-        on_delete=models.PROTECT
+        on_delete=models.CASCADE
     )
     student = models.ForeignKey(
         verbose_name=_('Student'),
@@ -117,9 +117,9 @@ class Marksheet(AbstractTimestampModel):
     )
 
     # add marks field
-    criteria_1 = models.IntegerField(verbose_name=_('Criteria 1 Mark'), max_length=128)
-    criteria_2 = models.IntegerField(verbose_name=_('Criteria 2 Mark'), max_length=128)
-    supervisor = models.IntegerField(verbose_name=_('Supervisor Mark'), max_length=128)
+    criteria_1 = models.IntegerField(verbose_name=_('Criteria 1 Mark'))
+    criteria_2 = models.IntegerField(verbose_name=_('Criteria 2 Mark'))
+    supervisor = models.IntegerField(verbose_name=_('Supervisor Mark'))
 
     def __str__(self):
         return self.proposal.title + " - " + self.student.student_id

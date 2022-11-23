@@ -8,6 +8,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 
 from accounts.models import User, Student, Teacher
+from project_management.mixins import SuperUserMixin
 
 
 class SignInView(View):
@@ -181,7 +182,7 @@ class ProfileView(LoginRequiredMixin, View):
         return render(request, self.template_name, context=context)
 
 
-class TeacherManagementView(LoginRequiredMixin, View):
+class TeacherManagementView(SuperUserMixin, View):
     template_name = 'accounts/teacher_management.html'
 
     def get(self, request, *args, **kwargs):
@@ -253,7 +254,7 @@ class TeacherManagementView(LoginRequiredMixin, View):
         return render(request, self.template_name, context)
 
 
-class AddTeacherView(View):
+class AddTeacherView(SuperUserMixin, View):
     template_name = 'accounts/add_teacher.html'
 
     def get(self, request, *args, **kwargs):

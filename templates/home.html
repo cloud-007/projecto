@@ -10,7 +10,7 @@
         {# running project and manage #}
         <div class="d-flex justify-content-between">
             <h3 class="color-primary-second">Running Project</h3>
-            {% if user.is_staff %}
+            {% if user.is_superuser %}
                 <a style="text-decoration: none; color: white"
                    href="{% url 'create-new-course' %}">
                     <button class="manage-button ">

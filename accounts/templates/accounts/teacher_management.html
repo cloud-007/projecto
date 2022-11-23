@@ -145,6 +145,8 @@
     <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
     <script type="text/javascript">
 
+        teacher_checked = false;
+
         alert_type = '';
         alert_message = '';
         is_checked = false;
@@ -152,7 +154,7 @@
 
         $(document).ready(function () {
             //get it if Status key found
-            element = document.getElementById('message-print');
+            const element = document.getElementById('message-print');
             element.classList.add("alert-" + localStorage.getItem("alert_type"));
             element.innerText = localStorage.getItem("alert_message");
             localStorage.clear();
