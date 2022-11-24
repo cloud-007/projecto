@@ -15,7 +15,8 @@ class SignInView(View):
     template_name = 'accounts/newlogin.html'
 
     def get(self, request, *args, **kwargs):
-
+        if request.user.is_authenticated:
+            return redirect('home')
         return render(request, self.template_name, {})
 
     def post(self, request, *args, **kwargs):
@@ -61,6 +62,8 @@ class RegisterView(View):
     }
 
     def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('home')
         return render(request, self.template_name, {})
 
     def post(self, request, *args, **kwargs):

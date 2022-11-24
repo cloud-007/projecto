@@ -1,12 +1,12 @@
-<div class="container block-project-details mt-3 ">
-    <div class="d-flex justify-content-between">
+<div class="container block-project-details mt-3 p-3">
+    <div class="d-flex justify-content-between row row-cols-2">
         <h5 class="color-primary-second">{{ proposal.title }}</h5>
-        <a class="text-muted text-decoration-none">
+        <a class="text-muted text-decoration-none d-flex justify-content-end">
             Submitted: {{ proposal.created_date }}
         </a>
     </div>
-    <div class="row">
-        <div class="col col-xs-12 col-sm-12 col-lg-6 ">
+    <div class="row row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-xs-1">
+        <div>
             {% for student in proposal.students.all %}
                 <div class="d-flex justify-content-between" style="width: 100%">
                     <h6 class="d-inline text-muted">{{ student.full_name }}
@@ -15,9 +15,9 @@
                 </div>
             {% endfor %}
         </div>
-        <div class="col col-xs-12 col-sm-12 col-lg-6">
-            <div class="row d-flex justify-content-between">
-                <div class="col col-xs-12 col-sm-12 col-lg-6 ">
+        <div>
+            <div class="row row-cols-lg-2 row-cols-md-2 d-flex justify-content-between">
+                <div>
                     <h6 class="text-muted">Preferred
                         Supervisors:
                         {% for supervisor in proposal.preferred_supervisors.all %}
@@ -29,8 +29,7 @@
                     <a href="{{ proposal.file.url }}">Proposal
                         File</a>
                 </div>
-                <div class="col col-xs-12 col-sm-12 col-lg-6">
-
+                <div>
                     {% if user.is_superuser %}
                         <div class="dropdown">
                             <button class="btn btn-sm btn-secondary dropdown-toggle"

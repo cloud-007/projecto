@@ -87,27 +87,26 @@ class Result(AbstractTimestampModel):
         related_name='result',
         on_delete=models.PROTECT
     )
-    marks = models.FloatField(
-        verbose_name=_('Total Marks'),
-        max_length=32
-    )
+
+    @property
+    def marks(self):
+        marksheets = Marksheet.objects.filter(result=self)
+        c1 = sum(marksheets.values_list('criteria_1', flat=True)) / len(marksheets.values_list('criteria_1', flat=True))
+        c2 = sum(marksheets.values_list('criteria_2', flat=True)) / len(marksheets.values_list('criteria_2', flat=True))
+        s_mark = sum(marksheets.values_list('supervisor', flat=True))
+        return c1 + c2 + s_mark
 
     def __str__(self):
         return self.student.student_id
 
 
 class Marksheet(AbstractTimestampModel):
-    proposal = models.ForeignKey(
-        verbose_name=_('Proposals'),
-        to='Proposal',
+    result = models.ForeignKey(
+        verbose_name=_('Result'),
+        to='Result',
         related_name='marksheets',
-        on_delete=models.CASCADE
-    )
-    student = models.ForeignKey(
-        verbose_name=_('Student'),
-        to='accounts.Student',
-        related_name='marksheets',
-        on_delete=models.PROTECT
+        on_delete=models.CASCADE,
+        default=0
     )
     teacher = models.ForeignKey(
         verbose_name=_('Teacher'),
@@ -122,4 +121,4 @@ class Marksheet(AbstractTimestampModel):
     supervisor = models.IntegerField(verbose_name=_('Supervisor Mark'))
 
     def __str__(self):
-        return self.proposal.title + " - " + self.student.student_id
+        return self.result.proposal.title + " - " + self.result.student.student_id

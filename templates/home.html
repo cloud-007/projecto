@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-    <div class="container block-body-container" onclick="">
+    <div class="container block-body-container">
         {% for message in messages %}
             <p class="alert alert-success">
                 {{ message }}
@@ -17,7 +17,6 @@
                         Add New
                     </button>
                 </a>
-
             {% endif %}
         </div>
         {# running project body #}

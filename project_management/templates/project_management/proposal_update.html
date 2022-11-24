@@ -14,6 +14,7 @@
             <form id="id_form" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <h5>Project proposal update form</h5>
+                {% include 'divider.html' %}
 
                 <div class="form-group ">
                     <label for="id_title">Project/Theses Title</label>
@@ -50,7 +51,7 @@
                     >
                     {# proposal file #}
                     <label for="id_proposal_file"
-                           class="form-label mt-2">Upload
+                           class="form-label mt-2" style="margin-bottom: 0">Upload
                         proposal</label>
                     <input id="id_proposal_file"
                            class="form-control input-field" type="file"
@@ -59,10 +60,10 @@
                            accept=".doc, .docx, .pdf"
                     />
                     {# submit proposal with warning Button #}
-                    <div>
+                    <div class="mt-4">
                         <!-- Button trigger modal -->
                         <button type="button"
-                                class="signInBtn"
+                                class="btn btn-primary signInBtn"
                                 data-bs-toggle="modal"
                                 style="width: 100%; margin-bottom: -16px"
                                 data-bs-target="#exampleModal">

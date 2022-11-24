@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container block-body-container mb-5">
+        <p id="message-print" class="alert" style="display: none"></p>
+        <h3 class="color-primary-second">ResultSheets</h3>
+        {% include 'divider.html' %}
+        <div class="table-responsive">
+            <table class="table table-striped mt-2">
+                <thead>
+                <tr>
+                    <th scope="col">Full Name</th>
+                    <th scope="col">Student Id</th>
+                    <th scope="col">Mark</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for mark in marks %}
+                    <tr>
+                        <td>{{ mark.student.full_name }}</td>
+                        <td>{{ mark.student.student_id }}</td>
+                        <td>{{ mark.marks }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+
+{% endblock %}

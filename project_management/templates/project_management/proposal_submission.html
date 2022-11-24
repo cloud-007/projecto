@@ -13,6 +13,7 @@
                 <form id="id_form" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <h5>Project proposal submission form</h5>
+                    {% include 'divider.html' %}
 
                     <div class="form-group ">
                         <label for="id_title">Project/Theses Title</label>
@@ -48,7 +49,7 @@
                         >
                         {# proposal file #}
                         <label for="id_proposal_file"
-                               class="form-label mt-2">Upload
+                               class="form-label mt-2" style="margin-bottom: 0">Upload
                             proposal</label>
                         <input id="id_proposal_file"
                                class="form-control input-field" type="file"
@@ -56,20 +57,10 @@
                                accept=".doc, .docx, .pdf"
                                required
                         />
-                        {#                        Previous working submit proposal button#}
-                        {#                        <button#}
-                        {#                                type="submit"#}
-                        {#                                class="signInBtn"#}
-                        {#                                style="width: 100%; margin-bottom: -16px"#}
-                        {#                        >#}
-                        {#                            Submit Proposal#}
-                        {#                        </button>#}
-
-                        {# submit proposal with warning Button #}
-                        <div>
+                        <div class="mt-4">
                             <!-- Button trigger modal -->
                             <button type="button"
-                                    class="signInBtn"
+                                    class="btn btn-primary signInBtn"
                                     data-bs-toggle="modal"
                                     style="width: 100%; margin-bottom: -16px"
                                     data-bs-target="#exampleModal">
@@ -106,14 +97,14 @@
                                         <div class="modal-footer">
                                             <button type="button"
                                                     class="btn btn-sm btn-secondary"
-                                                    data-bs-dismiss="modal">No,
-                                                Update
+                                                    data-bs-dismiss="modal">
+                                                Cancel
                                             </button>
                                             <button type="submit"
                                                     class="btn btn-sm btn-warning"
                                                     name="delete_button"
                                             >
-                                                Yes! Submit.
+                                                Submit
                                             </button>
                                         </div>
                                     </div>
@@ -132,7 +123,7 @@
 
         <div class="block-body-container container">
 
-            <div class="container" onclick="">
+            <div class="container">
                 {# running project and manage #}
                 <div class="d-flex justify-content-between">
                     <h3 class="color-primary-second">Your Submission</h3>
@@ -140,15 +131,15 @@
                 {% include 'divider.html' %}
             </div>
 
-            <div class="container block-project-details mt-3 ">
-                <div class="d-flex justify-content-between">
+            <div class="container block-project-details mt-3 p-3">
+                <div class="d-flex justify-content-between row row-cols-2">
                     <h5 class="color-primary-second">{{ proposal.title }}</h5>
-                    <h6 class="text-muted"> Submitted
-                        on: {{ proposal.created_date }}
-                    </h6>
+                    <a class="text-muted text-decoration-none d-flex justify-content-end">
+                        Submitted: {{ proposal.created_date }}
+                    </a>
                 </div>
-                <div class="row">
-                    <div class="col col-xs-12 col-sm-12 col-lg-7 ">
+                <div class="row row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-xs-2">
+                    <div>
                         {% for student in proposal.students.all %}
                             <div class="row d-flex justify-content-between">
                                 <h6 class="col text-muted">{{ student.full_name }}</h6>
@@ -156,20 +147,19 @@
                             </div>
                         {% endfor %}
                     </div>
-                    <div class="col col-xs-12 col-sm-12 col-lg-5">
-                        <div class="row d-flex justify-content-between">
-                            <div class="col col-xs-12 col-sm-12 col-lg-6 ">
-                                <h6 class="text-muted">Preferred
-                                    Supervisors:
-                                    {% for supervisor in proposal.preferred_supervisors.all %}
-                                        {{ supervisor.initials }},
-                                    {% endfor %}
-                                </h6>
+                    <div>
+                        <div class="row row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-xs-1">
+                            <div><h6 class="text-muted">Preferred
+                                Supervisors:
+                                {% for supervisor in proposal.preferred_supervisors.all %}
+                                    {{ supervisor.initials }},
+                                {% endfor %}
+                            </h6>
                                 <h6 class="text-muted">Assigned
                                     Supervisor: {{ proposal.assigned_supervisor }}</h6>
-                                <a href="{{ proposal.file.url }}">Proposal
-                                    File</a>
                             </div>
+                            <a href="{{ proposal.file.url }}">Proposal
+                                File</a>
                         </div>
                     </div>
                 </div>

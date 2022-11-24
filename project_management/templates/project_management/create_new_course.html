@@ -11,20 +11,19 @@
                         {{ message }}
                     </p>
                 {% endfor %}
-                <h5 class="text-black-70 sub-heading">Add a new course</h5>
+                <h4 class="text-black-70">Add a new course</h4>
                 {% include 'divider.html' %}
 
                 <div class="form-group ">
-                    <label class="label-naming">Select
-                        Course</label>
+                    <label>Select Course</label>
                     <div class="d-flex">
-                        <input type="button" class="input-field"
+                        <input type="button" class="btn btn-secondary input-field"
                                id="id_cse3300"
                                style="width: 100%; background: #6C757D; color: white"
                                value="CSE 3300"
                                onclick="toggleCourse('3300')"
                         >
-                        <input type="button" class="input-field"
+                        <input type="button" class="btn btn-secondary input-field"
                                id="id_cse4800"
                                style="width: 100%"
                                value="CSE 4800"
@@ -33,7 +32,7 @@
                         <input type="hidden" id="id_course_code"
                                name="course_code" value="CSE 3300">
                     </div>
-                    <label for="id_course_title" class="label-naming mt-1">Course
+                    <label for="id_course_title" class="mt-1">Course
                         Title
                     </label>
                     <input
@@ -45,9 +44,9 @@
                             value="Project i"
                     />
                     <label class="mt-1">Select Semester</label>
-                    <div class="input-group mt-1">
+                    <div class="input-group mt-1 d-flex">
                         <input id="id_semester"
-                               class="btn btn-sm btn-secondary dropdown-toggle dropdown-input"
+                               class="btn btn-primary btn-secondary dropdown-toggle"
                                type="button" data-bs-toggle="dropdown"
                                name="selected_semester"
                                aria-expanded="false"
@@ -79,18 +78,20 @@
                                name="semester">
                     </div>
                     <label for="id_deadline"
-                           class="mt-1 label-naming">Deadline</label>
+                           class="mt-1">Deadline</label>
                     <input
                             type="date"
                             class="form-control input-field"
+                            style="display: block"
                             id="id_deadline"
                             name="deadline"
+                            placeholder="Pick a date"
                             required
                             value="{{ course.deadline }}"
                     />
                     <button
                             type="submit"
-                            class="signInBtn"
+                            class="btn btn-primary signInBtn mt-4"
                             style="width: 100%; margin-bottom: -10px"
                             onclick="updateValue()"
                     >

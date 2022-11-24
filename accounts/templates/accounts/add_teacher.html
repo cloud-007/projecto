@@ -7,7 +7,8 @@
                 {% if  message.tags == 'success' %}
                     <p class="alert alert-success">
                         {{ message }}
-                        <a href="{% url 'teacher-management' %}">go back to teacher management</a>
+                        <a href="{% url 'teacher-management' %}">go back to
+                            teacher management</a>
                     </p>
                 {% else %}
                     <p class="alert alert-warning">
@@ -87,7 +88,7 @@
                     />
                     <button
                             type="submit"
-                            class="signInBtn mt-3"
+                            class="btn btn-primary signInBtn mt-4"
                             style="width: 100%; margin-bottom: -14px"
                     >
                         Add Teacher

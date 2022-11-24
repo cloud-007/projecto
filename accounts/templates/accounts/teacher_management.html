@@ -1,9 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-    <div class="container mb-5 block-body-container">
-        <p id="message-print" class="alert">
-        </p>
+    <div class="container block-body-container mb-5">
+        <p id="message-print" class="alert" style="display: none"></p>
         <div class="d-flex justify-content-between">
             <h3 class="color-primary-second">Teacher List</h3>
             <a style="text-decoration: none">
@@ -16,127 +15,134 @@
         </div>
 
         {% include 'divider.html' %}
-
-        <table class="table table-striped mt-2">
-            <thead>
-            <tr>
-                <th scope="col">Full Name</th>
-                <th scope="col">Initials</th>
-                <th scope="col">Email</th>
-                <th scope="col">Phone</th>
-                <th scope="col">Superuser</th>
-                <th scope="col">Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for teacher in teachers %}
+        <div class="table-responsive">
+            <table class="table table-striped mt-2">
+                <thead>
                 <tr>
-                    <td>{{ teacher.full_name }}</td>
-                    <td>{{ teacher.initials }}</td>
-                    <td>{{ teacher.email }}</td>
-                    <td>{{ teacher.phone }}</td>
-                    <!-- Update superuser status -->
-                    <td>
-                        <div class="form-check form-switch">
-                            <label for="flexSwitchCheckDefault{{ user.id }}"></label>
-                            <input
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal"
-                                    class="form-check-input" type="checkbox"
-                                    id="flexSwitchCheckDefault{{ user.id }}"
-                                    {% if teacher.user.is_superuser or is_checked %}
-                                    checked
-                                    {% endif %}
-                                    onclick="is_checked = checked;
-                                            teacher_id = {{ teacher.id }};
-                                            console.log(is_checked.toString() + teacher_id.toString());"
-                            >
-                        </div>
-
-                        <!-- Modal -->
-                        <div class="modal fade" id="exampleModal" tabindex="-1"
-                             aria-labelledby="exampleModalLabel"
-                             aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title"
-                                            id="exampleModalLabel">
-                                            Update Superuser Status
-                                        </h5>
-                                        <button type="button" class="btn-close"
-                                                data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        Are you sure you want to update this
-                                        superuser status?
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button"
-                                                class="btn btn-sm btn-secondary"
-                                                data-bs-dismiss="modal">Cancel
-                                        </button>
-                                        <button type="button"
-                                                class="btn btn-sm btn-primary"
-                                                onclick="statusUpdate()"
-                                        >
-                                            Confirm
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </td>
-                    <!-- Trash Button -->
-                    <td>
-                        <a class="btn btn-sm text-danger" href="#"
-                           data-bs-toggle="modal"
-                           data-bs-target="#exampleModal1"
-                           onclick="teacher_id = {{ teacher.id }}; console.log(teacher_id);"
-                        >
-                            <i class="fas fa-trash"></i>
-                        </a>
-
-                        <!-- Modal -->
-                        <div class="modal fade" id="exampleModal1" tabindex="-1"
-                             aria-labelledby="exampleModalLabel"
-                             aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title"
-                                            id="exampleModalLabel">Delete
-                                            Teacher?</h5>
-                                        <button type="button" class="btn-close"
-                                                data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        Are you sure you want to delete this
-                                        teacher?
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button"
-                                                class="btn btn-sm btn-secondary"
-                                                data-bs-dismiss="modal">Cancel
-                                        </button>
-                                        <button type="button"
-                                                class="btn btn-sm btn-danger"
-                                                onclick="deleteTeacher()"
-                                        >
-                                            Confirm
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </td>
+                    <th scope="col">Full Name</th>
+                    <th scope="col">Initials</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Superuser</th>
+                    <th scope="col">Action</th>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                {% for teacher in teachers %}
+                    <tr>
+                        <td>{{ teacher.full_name }}</td>
+                        <td>{{ teacher.initials }}</td>
+                        <td>{{ teacher.email }}</td>
+                        <td>{{ teacher.phone }}</td>
+                        <!-- Update superuser status -->
+                        <td>
+                            <div class="form-check form-switch">
+                                <label for="flexSwitchCheckDefault{{ user.id }}"></label>
+                                <input
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#exampleModal"
+                                        class="form-check-input" type="checkbox"
+                                        id="flexSwitchCheckDefault{{ user.id }}"
+                                        {% if teacher.user.is_superuser or is_checked %}
+                                        checked
+                                        {% endif %}
+                                        onclick="is_checked = checked;
+                                                teacher_id = {{ teacher.id }};
+                                                console.log(is_checked.toString() + teacher_id.toString());"
+                                >
+                            </div>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModal"
+                                 tabindex="-1"
+                                 aria-labelledby="exampleModalLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title"
+                                                id="exampleModalLabel">
+                                                Update Superuser Status
+                                            </h5>
+                                            <button type="button"
+                                                    class="btn-close"
+                                                    data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you sure you want to update this
+                                            superuser status?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button"
+                                                    class="btn btn-sm btn-secondary"
+                                                    data-bs-dismiss="modal">
+                                                Cancel
+                                            </button>
+                                            <button type="button"
+                                                    class="btn btn-sm btn-primary"
+                                                    onclick="statusUpdate()"
+                                            >
+                                                Confirm
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <!-- Trash Button -->
+                        <td>
+                            <a class="btn btn-sm text-danger" href="#"
+                               data-bs-toggle="modal"
+                               data-bs-target="#exampleModal1"
+                               onclick="teacher_id = {{ teacher.id }}; console.log(teacher_id);"
+                            >
+                                <i class="fas fa-trash"></i>
+                            </a>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModal1"
+                                 tabindex="-1"
+                                 aria-labelledby="exampleModalLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title"
+                                                id="exampleModalLabel">Delete
+                                                Teacher?</h5>
+                                            <button type="button"
+                                                    class="btn-close"
+                                                    data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you sure you want to delete this
+                                            teacher?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button"
+                                                    class="btn btn-sm btn-secondary"
+                                                    data-bs-dismiss="modal">
+                                                Cancel
+                                            </button>
+                                            <button type="button"
+                                                    class="btn btn-sm btn-danger"
+                                                    onclick="deleteTeacher()"
+                                            >
+                                                Confirm
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"
@@ -156,7 +162,12 @@
             //get it if Status key found
             const element = document.getElementById('message-print');
             element.classList.add("alert-" + localStorage.getItem("alert_type"));
-            element.innerText = localStorage.getItem("alert_message");
+
+            message = localStorage.getItem("alert_message");
+            console.log(message.length)
+            if (message.length)
+                element.style.display = "block";
+            element.innerText = message;
             localStorage.clear();
         });
 

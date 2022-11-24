@@ -52,30 +52,6 @@
     }
 }
 
-.signInBtn {
-    margin-top: 3%;
-    background: #FCD94A;
-    color: rgb(255, 255, 255);
-    box-shadow: none;
-    font-family: "poppins", serif;
-    height: 45px;
-    border: none;
-    font-weight: 500;
-    border-radius: 3px;
-}
-
-.signInBtn:hover {
-    margin-top: 3%;
-    background: #fdd32c;
-    color: rgb(255, 255, 255);
-    box-shadow: none;
-    font-family: "poppins", sans-serif;
-    height: 45px;
-    border: none;
-    font-weight: 500;
-    border-radius: 3px;
-}
-
 
 .registerBtn {
     margin-top: 5px;
@@ -153,6 +129,7 @@
 .block-login-container {
     border-radius: 10px;
     width: 60%;
+    margin-bottom: 100px !important;
 }
 
 .block-login-form {
@@ -189,21 +166,17 @@
 
 
 .input-field {
+    display: inline;
     background: #F2F4F6;
     border-radius: 3px;
     margin-top: 1%;
-    height: 45px;
+    width: 100%;
     border: 1px solid #dbdada;
     color: rgb(90, 89, 89);
 }
 
-.input-field:invalid, .loginInputField:focus, .loginInputField:active {
-    background: #F2F4F6;
-    border: 1px solid #dbdada;
-}
-
-.input-field:hover {
-    outline: 1px solid #251B37;
+.input-field:hover, .input-field:active, .input-field:focus {
+    outline: 1px solid #251B37 !important;
 }
 
 .input-field:focus {
@@ -222,16 +195,20 @@
     background: #251B37;
     color: #ffffff;
     box-shadow: none;
-    font-family: "Poppins", serif;
-    height: 40px;
+    /*height: 40px;*/
     border: none;
-    font-weight: 500;
-    font-size: 13px;
+    /*font-weight: 500;*/
+    /*font-size: 13px;*/
     border-radius: 5px;
 }
 
+.btn:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
 .signInBtn:hover {
-    height: 40px;
+    /*height: 40px;*/
     background: #3e2e5b;
     border-radius: 5px;
 }
@@ -240,32 +217,20 @@
 
     .block-login-container {
         border-radius: 10px;
-        width: 70%;
-        margin-bottom: 50px;
+        width: 80%;
+        margin-bottom: 15%;
     }
 
-    .loginHeading {
-        font-size: 25px;
+    .block-login-form {
+        margin: 2%;
+        text-align: start;
     }
 
-    .input-field {
-        height: 60px;
-    }
-
-    .dropdown-input {
-        min-width: 100px;
-        height: 60px;
-        margin-top: 6px;
-    }
 
     .rightDiv {
         text-align: left;
         border-radius: 10px;
         background: white;
-    }
-
-    .signInBtn {
-        height: 60px;
     }
 
 }
@@ -274,13 +239,10 @@
 
     .block-login-container {
         border-radius: 10px;
-        width: 80%;
-        margin-bottom: 50px;
+        width: 90%;
+        margin-bottom: 15%;
     }
 
-    .loginHeading {
-        font-size: 20px;
-    }
 
     .rightDiv {
         text-align: left;
@@ -289,7 +251,7 @@
     }
 
     .block-login-form {
-        margin: 10%;
+        margin: 5%;
         text-align: start;
     }
 

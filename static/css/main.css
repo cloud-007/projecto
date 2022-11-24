@@ -28,7 +28,6 @@ body {
 .project-name {
     display: inline;
     font-weight: bold;
-    font-size: 30px;
     font-family: 'Sora', sans-serif;
     color: #251B37 !important;
 }
@@ -42,8 +41,8 @@ body {
 .navbar-main {
     background: #f2f4f6;
     box-shadow: 0 1px 1px #e2e8ff;
-    padding-left: 50px;
-    padding-right: 50px;
+    padding-left: 5%;
+    padding-right: 5%;
 }
 
 .custom-nav-item {
@@ -105,33 +104,6 @@ header {
     bottom: 0;
     width: 100%;
     text-align: center;
-}
-
-.sub-heading {
-    font-size: 22pt;
-}
-
-.label-naming {
-    font-size: 12pt;
-}
-
-@media (max-width: 991px) {
-    .project-name {
-        font-size: 36pt;
-    }
-
-    .sub-heading {
-        font-size: 28pt
-    }
-
-    .label-naming {
-        font-size: 18pt;
-    }
-
-    .custom-nav-item {
-        font-size: 24pt;
-        padding: 3% 0 !important;
-    }
 }
 
 

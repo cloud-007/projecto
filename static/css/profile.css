@@ -3,7 +3,6 @@
     background: white;
     margin-bottom: 60px;
     border-radius: 5px;
-    padding: 28px !important;
 }
 
 .marks-block {
@@ -18,14 +17,25 @@
     transition: .5s;
 }
 
-@media screen and (min-width: 400px) {
-    .profile-block{
-        width: 80%;
+@media screen and (min-width: 0) {
+    .profile-block {
+        width: 90%;
         margin-top: 50px
     }
 
     .marks-block {
-        width: 100%;
+        width: 90%;
+    }
+}
+
+@media screen and (min-width: 400px) {
+    .profile-block {
+        width: 90%;
+        margin-top: 50px
+    }
+
+    .marks-block {
+        width: 90%;
     }
 
     .profile-image {
@@ -59,7 +69,7 @@
         width: 35%;
     }
 
-    .marks-block{
+    .marks-block {
         width: 50%;
     }
 

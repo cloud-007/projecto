@@ -24,9 +24,6 @@ class HomeView(View):
         return render(request, self.template_name,
                       {'courses': running_courses, 'archived': archived_courses})
 
-    def post(self, request, *args, **kwargs):
-        return render(request, self.template_name, {})
-
 
 class ProjectDetailsView(TeacherRequiredMixin, View):
     template_name = 'project_management/project_details.html'
@@ -50,15 +47,19 @@ class ProjectDetailsView(TeacherRequiredMixin, View):
             proposals = course.proposal_set.all()
         elif filter_by == 'assigned':
             proposals = course.proposal_set.filter(assigned_supervisor__isnull=False)
+        elif filter_by == request.user.teacher.initials:
+            proposals = course.proposal_set.filter(assigned_supervisor=request.user.teacher)
         else:
             proposals = course.proposal_set.filter(assigned_supervisor__isnull=True)
 
         print(proposals)
+        print(len(proposals.values_list('students', flat=True)))
 
         print(course)
         self.context = {
             'course': course,
             'proposals': proposals,
+            'student_count': len(proposals.values_list('students', flat=True)),
             'filter_by': filter_by,
             'teachers': Teacher.objects.all()
         }
@@ -222,7 +223,7 @@ class ProposalSubmissionView(LoginRequiredMixin, View):
         students = Student.objects.filter(student_id__in=student_list)
 
         for student in students:
-            result = Result(proposal=proposal, student=student, marks=0)
+            result = Result(proposal=proposal, student=student)
             result.save()
 
         proposal.students.set(students)
@@ -342,12 +343,12 @@ class MarkingStudentView(TeacherRequiredMixin, View):
                         supervisor_mark = 0
                     else:
                         supervisor_mark = s_mark
-                    marksheet = Marksheet.objects.filter(proposal=proposal, student=student,
+                    marksheet = Marksheet.objects.filter(result__proposal=proposal,
+                                                         result__student=student,
                                                          teacher=request.user.teacher).first()
                     if marksheet is None:
                         marksheet = Marksheet(
-                            proposal=proposal,
-                            student=student,
+                            result=proposal.result.get(student=student),
                             teacher=request.user.teacher,
                             criteria_1=criteria1,
                             criteria_2=criteria2,
@@ -361,11 +362,9 @@ class MarkingStudentView(TeacherRequiredMixin, View):
                         marksheet.save()
                 # set his previous marks to zero if any
                 else:
-                    marksheet = Marksheet.objects.filter(
-                        proposal=proposal,
-                        student=student,
-                        teacher=request.user.teacher
-                    ).first()
+                    marksheet = Marksheet.objects.filter(result__proposal=proposal,
+                                                         result__student=student,
+                                                         teacher=request.user.teacher).first()
                     if marksheet:
                         marksheet.criteria_1 = 0
                         marksheet.criteria_2 = 0
@@ -376,7 +375,8 @@ class MarkingStudentView(TeacherRequiredMixin, View):
             if is_absent == 'on':
                 # set zero in his marksheet
                 for student in proposal.students.all():
-                    marksheet = Marksheet.objects.filter(proposal=proposal, student=student,
+                    marksheet = Marksheet.objects.filter(result__proposal=proposal,
+                                                         result__student=student,
                                                          teacher=request.user.teacher).first()
                     if marksheet:
                         marksheet.criteria_1 = 0
@@ -404,7 +404,8 @@ class MarkingStudentView(TeacherRequiredMixin, View):
 
                 # update student marksheet for this proposal
                 for student in proposal.students.all():
-                    marksheet = Marksheet.objects.filter(proposal=proposal, student=student,
+                    marksheet = Marksheet.objects.filter(result__proposal=proposal,
+                                                         result__student=student,
                                                          teacher=request.user.teacher).first()
                     if marksheet:
                         marksheet.criteria_1 = int(criteria1)
@@ -413,8 +414,7 @@ class MarkingStudentView(TeacherRequiredMixin, View):
                         marksheet.save()
                     else:
                         marksheet = Marksheet(
-                            proposal=proposal,
-                            student=student,
+                            result=proposal.result.get(student=student),
                             teacher=request.user.teacher,
                             criteria_1=criteria1,
                             criteria_2=criteria2,
@@ -429,3 +429,20 @@ class MarkingStudentView(TeacherRequiredMixin, View):
         }
 
         return render(request, self.template_name, context=context)
+
+
+class ResultSheetView(SuperUserMixin, View):
+    template_name = 'project_management/course_results.html'
+
+    def get(self, request, *args, **kwargs):
+        course_id = kwargs.get('id')
+        course = Course.objects.get(id=course_id)
+        marks = Result.objects.filter(proposal__in=course.proposal_set.all())
+        print(marks)
+        context = {
+            'marks': marks
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        return render(request, self.template_name, {})

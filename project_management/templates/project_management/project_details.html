@@ -4,38 +4,49 @@
     <div class="container mb-5 block-body-container" onclick="">
         {# running project and manage #}
         <div class="d-flex justify-content-between">
-            <h3 class="color-primary-second">CSE - {{ course.course_id }}
-                submissions({{ proposals.count }})</h3>
-            <div class=" d-flex align-items-center">
-                <a style="text-decoration: none"
-                   href="#">
-                    <button class="ms-2 btn btn-sm btn-outline-info">
-                        My Supervised Projects
-                    </button>
-                </a>
-
+            <h5 id="id_total_submission" class="color-primary-second"
+                style="font-weight: bold">CSE
+                - {{ course.course_id }}
+                submissions({{ proposals.count }}/{{ student_count }})</h5>
+            <div class="btn-group d-inline-flex"
+                 aria-label="Basic outlined example" style="overflow-x: scroll">
                 {% if user.is_superuser %}
-                    <a style="text-decoration: none"
-                       href="{% url 'course-details' course.id 'assigned' %}">
-                        <button class="ms-2 btn btn-sm btn-primary"
-                        >
-                            Assigned
-                        </button>
-                    </a>
-                    <a style="text-decoration: none"
-                       href="{% url 'course-details' course.id 'unassigned' %}">
-                        <button class="ms-2 btn btn-sm btn-info">
-                            Unassigned
-                        </button>
-                    </a>
-                    <a style="text-decoration: none"
-                       href="{% url 'course-update' course.id  course.semester %}">
-                        <button class="ms-2 btn btn-sm btn-danger">
-                            Update
-                        </button>
-                    </a>
+                    <button type="button"
+                            class="btn btn-sm btn-outline-secondary"
+                            style="
+                        white-space: nowrap;
+                        text-align: center;"
+                            onclick="location.href='{% url 'course-results' course.id %}';"
+                    > Result
+                    </button>
                 {% endif %}
-
+                <button type="button" class="btn btn-sm btn-outline-secondary"
+                        style="
+                        white-space: nowrap;
+                        text-align: center;"
+                        onclick="location.href='{% url 'course-details' course.id user.teacher.initials %}';"
+                > My Supervised Projects
+                </button>
+                {% if user.is_superuser %}
+                    <button type="button"
+                            class="btn btn-sm btn-outline-secondary"
+                            onclick="location.href='{% url 'course-details' course.id 'assigned' %}';"
+                    >
+                        Assigned
+                    </button>
+                    <button type="button"
+                            class="btn btn-sm btn-outline-secondary"
+                            onclick="location.href='{% url 'course-details' course.id 'unassigned' %}';"
+                    >
+                        Unassigned
+                    </button>
+                    <button type="button"
+                            class="btn btn-sm btn-outline-secondary"
+                            onclick="location.href='{% url 'course-update' course.id  course.semester %}';"
+                    >
+                        Update
+                    </button>
+                {% endif %}
 
             </div>
 
@@ -49,7 +60,7 @@
         {% else %}
             <h3 style="height: 40%"
                 class=" container text-muted d-flex align-items-center justify-content-center">
-                No unassigned proposals</h3>
+                No proposals</h3>
         {% endif %}
 
     </div>
