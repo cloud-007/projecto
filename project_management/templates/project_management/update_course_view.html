@@ -37,6 +37,13 @@
                                value="CSE 4800"
                                onclick="toggleCourse('4800')"
                         >
+                        <input type="button"
+                               class="btn btn-secondary input-field"
+                               id="id_cse4801"
+                               style="width: 100%"
+                               value="CSE 4801"
+                               onclick="toggleCourse('4801')"
+                        >
                         <input type="hidden" id="id_course_code"
                                name="course_code" value="CSE 3300">
                     </div>
@@ -166,8 +173,10 @@
         $(document).ready(function () {
             {% if course.course_id == 3300 %}
                 toggleCourse("3300")
-            {% else %}
+            {% elif course.course_id == 4800 %}
                 toggleCourse("4800")
+            {% else %}
+                toggleCourse("4801")
             {% endif %}
             const sem = '{{ course.semester }}';
             const arr = sem.split(" ");
@@ -178,31 +187,51 @@
         });
 
         function toggleCourse(courseCode) {
+            const cse3300 = document.getElementById("id_cse3300")
+            const cse4800 = document.getElementById("id_cse4800")
+            const cse4801 = document.getElementById("id_cse4801")
             if (courseCode === "3300") {
                 this.selectedCourse = "CSE 3300";
                 this.courseTitle = 'Project i'
-                const cse3300 = document.getElementById("id_cse3300")
-                const cse4800 = document.getElementById("id_cse4800")
+
                 cse3300.style.background = "#6C757D"
                 cse3300.style.color = "white"
+
                 cse4800.style.background = "white"
                 cse4800.style.color = "black"
+                cse4801.style.background = "white"
+                cse4801.style.color = "black"
 
                 document.getElementById("id_course_title").value = "Project i"
                 document.getElementById("id_course_code").value = "CSE 3300"
-            } else {
+            } else if (courseCode === "4800") {
                 this.selectedCourse = "CSE 4800";
-                this.courseTitle = 'Project ii Part i'
+                this.courseTitle = 'Project 2 Part i'
 
-                const cse3300 = document.getElementById("id_cse3300")
-                const cse4800 = document.getElementById("id_cse4800")
-                cse3300.style.background = "white"
-                cse3300.style.color = "black"
                 cse4800.style.background = "#6C757D"
                 cse4800.style.color = "white"
 
-                document.getElementById("id_course_title").value = "Project ii Part i"
+                cse3300.style.background = "white"
+                cse3300.style.color = "black"
+                cse4801.style.background = "white"
+                cse4801.style.color = "black"
+
+                document.getElementById("id_course_title").value = "Project 2 Part i"
                 document.getElementById("id_course_code").value = "CSE 4800"
+            } else {
+                this.selectedCourse = "CSE 4801";
+                this.courseTitle = 'Project 2 Part ii'
+
+                cse4801.style.background = "#6C757D"
+                cse4801.style.color = "white"
+
+                cse3300.style.background = "white"
+                cse3300.style.color = "black"
+                cse4800.style.background = "white"
+                cse4800.style.color = "black"
+
+                document.getElementById("id_course_title").value = "Project 2 Part ii"
+                document.getElementById("id_course_code").value = "CSE 4801"
             }
         }
 

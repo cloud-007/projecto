@@ -3,23 +3,40 @@
 {% block content %}
     <div class="container block-body-container mb-5">
         <p id="message-print" class="alert" style="display: none"></p>
-        <h3 class="color-primary-second">ResultSheets</h3>
+        <div id="id_design_print" class="d-flex justify-content-between">
+            <h3 id="id_heading" class="color-primary-second">Result Sheets</h3>
+            <div id="id_button_group" class="btn-group" role="group"
+                 aria-label="Basic outlined example">
+                <button type="button" class="btn btn-sm btn-outline-secondary"
+                        onclick="clicked_button ='CSV'; DownloadCSV();">CSV
+                </button>
+                <button type="button" class="btn  btn-sm btn-outline-secondary">
+                    PDF
+                </button>
+                <button type="button" class="btn  btn-sm btn-outline-secondary"
+                        onclick="PrintButton()">
+                    Print
+                </button>
+            </div>
+        </div>
         {% include 'divider.html' %}
-        <div class="table-responsive">
-            <table class="table table-striped mt-2">
+        <div id="" class="table-responsive ">
+            <table id="data-table" class="table table-striped mt-2">
                 <thead>
                 <tr>
                     <th scope="col">Full Name</th>
                     <th scope="col">Student Id</th>
+                    <th scope="col">Course</th>
                     <th scope="col">Mark</th>
                 </tr>
                 </thead>
                 <tbody>
-                {% for mark in marks %}
+                {% for result in results %}
                     <tr>
-                        <td>{{ mark.student.full_name }}</td>
-                        <td>{{ mark.student.student_id }}</td>
-                        <td>{{ mark.marks }}</td>
+                        <td>{{ result.student.full_name }}</td>
+                        <td>{{ result.student.student_id }}</td>
+                        <td>CSE-{{ result.course.course_id }}</td>
+                        <td>{{ result.marks }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -27,7 +44,68 @@
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"
+            integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript">
+        clicked_button = '';
+
+        function PrintButton() {
+            course_id ={{ course.id }};
+
+            console.log(course_id)
+            nav = document.getElementById("id_navbar")
+            button_group = document.getElementById("id_button_group")
+            design_print = document.getElementById("id_design_print")
+            heading = document.getElementById("id_heading")
+
+            if (course_id === 594612) heading.innerText = "Result Sheet: Running Semester";
+            else heading.innerText = "Result Sheet: CSE-" + course_id;
+
+            subheading = document.getElementById("id_subheading")
+            design_print.classList.remove("justify-content-between")
+            design_print.classList.add("justify-content-center")
 
 
+            nav.style.display = "None"
+            button_group.style.display = "None"
+            window.print()
+            nav.style.display = "Block"
+            button_group.style.display = "Inline"
+            design_print.classList.add("justify-content-between")
+            heading.innerText = "Result Sheet"
+        }
+
+        function DownloadCSV() {
+            course_id ={{ course.id }};
+            if (course_id === null) course_id = 594612
+            console.log(course_id)
+
+            $.ajax({
+                    type: 'GET',
+                    url: '{% url 'course-results' course.id %}',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    data: {
+                        // plus other data
+                        'type': clicked_button,
+                    },
+                    success: function (data) {
+                        console.log(data)
+                        var blob = new Blob([data]);
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = "Result " + '{{ course.title }} ' + '{{ course.semester }}' + '.csv';
+                        link.click();
+                    },
+                    error: function (data) {
+                        console.log(data)
+                    }
+                }
+            )
+
+        }
+    </script>
 
 {% endblock %}

@@ -8,10 +8,11 @@
     <div class="row row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-xs-1">
         <div>
             {% for student in proposal.students.all %}
-                <div class="d-flex justify-content-between" style="width: 100%">
-                    <h6 class="d-inline text-muted">{{ student.full_name }}
+                <div class="row d-flex justify-content-between"
+                     style="width: 100%">
+                    <h6 class="col d-inline text-muted">{{ student.full_name }}
                         - </h6>
-                    <h6 class="d-inline  text-muted">{{ student.student_id }}</h6>
+                    <h6 class="col d-inline  text-muted">{{ student.student_id }}</h6>
                 </div>
             {% endfor %}
         </div>
@@ -26,8 +27,13 @@
                     </h6>
                     <h6 class="text-muted">Assigned
                         Supervisor: {{ proposal.assigned_supervisor }}</h6>
-                    <a href="{{ proposal.file.url }}">Proposal
-                        File</a>
+                    <a href="{{ proposal.file.url }}">
+                        <button style="width: 100%"
+                                class="mb-1 btn btn-sm btn-outline-secondary">
+                            Proposal
+                            File
+                        </button>
+                    </a>
                 </div>
                 <div>
                     {% if user.is_superuser %}

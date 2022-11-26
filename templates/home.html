@@ -11,12 +11,20 @@
         <div class="d-flex justify-content-between">
             <h3 class="color-primary-second">Running Project</h3>
             {% if user.is_superuser %}
-                <a style="text-decoration: none; color: white"
-                   href="{% url 'create-new-course' %}">
-                    <button class="manage-button ">
-                        Add New
-                    </button>
-                </a>
+                <div>
+                    <a style="text-decoration: none; color: white"
+                       href="{% url 'course-results' 594612 %}">
+                        <button class="btn btn-sm btn-outline-secondary ">
+                            Result
+                        </button>
+                    </a>
+                    <a style="text-decoration: none; color: white"
+                       href="{% url 'create-new-course' %}">
+                        <button class="btn btn-sm btn-outline-secondary ">
+                            Add New
+                        </button>
+                    </a>
+                </div>
             {% endif %}
         </div>
         {# running project body #}

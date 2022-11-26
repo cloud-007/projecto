@@ -25,7 +25,12 @@ class Course(AbstractTimestampModel):
 
 class Proposal(AbstractTimestampModel):
     title = models.CharField(verbose_name=_('Title'), max_length=256)
-    course = models.ForeignKey(Course, on_delete=models.PROTECT)
+    course = models.ForeignKey(
+        verbose_name=_('Course'),
+        to='Course',
+        related_name='proposal',
+        on_delete=models.CASCADE
+    )
     students = models.ManyToManyField(
         verbose_name=_('Students'),
         to='accounts.Student',
@@ -81,6 +86,14 @@ class Result(AbstractTimestampModel):
         related_name='result',
         on_delete=models.CASCADE
     )
+    course = models.ForeignKey(
+        verbose_name=_('Course'),
+        to='Course',
+        related_name='result',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
     student = models.ForeignKey(
         verbose_name=_('Student'),
         to='accounts.Student',
@@ -91,8 +104,10 @@ class Result(AbstractTimestampModel):
     @property
     def marks(self):
         marksheets = Marksheet.objects.filter(result=self)
-        c1 = sum(marksheets.values_list('criteria_1', flat=True)) / len(marksheets.values_list('criteria_1', flat=True))
-        c2 = sum(marksheets.values_list('criteria_2', flat=True)) / len(marksheets.values_list('criteria_2', flat=True))
+        c1 = sum(marksheets.values_list('criteria_1', flat=True)) / max(1, len(marksheets.values_list('criteria_1',
+                                                                                                      flat=True)))
+        c2 = sum(marksheets.values_list('criteria_2', flat=True)) / max(1, len(marksheets.values_list('criteria_2',
+                                                                                                      flat=True)))
         s_mark = sum(marksheets.values_list('supervisor', flat=True))
         return c1 + c2 + s_mark
 
@@ -104,7 +119,7 @@ class Marksheet(AbstractTimestampModel):
     result = models.ForeignKey(
         verbose_name=_('Result'),
         to='Result',
-        related_name='marksheets',
+        related_name='marksheet',
         on_delete=models.CASCADE,
         default=0
     )

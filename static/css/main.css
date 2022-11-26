@@ -27,8 +27,8 @@ body {
 
 .project-name {
     display: inline;
-    font-weight: bold;
-    font-family: 'Sora', sans-serif;
+    font-weight: 900;
+    font-family: 'Roboto', sans-serif;
     color: #251B37 !important;
 }
 

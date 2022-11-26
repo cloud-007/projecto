@@ -7,7 +7,14 @@
     {% endif %}"
        style=" text-decoration: none">
         <div class="container card-block-container p-3">
-            <h3 class="color-primary-second">CSE - {{ course.course_id }}</h3>
+            <div>
+                <h3 class="color-primary-second">CSE
+                    - {{ course.course_id }}
+                    {% if user.teacher %}
+                        ({{ course.proposal.count }})
+                    {% endif %}
+                </h3>
+            </div>
             {% include 'divider.html' %}
             <h6 class="text-muted">{{ course.title }}</h6>
             <h6 class="mt-4 text-muted">{{ course.semester }}</h6>

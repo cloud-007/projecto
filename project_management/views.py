@@ -1,8 +1,10 @@
+import csv
 import datetime
 import json
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
 
@@ -44,13 +46,13 @@ class ProjectDetailsView(TeacherRequiredMixin, View):
         filter_by = kwargs.get('filter_by')
 
         if filter_by == 'all':
-            proposals = course.proposal_set.all()
+            proposals = course.proposal.all()
         elif filter_by == 'assigned':
-            proposals = course.proposal_set.filter(assigned_supervisor__isnull=False)
+            proposals = course.proposal.filter(assigned_supervisor__isnull=False)
         elif filter_by == request.user.teacher.initials:
-            proposals = course.proposal_set.filter(assigned_supervisor=request.user.teacher)
+            proposals = course.proposal.filter(assigned_supervisor=request.user.teacher)
         else:
-            proposals = course.proposal_set.filter(assigned_supervisor__isnull=True)
+            proposals = course.proposal.filter(assigned_supervisor__isnull=True)
 
         print(proposals)
         print(len(proposals.values_list('students', flat=True)))
@@ -91,11 +93,11 @@ class ProjectDetailsView(TeacherRequiredMixin, View):
             course = Course.objects.get(id=course_id)
             filter_by = kwargs.get('filter_by')
             if filter_by == 'all':
-                proposals = course.proposal_set.all()
+                proposals = course.proposal.all()
             elif filter_by == 'assigned':
-                proposals = course.proposal_set.filter(assigned_supervisor__isnull=False)
+                proposals = course.proposal.filter(assigned_supervisor__isnull=False)
             else:
-                proposals = course.proposal_set.filter(assigned_supervisor__isnull=True)
+                proposals = course.proposal.filter(assigned_supervisor__isnull=True)
             self.context = {
                 'course': course,
                 'proposals': proposals,
@@ -132,7 +134,26 @@ class CreateNewCourse(SuperUserMixin, View):
 
         course.save()
         messages.success(request, course.title + " has been added successfully")
+        print(type(course.course_id))
+        if course.course_id == "4800":
+            sem = course.semester.split(" ")
+            semester = sem[0]
+            year = sem[1]
+            if semester == "Spring":
+                next_semester = "Summer"
+                next_year = year
+                deadline = datetime.datetime(int(next_year), 12, 31)
+            else:
+                next_semester = "Spring"
+                next_year = int(year) + 1
+                deadline = datetime.datetime(int(next_year), 6, 3)
+            next_semester = next_semester + " " + str(next_year)
+            if Course.objects.filter(course_id=4801, semester=next_semester).first():
+                pass
+            course = Course(course_id=4801, title="Project 2 part ii", semester=next_semester,
+                            deadline=deadline)
 
+            course.save()
         return redirect('home')
 
 
@@ -165,7 +186,9 @@ class UpdateCourseView(SuperUserMixin, View):
         print("Updating course")
         code = request.POST.get("course_code")
         val = code.split(" ")
-        if Course.objects.filter(course_id=val[1], semester=request.POST.get("semester")).first():
+        check_course = Course.objects.filter(course_id=val[1], semester=request.POST.get("semester")).first()
+        if check_course is not None and (
+                check_course.course_id != course.course_id or check_course.semester != course.semester):
             messages.warning(request, "There is already a course for this semester")
             context = {
                 'course': course
@@ -223,7 +246,7 @@ class ProposalSubmissionView(LoginRequiredMixin, View):
         students = Student.objects.filter(student_id__in=student_list)
 
         for student in students:
-            result = Result(proposal=proposal, student=student)
+            result = Result(proposal=proposal, course=course, student=student)
             result.save()
 
         proposal.students.set(students)
@@ -238,8 +261,44 @@ class ProposalSubmissionView(LoginRequiredMixin, View):
         messages.success(request, "Your response has been recorded")
 
         proposal.save()
+        print(proposal.course.course_id)
+        if proposal.course.course_id == 4800:
+            print("Creating new proposal for 4801")
+
+            sem = proposal.course.semester
+            sem = sem.split(" ")
+            semester = sem[0]
+            year = sem[1]
+            if semester == "Spring":
+                next_semester = "Summer"
+                next_year = year
+            else:
+                next_semester = "Spring"
+                next_year = int(year) + 1
+
+            semester = str(next_semester) + " " + str(next_year)
+            print(course)
+            print(semester)
+
+            new_proposal = proposal
+            new_proposal.id = None
+            new_proposal.course = Course.objects.get(course_id=4801, semester=semester)
+            new_proposal.save()
+            print(new_proposal)
+            new_proposal.students.set(students),
+            new_proposal.preferred_supervisors.set(teachers),
+
+            new_proposal.save()
+
+            for student in students:
+                result = Result(proposal=new_proposal, course=new_proposal.course, student=student)
+                result.save()
 
         return redirect('home')
+
+
+'''Update update view when a proposal is updated
+remove result of removed student and add newly added student'''
 
 
 class ProposalUpdateView(SuperUserMixin, View):
@@ -436,11 +495,32 @@ class ResultSheetView(SuperUserMixin, View):
 
     def get(self, request, *args, **kwargs):
         course_id = kwargs.get('id')
-        course = Course.objects.get(id=course_id)
-        marks = Result.objects.filter(proposal__in=course.proposal_set.all())
-        print(marks)
+        print(course_id)
+        if course_id == 594612:
+            running_courses = Course.objects.filter(
+                deadline__range=(datetime.datetime.now().date(), datetime.date(2500, 1, 1))).order_by('deadline')
+            results = Result.objects.filter(course__in=running_courses.all())
+            course = Course(id=594612)
+        else:
+            course = Course.objects.get(id=course_id)
+            results = Result.objects.filter(proposal__in=course.proposal.all())
+        if request.is_ajax():
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename=Result '
+
+            writer = csv.writer(response)
+            writer.writerow(['Name', 'ID', 'Marks', 'Date'])
+
+            for result in results:
+                writer.writerow(
+                    [result.student.full_name, result.student.student_id, result.marks, result.created_date])
+            print(response)
+            return response
+
+        print(results)
         context = {
-            'marks': marks
+            'results': results,
+            'course': course
         }
         return render(request, self.template_name, context)
 

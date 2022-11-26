@@ -25,7 +25,6 @@
         </div>
         {% include 'divider.html' %}
         {# marking student body #}
-
         <div class="d-flex justify-content-center mt-3">
             <div class="container mt-2 marks-block">
                 <form class="row g-2" method="post"
@@ -223,6 +222,8 @@
                     document.querySelector("label[for='id_supervisor_mark" + {{ student.student_id }} +"']").style.display = "block"
                 {% endfor %}
                 document.getElementById("id_supervisor_mark").required = false;
+                document.getElementById("id_supervisor_mark").style.display = "block";
+                document.querySelector("label[for='id_supervisor_mark']").style.display = "block"
             {% else %}
                 {% for student in proposal.students.all %}
                     document.getElementById("id_supervisor_mark" + {{ student.student_id }}).style.display = "none";
@@ -230,6 +231,9 @@
                     document.querySelector("label[for='id_supervisor_mark" + {{ student.student_id }} +"']").style.display = "none"
                 {% endfor %}
                 document.getElementById("id_supervisor_mark").required = false;
+                document.getElementById("id_supervisor_mark").style.display = "none";
+                document.querySelector("label[for='id_supervisor_mark']").style.display = "none"
+                console.log("Here")
             {% endif %}
         });
 
@@ -244,13 +248,18 @@
                     document.getElementById("id_full_marks" + {{ student.student_id }}).required = false;
                     document.getElementById("id_criteria1" + {{ student.student_id }}).required = false;
                     document.getElementById("id_criteria2" + {{ student.student_id }}).required = false;
-                    document.getElementById("id_supervisor_mark" + {{ student.student_id }}).required = false;
+
+                    {% if proposal.assigned_supervisor == user.teacher %}
+                        document.getElementById("id_supervisor_mark" + {{ student.student_id }}).required = false;
+                    {% endif %}
                 {% endfor %}
 
                 document.getElementById("id_full_marks").required = false;
                 document.getElementById("id_criteria1").required = true;
                 document.getElementById("id_criteria2").required = true;
-                document.getElementById("id_supervisor_mark").required = true;
+                {% if proposal.assigned_supervisor == user.teacher %}
+                    document.getElementById("id_supervisor_mark").required = true;
+                {% endif %}
 
 
             } else {
@@ -260,13 +269,18 @@
                 {% for student in proposal.students.all %}
                     document.getElementById("id_criteria1" + {{ student.student_id }}).required = true;
                     document.getElementById("id_criteria2" + {{ student.student_id }}).required = true;
-                    document.getElementById("id_supervisor_mark" + {{ student.student_id }}).required = true;
+
+                    {% if proposal.assigned_supervisor == user.teacher %}
+                        document.getElementById("id_supervisor_mark" + {{ student.student_id }}).required = true;
+                    {% endif %}
                 {% endfor %}
 
                 document.getElementById("id_full_marks").required = false;
                 document.getElementById("id_criteria1").required = false;
                 document.getElementById("id_criteria2").required = false;
-                document.getElementById("id_supervisor_mark").required = false;
+                {% if proposal.assigned_supervisor == user.teacher %}
+                    document.getElementById("id_supervisor_mark").required = false;
+                {% endif %}
             }
         }
 
