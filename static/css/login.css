@@ -191,14 +191,11 @@
     margin-top: 6px;
 }
 
-.signInBtn {
+.signInBtn{
     background: #251B37;
     color: #ffffff;
     box-shadow: none;
-    /*height: 40px;*/
     border: none;
-    /*font-weight: 500;*/
-    /*font-size: 13px;*/
     border-radius: 5px;
 }
 
@@ -207,7 +204,7 @@
     box-shadow: none !important;
 }
 
-.signInBtn:hover {
+.signInBtn:hover, .signInBtn:focus {
     /*height: 40px;*/
     background: #3e2e5b;
     border-radius: 5px;

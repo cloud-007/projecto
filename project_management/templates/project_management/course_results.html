@@ -51,7 +51,12 @@
         clicked_button = '';
 
         function PrintButton() {
-            course_id ={{ course.id }};
+
+            {% if course.course_id is None %}
+                course_id = null
+            {% else %}
+                course_id ={{ course.course_id }};
+            {% endif %}
 
             console.log(course_id)
             nav = document.getElementById("id_navbar")
@@ -59,7 +64,7 @@
             design_print = document.getElementById("id_design_print")
             heading = document.getElementById("id_heading")
 
-            if (course_id === 594612) heading.innerText = "Result Sheet: Running Semester";
+            if (course_id === null) heading.innerText = "Result Sheet: Running Semester";
             else heading.innerText = "Result Sheet: CSE-" + course_id;
 
             subheading = document.getElementById("id_subheading")
@@ -73,6 +78,7 @@
             nav.style.display = "Block"
             button_group.style.display = "Inline"
             design_print.classList.add("justify-content-between")
+            design_print.classList.remove("justify-content-center")
             heading.innerText = "Result Sheet"
         }
 

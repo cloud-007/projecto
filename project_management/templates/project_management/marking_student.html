@@ -71,7 +71,7 @@
                                     </label>
                                     <input
                                             type="number"
-                                            max="40"
+                                            max="60"
                                             class="form-control input-field"
                                             id="id_full_marks{{ student.student_id }}"
                                             name="full_marks{{ student.student_id }}"
@@ -83,7 +83,7 @@
                                             1(Presentation/Viva)</label>
                                         <input
                                                 type="number"
-                                                max="40"
+                                                max="30"
                                                 class="form-control input-field"
                                                 id="id_criteria1{{ student.student_id }}"
                                                 name="criteria1{{ student.student_id }}"
@@ -94,7 +94,7 @@
                                             Depth)</label>
                                         <input
                                                 type="number"
-                                                max="40"
+                                                max="30"
                                                 class="form-control input-field"
                                                 id="id_criteria2{{ student.student_id }}"
                                                 name="criteria2{{ student.student_id }}"
@@ -102,7 +102,12 @@
                                         />
                                     </div>
                                     <label for="id_supervisor_mark{{ student.student_id }}"
-                                           class="mt-1">Supervisor
+                                           class="mt-1"
+
+                                            {% if proposal.assigned_supervisor != user.teacher %}
+                                           style="display: none"
+                                            {% endif %}
+                                    >Supervisor
                                         Mark</label>
                                     <input
                                             type="number"
@@ -110,6 +115,9 @@
                                             class="form-control input-field"
                                             id="id_supervisor_mark{{ student.student_id }}"
                                             name="supervisor_mark{{ student.student_id }}"
+                                            {% if proposal.assigned_supervisor != user.teacher %}
+                                            style="display: none"
+                                            {% endif %}
                                     />
                                 </div>
                             </div>
@@ -154,7 +162,7 @@
                                 </label>
                                 <input
                                         type="number"
-                                        max="40"
+                                        max="60"
                                         class="form-control input-field"
                                         id="id_full_marks"
                                         name="full_marks"
@@ -166,7 +174,7 @@
                                         1(Presentation/Viva)</label>
                                     <input
                                             type="number"
-                                            max="40"
+                                            max="30"
                                             class="form-control input-field"
                                             id="id_criteria1"
                                             name="criteria1"
@@ -176,19 +184,26 @@
                                         Depth)</label>
                                     <input
                                             type="number"
-                                            max="40"
+                                            max="30"
                                             class="form-control input-field"
                                             id="id_criteria2"
                                             name="criteria2"
                                     />
                                 </div>
                                 <label for="id_supervisor_mark"
-                                       class="mt-1">Supervisor
+                                       class="mt-1"
+                                        {% if proposal.assigned_supervisor != user.teacher %}
+                                       style="display: none"
+                                        {% endif %}
+                                >Supervisor
                                     Mark</label>
                                 <input
                                         type="number"
                                         max="40"
                                         class="form-control input-field"
+                                        {% if proposal.assigned_supervisor != user.teacher %}
+                                        style="display: none"
+                                        {% endif %}
                                         id="id_supervisor_mark"
                                         name="supervisor_mark"
                                 />
@@ -197,7 +212,7 @@
                     </div>
                     <button
                             type="submit"
-                            class="btn btn-primary signInBtn mt-3"
+                            class="btn signInBtn mt-3"
                             style="width: 100%; margin-bottom: -14px"
                     >
                         Submit Mark

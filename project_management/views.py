@@ -23,8 +23,17 @@ class HomeView(View):
             deadline__range=(
                 datetime.date(2000, 1, 1), datetime.datetime.now().date() - datetime.timedelta(1))).order_by('deadline')
 
-        return render(request, self.template_name,
-                      {'courses': running_courses, 'archived': archived_courses})
+        try:
+            course_list = request.user.student.proposal.values_list('course', flat=True)
+        except (Exception,) as e:
+            course_list = None
+        context = {
+            'courses': running_courses,
+            'archived': archived_courses,
+            'course_list': course_list
+        }
+
+        return render(request, self.template_name, context)
 
 
 class ProjectDetailsView(TeacherRequiredMixin, View):
@@ -54,9 +63,6 @@ class ProjectDetailsView(TeacherRequiredMixin, View):
         else:
             proposals = course.proposal.filter(assigned_supervisor__isnull=True)
 
-        print(proposals)
-        print(len(proposals.values_list('students', flat=True)))
-
         print(course)
         self.context = {
             'course': course,
@@ -75,18 +81,38 @@ class ProjectDetailsView(TeacherRequiredMixin, View):
             print("Came from ajax")
             delete_proposal = request.POST.get("delete_button")
             print(delete_proposal)
-
             proposal_id = request.POST.get("proposal_id")
             proposal = Proposal.objects.get(id=proposal_id)
             # if the admin is requesting to delete the proposal
+            if proposal.course.course_id == 4800:
+                sem = proposal.course.semester.split(" ")
+                semester = sem[0]
+                year = sem[1]
+                if semester == "Spring":
+                    next_semester = "Summer"
+                    next_year = year
+                else:
+                    next_semester = "Spring"
+                    next_year = int(year) + 1
+                next_semester = next_semester + " " + str(next_year)
+                next_proposal = Proposal.objects.get(course=Course.objects.get(course_id=4801, semester=next_semester),
+                                                     team_lead=proposal.team_lead)
+            else:
+                next_proposal = None
             if delete_proposal == 'true':
                 proposal.delete()
+                if next_proposal:
+                    next_proposal.delete()
             # otherwise he is trying to assign a supervisor
             else:
                 print("Assign Supervisor")
                 proposal.assigned_supervisor = Teacher.objects.get(id=request.POST.get("teacher_id"))
                 proposal.assigned_by = request.user.teacher
                 proposal.save()
+                if next_proposal:
+                    next_proposal.assigned_supervisor = proposal.assigned_supervisor
+                    next_proposal.assigned_by = request.user.teacher
+                    next_proposal.save()
                 print(proposal.assigned_supervisor)
 
             course_id = kwargs.get('id')
@@ -297,10 +323,6 @@ class ProposalSubmissionView(LoginRequiredMixin, View):
         return redirect('home')
 
 
-'''Update update view when a proposal is updated
-remove result of removed student and add newly added student'''
-
-
 class ProposalUpdateView(SuperUserMixin, View):
     template_name = 'project_management/proposal_update.html'
 
@@ -319,8 +341,33 @@ class ProposalUpdateView(SuperUserMixin, View):
         return render(request, self.template_name, context=context)
 
     def post(self, request, *args, **kwargs):
-
         proposal = Proposal.objects.get(id=kwargs.get('proposal_id'))
+        if proposal.course.course_id == 4800:
+            sem = proposal.course.semester.split(" ")
+            semester = sem[0]
+            year = sem[1]
+            if semester == "Spring":
+                next_semester = "Summer"
+                next_year = year
+            else:
+                next_semester = "Spring"
+                next_year = int(year) + 1
+            next_semester = next_semester + " " + str(next_year)
+            next_proposal = Proposal.objects.get(course=Course.objects.get(course_id=4801, semester=next_semester),
+                                                 team_lead=proposal.team_lead)
+        else:
+            next_proposal = None
+
+        '''Removing results of previously set student'''
+        for student in proposal.students.all():
+            result = Result.objects.get(proposal=proposal, course=proposal.course, student=student)
+            result.delete()
+
+        if next_proposal:
+            '''Removing results of previously set student of 4801'''
+            for student in next_proposal.students.all():
+                result = Result.objects.get(proposal=next_proposal, course=next_proposal.course, student=student)
+                result.delete()
 
         proposal.title = request.POST.get("title")
         print(proposal.file)
@@ -333,16 +380,35 @@ class ProposalUpdateView(SuperUserMixin, View):
         students = Student.objects.filter(student_id__in=student_list)
         proposal.students.set(students)
 
+        if next_proposal:
+            next_proposal.students.set(students)
+
+        '''Add resultsheet for the updated student'''
+        for student in students:
+            result = Result(proposal=proposal, course=proposal.course, student=student)
+            result.save()
+
+        '''Add resultsheet for 4801 if the course is 4800'''
+        if next_proposal:
+            for student in students:
+                result = Result(proposal=next_proposal, course=next_proposal.course, student=student)
+                result.save()
+
         teacher_list = []
 
         for teacher in json.loads(request.POST.get("tagify_teacher")):
             teacher_list.append(teacher['value'])
         teachers = Teacher.objects.filter(full_name__in=teacher_list)
+
         proposal.preferred_supervisors.set(teachers)
+        if next_proposal:
+            next_proposal.preferred_supervisors.set(teachers)
 
         messages.success(request, "Proposal has been updated")
 
         proposal.save()
+        if next_proposal:
+            next_proposal.save()
 
         context = {
             'students': Student.objects.exclude(proposal__course=proposal.course),

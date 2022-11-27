@@ -10,7 +10,6 @@
                          src={% static 'media/loginimg.png' %} alt=''>
                 </div>
             </div>
-
             <form class="fade-in login-padding loginForm col-md-6 col-lg-6"
                   method="post">
                 {% csrf_token %}
@@ -55,11 +54,11 @@
                         Login
                     </button>
                     <div class="mt-2">
-                        <small class="text-muted newUser">
-                            Need an account? <a class="ml-2 register"
-                                                href="{% url 'register' %}">Sign
+                        <p class="text-muted newUser">
+                            New user? <a class="ml-2 register"
+                                         href="{% url 'register' %}">Sign
                             Up</a>
-                        </small>
+                        </p>
                     </div>
                 </div>
             </form>

@@ -1,32 +1,35 @@
-<div class="container block-project-details mt-3 p-3">
-    <div class="d-flex justify-content-between row row-cols-2">
-        <h5 class="color-primary-second">{{ proposal.title }}</h5>
-        <a class="text-muted text-decoration-none d-flex justify-content-end">
-            Submitted: {{ proposal.created_date }}
-        </a>
-    </div>
-    <div class="row row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-xs-1">
-        <div>
-            {% for student in proposal.students.all %}
-                <div class="row d-flex justify-content-between"
-                     style="width: 100%">
-                    <h6 class="col d-inline text-muted">{{ student.full_name }}
-                        - </h6>
-                    <h6 class="col d-inline  text-muted">{{ student.student_id }}</h6>
-                </div>
-            {% endfor %}
-        </div>
-        <div>
-            <div class="row row-cols-lg-2 row-cols-md-2 d-flex justify-content-between">
+<div class="p-1">
+    <div class="card">
+        <div class="card-body">
+            <div style="margin-top: -10px"
+                 class="card-header">
+                <h5 class="color-primary-second">{{ proposal.title }}</h5>
+                <a style="font-size: 0.9rem"
+                   class="text-muted text-decoration-none">
+                    Submitted: {{ proposal.created_date }}
+                </a>
+            </div>
+            <div style="min-height: 120px" class="mt-2 mb-2 card-text">
+                {% for student in proposal.students.all %}
+                    <div class="row d-flex justify-content-between"
+                         style="width: 100%">
+                        <a style="cursor: default"
+                           class="col col-8 d-inline text-decoration-none color-primary">{{ student.full_name }}</a>
+                        <a style="cursor:default;"
+                           class="col col-4 d-inline text-decoration-none color-primary d-flex justify-content-end">{{ student.student_id }}</a>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="card-footer">
                 <div>
-                    <h6 class="text-muted">Preferred
+                    <a class="text-decoration-none text-muted">Preferred
                         Supervisors:
                         {% for supervisor in proposal.preferred_supervisors.all %}
                             {{ supervisor.initials }},
                         {% endfor %}
-                    </h6>
-                    <h6 class="text-muted">Assigned
-                        Supervisor: {{ proposal.assigned_supervisor }}</h6>
+                    </a>
+                    <a class="text-decoration-none text-muted">Assigned
+                        Supervisor: {{ proposal.assigned_supervisor }}</a>
                     <a href="{{ proposal.file.url }}">
                         <button style="width: 100%"
                                 class="mb-1 btn btn-sm btn-outline-secondary">
@@ -145,6 +148,7 @@
         </div>
     </div>
 </div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"
         integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>

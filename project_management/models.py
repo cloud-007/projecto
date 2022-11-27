@@ -112,7 +112,8 @@ class Result(AbstractTimestampModel):
         return c1 + c2 + s_mark
 
     def __str__(self):
-        return self.student.student_id
+        return "CSE - " + str(
+            self.proposal.course.course_id) + " | " + self.proposal.course.semester + " | " + self.student.student_id
 
 
 class Marksheet(AbstractTimestampModel):

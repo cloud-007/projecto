@@ -8,8 +8,41 @@
                 style="font-weight: bold">CSE
                 - {{ course.course_id }}
                 submissions({{ proposals.count }}/{{ student_count }})</h5>
-            <div class="btn-group d-inline-flex"
-                 aria-label="Basic outlined example" style="overflow-x: scroll">
+            <!-- dropdown for mobile -->
+            <div class="dropdown d-md-none">
+                <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                        type="button" id="dropdownMenuButton1"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa fa-cog"></i> Actions
+                </button>
+                <ul class="dropdown-menu"
+                    aria-labelledby="dropdownMenuButton1">
+                    {% if user.is_superuser %}
+                        <li><a class="dropdown-item text-muted"
+                               href="{% url 'course-results' course.id %}">Result</a>
+                        </li>
+                    {% endif %}
+                    <li><a class="dropdown-item text-muted"
+                           href="{% url 'course-details' course.id user.teacher.initials %}">My
+                        Projects</a>
+                    </li>
+
+                    {% if user.is_superuser %}
+                        <li><a class="dropdown-item text-muted"
+                               href="{% url 'course-details' course.id 'assigned' %}">Assigned</a>
+                        </li>
+                        <li><a class="dropdown-item text-muted"
+                               href="{% url 'course-details' course.id 'unassigned' %}">Unassigned</a>
+                        </li>
+                        <li><a class="dropdown-item text-muted"
+                               href="{% url 'course-update' course.id  course.semester %}">Update</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+            <!-- button group for desktop -->
+            <div class="btn-group d-none d-md-flex"
+                 aria-label="Basic outlined example">
                 {% if user.is_superuser %}
                     <button type="button"
                             class="btn btn-sm btn-outline-secondary"
@@ -25,7 +58,7 @@
                         white-space: nowrap;
                         text-align: center;"
                         onclick="location.href='{% url 'course-details' course.id user.teacher.initials %}';"
-                > My Supervised Projects
+                > My Projects
                 </button>
                 {% if user.is_superuser %}
                     <button type="button"
@@ -54,9 +87,11 @@
         {% include 'divider.html' %}
         {# submission details of a project body #}
         {% if proposals %}
-            {% for proposal in proposals %}
-                {% include 'project_management/project_details_card.html' with proposal=proposal teachers=teachers id=proposal.id %}
-            {% endfor %}
+            <div class="row mt-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-1 row-cols-xs-1 d-flex justify-content-start">
+                {% for proposal in proposals %}
+                    {% include 'project_management/project_details_card_new.html' with proposal=proposal teachers=teachers id=proposal.id %}
+                {% endfor %}
+            </div>
         {% else %}
             <h3 style="height: 40%"
                 class=" container text-muted d-flex align-items-center justify-content-center">

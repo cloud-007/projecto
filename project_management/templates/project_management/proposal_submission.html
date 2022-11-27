@@ -59,10 +59,12 @@
                         />
                         <div class="mt-4">
                             <!-- Button trigger modal -->
-                            <button type="button"
+                            <button id="id_submit"
+                                    type="button"
                                     class="btn btn-primary signInBtn"
                                     data-bs-toggle="modal"
                                     style="width: 100%; margin-bottom: -16px"
+                                    onclick="validateForm()"
                                     data-bs-target="#exampleModal">
                                 Submit Proposal
                             </button>
@@ -161,7 +163,8 @@
                             </div>
                             <a href="{{ proposal.file.url }}">
                                 <button class="btn btn-sm btn-outline-secondary">
-                                    Proposal File
+                                    <i class="fa-solid fa-circle-down"></i> Proposal
+                                    File
                                 </button>
                             </a>
                         </div>
@@ -207,6 +210,23 @@
             whitelist: teacherList // Array of values. stackoverflow.com/a/43375571/104380
         })
 
+        $('#id_submit').on('click', function () {
+            console.log("Clicked button")
+            $("#id_form").valid();
+        });
+
+        function validateForm() {
+            $("#form1").validate({
+                rules: {
+                    field1: "required"
+                },
+                messages: {
+                    field1: "Please specify your name"
+
+                }
+            })
+            document.getElementById("id_form").valid();
+        }
 
     </script>
 {% endblock %}

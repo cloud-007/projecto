@@ -30,7 +30,9 @@
     {# CSS File ends here #}
     {# font awesome #}
     <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+          integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
 
 
 </head>
@@ -42,7 +44,10 @@
 {% endblock %}
 <div class="footer">
     {% include 'divider.html' %}
-    <p class="mt-1 text-muted">Copyright 2022 @PROJECTO</p>
+    <p class="mt-1 text-muted">Copyright 2022 @<a
+            class="text-decoration-none text-muted"
+            href="{% url 'home' %}">PROJECTO</a>
+    </p>
 </div>
 
 {# all script goes here #}
