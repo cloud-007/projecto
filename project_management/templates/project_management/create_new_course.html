@@ -16,7 +16,7 @@
 
                 <div class="form-group ">
                     <label>Select Course</label>
-                    <div class="d-flex">
+                    <div class="btn-group d-flex">
                         <input type="button"
                                class="btn btn-secondary input-field"
                                id="id_cse3300"
@@ -34,11 +34,12 @@
                         <input type="button"
                                class="btn btn-secondary input-field"
                                id="id_cse4801"
-                               style="width: 100%"
+                               style="width: 100%; border-radius: 0 3px 3px 0;"
                                value="CSE 4801"
                                onclick="toggleCourse('4801')"
                         >
                         <input type="hidden" id="id_course_code"
+                               style="width: 100%"
                                name="course_code" value="CSE 3300">
                     </div>
                     <label for="id_course_title" class="mt-1">Course
@@ -55,22 +56,31 @@
                     <label class="mt-1">Select Semester</label>
                     <div class="input-group">
                         <input id="id_semester"
-                               class="btn btn-sm btn-secondary dropdown-toggle dropdown-input"
-                               type="button" data-bs-toggle="dropdown"
+                               class="d-none"
+                               type="text"
                                name="selected_semester"
                                aria-expanded="false"
                                value="Spring"
                         >
+                        <button id="id_button_semester"
+                                style="border-radius: 3px 0 0 3px"
+                                class="btn btn-sm btn-secondary dropdown-toggle dropdown-input"
+                                type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                        >Spring
+                        </button>
                         <ul class="dropdown-menu">
                             <li>
                                 <a class="dropdown-item" href="#"
                                    onclick="document.getElementById('id_semester').value = 'Spring';
+                                   document.getElementById('id_button_semester').innerText = 'Spring';
                                     selectedSemester = 'Spring';
                                     ">Spring</a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="#"
                                    onclick="document.getElementById('id_semester').value = 'Summer';
+                                   document.getElementById('id_button_semester').innerText = 'Summer';
                                     selectedSemester = 'Summer';
                                     ">Summer</a>
                             </li>

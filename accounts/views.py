@@ -20,7 +20,6 @@ class SignInView(View):
         return render(request, self.template_name, {})
 
     def post(self, request, *args, **kwargs):
-        print(request.POST)
         username = request.POST.get("username")
         password = request.POST.get("password")
         storage = messages.get_messages(request)
@@ -91,6 +90,10 @@ class RegisterView(View):
             messages.warning(request, "This username is already taken")
             return render(request, self.template_name, context=self.context)
 
+        if User.objects.filter(email=email).first():
+            messages.warning(request, "This username is already taken")
+            return render(request, self.template_name, context=self.context)
+
         # checking if all the fields is ok or not
         if password == confirm_password:
             user = User.objects.create_user(username=username,
@@ -152,7 +155,7 @@ class ProfileView(LoginRequiredMixin, View):
             if check_student_id and request.user.student.student_id != check_student_id.student_id:
                 messages.warning(request, 'This student id already exists')
             else:
-                student_profile.student_id = student_id
+                # student_profile.student_id = student_id
                 student_profile.full_name = full_name
                 student_profile.batch = batch
                 student_profile.section = section

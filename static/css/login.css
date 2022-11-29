@@ -191,7 +191,7 @@
     margin-top: 6px;
 }
 
-.signInBtn{
+.signInBtn {
     background: #251B37;
     color: #ffffff;
     box-shadow: none;
@@ -207,6 +207,7 @@
 .signInBtn:hover, .signInBtn:focus {
     /*height: 40px;*/
     background: #3e2e5b;
+    color: #ffffff;
     border-radius: 5px;
 }
 

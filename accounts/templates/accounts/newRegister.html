@@ -12,12 +12,14 @@
         {% endfor %}
         <div class="row" style="padding-bottom: 70px">
             <div class="leftImage card border-0 col-lg-6 d-none d-lg-flex justify-content-center">
-                <img style="margin: 5%" class=""
-                     src={% static 'media/loginimg.png' %} alt="">
+                <img
+                        style="margin: 5%"
+                        src={% static 'media/loginimg.png' %} alt="">
             </div>
             <div class="col-lg-6 rightDiv d-flex justify-content-center align-items-center">
                 <div class="block-login-form">
-                    <h3 class="loginHeading">Create your PROJECTO Account!</h3>
+                    <h4 style="font-weight: bold" class="color-primary">
+                        Create your PROJECTO Account!</h4>
                     <form method="post" class="col-lg-10 col-md-10">
                         {% csrf_token %}
                         <label for="id_student_id"

@@ -3,45 +3,82 @@
 {% block content %}
     <div class="container block-body-container mb-5">
         <p id="message-print" class="alert" style="display: none"></p>
-        <div id="id_design_print" class="d-flex justify-content-between">
+        <div id="id_design_print" class="d-flex justify-content-between"
+             style="border-bottom: 1px solid #d2d2d2">
             <h3 id="id_heading" class="color-primary-second">Result Sheets</h3>
-            <div id="id_button_group" class="btn-group" role="group"
-                 aria-label="Basic outlined example">
-                <button type="button" class="btn btn-sm btn-outline-secondary"
-                        onclick="clicked_button ='CSV'; DownloadCSV();">CSV
-                </button>
-                <button type="button" class="btn  btn-sm btn-outline-secondary">
-                    PDF
-                </button>
-                <button type="button" class="btn  btn-sm btn-outline-secondary"
-                        onclick="PrintButton()">
-                    Print
-                </button>
-            </div>
+            {% if results.count > 0 %}
+                <div id="id_button_group" class="btn-group" role="group"
+                     aria-label="Basic outlined example">
+                    <button type="button"
+                            class="btn btn-sm btn-outline-secondary"
+                            onclick="clicked_button ='CSV'; DownloadCSV();">CSV
+                    </button>
+                    <button type="button"
+                            class="btn  btn-sm btn-outline-secondary">
+                        PDF
+                    </button>
+                    <button type="button"
+                            class="btn  btn-sm btn-outline-secondary"
+                            onclick="PrintButton()">
+                        Print
+                    </button>
+                </div>
+            {% endif %}
         </div>
-        {% include 'divider.html' %}
-        <div id="" class="table-responsive ">
-            <table id="data-table" class="table table-striped mt-2">
-                <thead>
-                <tr>
-                    <th scope="col">Full Name</th>
-                    <th scope="col">Student Id</th>
-                    <th scope="col">Course</th>
-                    <th scope="col">Mark</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for result in results %}
+        {% if results.count > 0 %}
+            <div id="" class="table-responsive ">
+                <table id="data-table" class="table table-striped mt-2">
+                    <thead>
                     <tr>
-                        <td>{{ result.student.full_name }}</td>
-                        <td>{{ result.student.student_id }}</td>
-                        <td>CSE-{{ result.course.course_id }}</td>
-                        <td>{{ result.marks }}</td>
+                        <th scope="col">Full Name</th>
+                        <th scope="col">Student Id</th>
+                        <th scope="col">Course</th>
+                        <th scope="col">Mark</th>
+                        <th scope="col">Grade</th>
                     </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody>
+                    {% for result in results %}
+                        <tr>
+                            <td>{{ result.student.full_name }}</td>
+                            <td>{{ result.student.student_id }}</td>
+                            <td>CSE-{{ result.course.course_id }}</td>
+                            <td>{{ result.marks }}</td>
+                            <td>
+                                {% if result.marks >= 80 %}
+                                    A+
+                                {% elif result.marks >= 75 %}
+                                    A
+                                {% elif result.marks >= 75 %}
+                                    A
+                                {% elif result.marks >= 70 %}
+                                    A-
+                                {% elif result.marks >= 65 %}
+                                    B+
+                                {% elif result.marks >= 60 %}
+                                    B
+                                {% elif result.marks >= 55 %}
+                                    B-
+                                {% elif result.marks >= 50 %}
+                                    C+
+                                {% elif result.marks >= 45 %}
+                                    C
+                                {% elif result.marks >= 40 %}
+                                    D
+                                {% else %}
+                                    F
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="mt-5 d-flex justify-content-center align-items-center">
+                No result found
+            </div>
+        {% endif %}
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"

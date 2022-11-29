@@ -7,8 +7,9 @@
                 {% if  message.tags == 'success' %}
                     <p class="alert alert-success">
                         {{ message }}
-                        <a href="{% url 'teacher-management' %}">go back to
-                            teacher management</a>
+                        <a href="{% url 'teacher-management' %}">
+                            go back to teacher management
+                        </a>
                     </p>
                 {% else %}
                     <p class="alert alert-warning">

@@ -6,7 +6,7 @@
         <div class="d-flex justify-content-between">
             <h3 class="color-primary-second">Teacher List</h3>
             <a style="text-decoration: none">
-                <button class="ms-2 btn btn-sm btn-outline-primary"
+                <button class="ms-2 btn btn-sm btn-outline-secondary"
                         onclick="location.href='{% url 'add-teacher' %}'"
                 >
                     Add Teacher
@@ -76,7 +76,9 @@
                                         <div class="modal-footer">
                                             <button type="button"
                                                     class="btn btn-sm btn-secondary"
-                                                    data-bs-dismiss="modal">
+                                                    data-bs-dismiss="modal"
+                                                    onclick=""
+                                            >
                                                 Cancel
                                             </button>
                                             <button type="button"
@@ -165,9 +167,10 @@
 
             message = localStorage.getItem("alert_message");
             console.log(message.length)
-            if (message.length)
+            if (message.length) {
                 element.style.display = "block";
-            element.innerText = message;
+                element.innerText = message;
+            }
             localStorage.clear();
         });
 

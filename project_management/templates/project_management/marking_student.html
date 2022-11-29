@@ -36,8 +36,9 @@
                                 <div class="p-3 border bg-light"
                                      style="border-radius: 10px">
                                     <div class="d-flex justify-content-between">
-                                        <h5>Student
-                                            ID: {{ student.student_id }}</h5>
+                                        <h5>
+                                            Student ID: {{ student.student_id }}
+                                        </h5>
                                         <div>
                                             <div class="form-check form-switch">
                                                 <label class="form-check-label"
@@ -78,9 +79,11 @@
                                             style="display: none"
                                     />
                                     <div>
-                                        <label for="id_criteria1{{ student.student_id }}"
-                                               class="mt-1">Criteria
-                                            1(Presentation/Viva)</label>
+                                        <label
+                                                for="id_criteria1{{ student.student_id }}"
+                                                class="mt-1">
+                                            Criteria 1(Presentation/Viva)
+                                        </label>
                                         <input
                                                 type="number"
                                                 max="30"
@@ -89,9 +92,12 @@
                                                 name="criteria1{{ student.student_id }}"
                                                 required
                                         />
-                                        <label for="id_criteria2{{ student.student_id }}"
-                                               class="mt-1">Criteria 2(Coding
-                                            Depth)</label>
+                                        <label
+                                                for="id_criteria2{{ student.student_id }}"
+                                                class="mt-1"
+                                        >
+                                            Criteria 2(Coding Depth)
+                                        </label>
                                         <input
                                                 type="number"
                                                 max="30"
@@ -101,14 +107,15 @@
                                                 required
                                         />
                                     </div>
-                                    <label for="id_supervisor_mark{{ student.student_id }}"
-                                           class="mt-1"
-
+                                    <label
+                                            for="id_supervisor_mark{{ student.student_id }}"
+                                            class="mt-1"
                                             {% if proposal.assigned_supervisor != user.teacher %}
-                                           style="display: none"
+                                            style="display: none"
                                             {% endif %}
-                                    >Supervisor
-                                        Mark</label>
+                                    >
+                                        Supervisor Mark
+                                    </label>
                                     <input
                                             type="number"
                                             max="40"
@@ -142,36 +149,30 @@
                                                    onclick="selectedStudent = '';
                                                        showHideFullMarks();">
                                         </div>
-                                        <div class="form-check form-switch">
-                                            <label class="form-check-label"
-                                                   for="isAbsent">Absent</label>
-                                            <input class="form-check-input"
-                                                   type="checkbox"
-                                                   name="isAbsent"
-                                                   id="isAbsent"
-                                                   onclick="selectedStudent = '';
-                                                           makeAbsent();">
-                                        </div>
                                     </div>
                                 </div>
                                 {% include 'divider.html' %}
-                                <label for="id_full_marks"
-                                       class="mt-1"
-                                       style="display:none;"
-                                >Full Marks
+                                <label
+                                        for="id_full_marks"
+                                        class="mt-1"
+                                        style="display:none;"
+                                >
+                                    Full Marks
                                 </label>
                                 <input
                                         type="number"
                                         max="60"
+                                        style="display: none"
                                         class="form-control input-field"
                                         id="id_full_marks"
                                         name="full_marks"
-                                        style="display: none"
                                 />
                                 <div>
-                                    <label for="id_criteria1"
-                                           class="mt-1">Criteria
-                                        1(Presentation/Viva)</label>
+                                    <label
+                                            for="id_criteria1"
+                                            class="mt-1"
+                                    >Criteria 1(Presentation/Viva)
+                                    </label>
                                     <input
                                             type="number"
                                             max="30"
@@ -179,9 +180,11 @@
                                             id="id_criteria1"
                                             name="criteria1"
                                     />
-                                    <label for="id_criteria2"
-                                           class="mt-1">Criteria 2(Coding
-                                        Depth)</label>
+                                    <label
+                                            for="id_criteria2"
+                                            class="mt-1"
+                                    >Criteria 2(Coding Depth)
+                                    </label>
                                     <input
                                             type="number"
                                             max="30"
@@ -190,20 +193,18 @@
                                             name="criteria2"
                                     />
                                 </div>
-                                <label for="id_supervisor_mark"
-                                       class="mt-1"
-                                        {% if proposal.assigned_supervisor != user.teacher %}
-                                       style="display: none"
-                                        {% endif %}
-                                >Supervisor
-                                    Mark</label>
+                                <label
+                                        for="id_supervisor_mark"
+                                        class="mt-1"
+                                        style="display: none"
+                                >
+                                    Supervisor Mark
+                                </label>
                                 <input
                                         type="number"
                                         max="40"
                                         class="form-control input-field"
-                                        {% if proposal.assigned_supervisor != user.teacher %}
                                         style="display: none"
-                                        {% endif %}
                                         id="id_supervisor_mark"
                                         name="supervisor_mark"
                                 />
@@ -237,8 +238,8 @@
                     document.querySelector("label[for='id_supervisor_mark" + {{ student.student_id }} +"']").style.display = "block"
                 {% endfor %}
                 document.getElementById("id_supervisor_mark").required = false;
-                document.getElementById("id_supervisor_mark").style.display = "block";
-                document.querySelector("label[for='id_supervisor_mark']").style.display = "block"
+                document.getElementById("id_supervisor_mark").style.display = "none";
+                document.querySelector("label[for='id_supervisor_mark']").style.display = "none"
             {% else %}
                 {% for student in proposal.students.all %}
                     document.getElementById("id_supervisor_mark" + {{ student.student_id }}).style.display = "none";
@@ -256,51 +257,18 @@
 
         function validate() {
             if (document.getElementById("flexSwitchCheckDefault").checked) {
-                document.getElementById("allStudentMark").style.display = "none";
-                document.getElementById("sameMark").style.display = "block";
-
-                {% for student in proposal.students.all %}
-                    document.getElementById("id_full_marks" + {{ student.student_id }}).required = false;
-                    document.getElementById("id_criteria1" + {{ student.student_id }}).required = false;
-                    document.getElementById("id_criteria2" + {{ student.student_id }}).required = false;
-
-                    {% if proposal.assigned_supervisor == user.teacher %}
-                        document.getElementById("id_supervisor_mark" + {{ student.student_id }}).required = false;
-                    {% endif %}
-                {% endfor %}
-
-                document.getElementById("id_full_marks").required = false;
-                document.getElementById("id_criteria1").required = true;
-                document.getElementById("id_criteria2").required = true;
-                {% if proposal.assigned_supervisor == user.teacher %}
-                    document.getElementById("id_supervisor_mark").required = true;
-                {% endif %}
-
-
+                document.getElementById("allStudentMark").style.display = "none"
+                document.getElementById("sameMark").style.display = "block"
             } else {
-                document.getElementById("allStudentMark").style.display = "block";
-                document.getElementById("sameMark").style.display = "none";
-
-                {% for student in proposal.students.all %}
-                    document.getElementById("id_criteria1" + {{ student.student_id }}).required = true;
-                    document.getElementById("id_criteria2" + {{ student.student_id }}).required = true;
-
-                    {% if proposal.assigned_supervisor == user.teacher %}
-                        document.getElementById("id_supervisor_mark" + {{ student.student_id }}).required = true;
-                    {% endif %}
-                {% endfor %}
-
-                document.getElementById("id_full_marks").required = false;
-                document.getElementById("id_criteria1").required = false;
-                document.getElementById("id_criteria2").required = false;
-                {% if proposal.assigned_supervisor == user.teacher %}
-                    document.getElementById("id_supervisor_mark").required = false;
-                {% endif %}
+                document.getElementById("allStudentMark").style.display = "block"
+                document.getElementById("sameMark").style.display = "none"
             }
         }
 
         function showHideFullMarks() {
+            console.log(selectedStudent)
             if (document.getElementById("assignSameMarkCheck" + selectedStudent).checked) {
+                console.log(document.getElementById("assignSameMarkCheck" + selectedStudent).checked)
 
                 document.getElementById("id_full_marks" + selectedStudent).required = false;
                 document.getElementById("id_criteria1" + selectedStudent).required = true;
@@ -355,17 +323,24 @@
                 document.getElementById("id_full_marks" + selectedStudent).required = false;
                 document.getElementById("id_criteria1" + selectedStudent).required = true;
                 document.getElementById("id_criteria2" + selectedStudent).required = true;
-                document.getElementById("id_supervisor_mark" + selectedStudent).required = true;
+
 
                 console.log("Make absent " + selectedStudent + " :" + document.getElementById("id_supervisor_mark" + selectedStudent).required);
 
                 document.getElementById("id_criteria1" + selectedStudent).style.display = "block";
                 document.getElementById("id_criteria2" + selectedStudent).style.display = "block";
-                document.getElementById("id_supervisor_mark" + selectedStudent).style.display = "block";
+
 
                 document.querySelector("label[for='id_criteria1" + selectedStudent + "']").style.display = "block"
                 document.querySelector("label[for='id_criteria2" + selectedStudent + "']").style.display = "block"
-                document.querySelector("label[for='id_supervisor_mark" + selectedStudent + "']").style.display = "block"
+
+
+                {% if user.teacher == proposal.assigned_supervisor %}
+                    document.getElementById("id_supervisor_mark" + selectedStudent).required = true;
+                    document.querySelector("label[for='id_supervisor_mark" + selectedStudent + "']").style.display = "block"
+                    document.getElementById("id_supervisor_mark" + selectedStudent).style.display = "block";
+                {% endif %}
+
             }
         }
 

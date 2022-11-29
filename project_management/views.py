@@ -17,8 +17,19 @@ class HomeView(View):
     template_name = 'home.html'
 
     def get(self, request, *args, **kwargs):
-        running_courses = Course.objects.filter(
-            deadline__range=(datetime.datetime.now().date(), datetime.date(2500, 1, 1))).order_by('deadline')
+
+        cur_date = datetime.datetime.now().date()
+
+        if cur_date.month <= 6:
+            semester = "Spring " + str(cur_date.year)
+        else:
+            semester = "Summer " + str(cur_date.year)
+
+        running_courses = Course.objects.filter(semester=semester,
+                                                deadline__range=(
+                                                    datetime.datetime.now().date(),
+                                                    datetime.date(2500, 1, 1))).order_by(
+            'deadline')
         archived_courses = Course.objects.filter(
             deadline__range=(
                 datetime.date(2000, 1, 1), datetime.datetime.now().date() - datetime.timedelta(1))).order_by('deadline')
@@ -563,8 +574,18 @@ class ResultSheetView(SuperUserMixin, View):
         course_id = kwargs.get('id')
         print(course_id)
         if course_id == 594612:
-            running_courses = Course.objects.filter(
-                deadline__range=(datetime.datetime.now().date(), datetime.date(2500, 1, 1))).order_by('deadline')
+            cur_date = datetime.datetime.now().date()
+
+            if cur_date.month <= 6:
+                semester = "Spring " + str(cur_date.year)
+            else:
+                semester = "Summer " + str(cur_date.year)
+
+            running_courses = Course.objects.filter(semester=semester,
+                                                    deadline__range=(
+                                                        datetime.datetime.now().date(),
+                                                        datetime.date(2500, 1, 1))).order_by(
+                'deadline')
             results = Result.objects.filter(course__in=running_courses.all())
             course = Course(id=594612)
         else:

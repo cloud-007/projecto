@@ -25,6 +25,11 @@
                                 required
                                 value="{{ title }}"
                         />
+                        <div id="id_title_error"
+                             style="display: none"
+                             class="invalid-feedback text-decoration-none">
+                            Project title is required.
+                        </div>
                         {# here is the tagify student element #}
                         <label for="id_tagify_student" class="mt-2">Team
                             Members</label>
@@ -36,6 +41,11 @@
                                 value="{{ user.student.student_id }}"
                                 required
                         >
+                        <div id="id_student_error"
+                             style="display: none"
+                             class="invalid-feedback text-decoration-none">
+                            Minimum one student is required.
+                        </div>
 
                         {# here is the tagify teachers element #}
                         <label for="id_tagify_teacher" class="mt-2">Preferred
@@ -47,6 +57,11 @@
                                 placeholder="Type teachers name"
                                 required
                         >
+                        <div id="id_teacher_error"
+                             style="display: none"
+                             class="invalid-feedback text-decoration-none">
+                            Please select some teachers.
+                        </div>
                         {# proposal file #}
                         <label for="id_proposal_file"
                                class="form-label mt-2" style="margin-bottom: 0">Upload
@@ -57,6 +72,11 @@
                                accept=".doc, .docx, .pdf"
                                required
                         />
+                        <div id="id_proposal_error"
+                             style="display: none"
+                             class="invalid-feedback text-decoration-none">
+                            Please select a proposal file.
+                        </div>
                         <div class="mt-4">
                             <!-- Button trigger modal -->
                             <button id="id_submit"
@@ -64,8 +84,8 @@
                                     class="btn btn-primary signInBtn"
                                     data-bs-toggle="modal"
                                     style="width: 100%; margin-bottom: -16px"
-                                    onclick="validateForm()"
-                                    data-bs-target="#exampleModal">
+                                    onclick="validateForm(event)"
+                            >
                                 Submit Proposal
                             </button>
 
@@ -86,14 +106,20 @@
                                                     aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body alert alert-warning">
-                                            Make sure following information is
-                                            correct. You won't be able to update
-                                            the form!
+                                            Submission Preview
                                             <ul>
-                                                <li>Title</li>
-                                                <li>Team members</li>
-                                                <li>Preferred Supervisors</li>
-                                                <li>Proposal file</li>
+                                                <li id="id_preview_title">
+                                                    Title
+                                                </li>
+                                                <li id="id_preview_student">Team
+                                                    members
+                                                </li>
+                                                <li id="id_preview_teacher">
+                                                    Preferred Supervisors
+                                                </li>
+                                                <li id="id_preview_proposal">
+                                                    Proposal file
+                                                </li>
                                             </ul>
                                         </div>
                                         <div class="modal-footer">
@@ -161,12 +187,15 @@
                                 <h6 class="text-muted content-font">Assigned
                                     Supervisor: {{ proposal.assigned_supervisor }}</h6>
                             </div>
-                            <a href="{{ proposal.file.url }}">
-                                <button class="btn btn-sm btn-outline-secondary">
-                                    <i class="fa-solid fa-circle-down"></i> Proposal
-                                    File
-                                </button>
-                            </a>
+                            <button
+                                    style="height: 32px; width: auto"
+                                    class="ps-2 btn btn-sm btn-outline-secondary"
+                                    onclick="location.href='{{ proposal.file.url }}'"
+                            >
+                                <i class="fa-solid fa-circle-down"></i>
+                                Proposal
+                                File
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -191,7 +220,15 @@
         // initialize Tagify on the above input node reference
         const tagify_student = new Tagify(studentInputElm, {
             enforceWhitelist: true,
-            whitelist: student_list // Array of values. stackoverflow.com/a/43375571/104380
+            whitelist: student_list, // Array of values. stackoverflow.com/a/43375571/104380
+            dropdown: {
+                classname: "color-blue",
+                enabled: 0,              // show the dropdown immediately on focus
+                maxItems: 5,
+                position: "text",         // place the dropdown near the typed text
+                closeOnSelect: false,          // keep the dropdown open after selecting a suggestion
+                highlightFirst: true,
+            }
         })
 
         const teacherList = [
@@ -207,25 +244,97 @@
         // initialize Tagify on the above input node reference
         const tagify_teacher = new Tagify(teacherInputElm, {
             enforceWhitelist: true,
-            whitelist: teacherList // Array of values. stackoverflow.com/a/43375571/104380
+            whitelist: teacherList, // Array of values. stackoverflow.com/a/43375571/104380
+            dropdown: {
+                classname: "color-blue",
+                enabled: 0,              // show the dropdown immediately on focus
+                maxItems: 5,
+                position: "text",         // place the dropdown near the typed text
+                closeOnSelect: false,          // keep the dropdown open after selecting a suggestion
+                highlightFirst: true
+            }
         })
 
-        $('#id_submit').on('click', function () {
-            console.log("Clicked button")
-            $("#id_form").valid();
-        });
 
-        function validateForm() {
-            $("#form1").validate({
-                rules: {
-                    field1: "required"
-                },
-                messages: {
-                    field1: "Please specify your name"
+        function validateForm(e) {
+            e.preventDefault()
+            console.log("Clicked")
+            const project_title = document.getElementById("id_title").value;
+            const project_student = document.getElementById("id_tagify_student").value;
+            const project_teacher = document.getElementById("id_tagify_teacher").value;
+            const project_file = document.getElementById("id_proposal_file").value;
+            let errorFound = false;
 
+            console.log(project_title.length)
+            if (project_title.length === 0) {
+                errorFound = true;
+                document.getElementById("id_title_error").style.display = "block"
+            } else {
+                document.getElementById("id_title_error").style.display = "none"
+            }
+
+            if (project_student.length === 0) {
+                errorFound = true;
+                document.getElementById("id_student_error").style.display = "block"
+            } else {
+                document.getElementById("id_student_error").style.display = "none"
+            }
+
+            if (project_teacher.length === 0) {
+                errorFound = true;
+                document.getElementById("id_teacher_error").style.display = "block"
+            } else {
+                document.getElementById("id_teacher_error").style.display = "none"
+            }
+
+            if (project_file.length === 0) {
+                errorFound = true;
+                document.getElementById("id_proposal_error").style.display = "block"
+            } else {
+                document.getElementById("id_proposal_error").style.display = "none"
+            }
+
+
+            if (!errorFound) {
+                const stdList = project_student.split('"')
+                const teacherList = project_teacher.split('"')
+
+
+                let stdDataToSend = "";
+                let teacherDataToSend = "";
+
+                for (let i in stdList) {
+                    if (stdList[i] === "[{" || stdList[i] === "value" || stdList[i] === ":" || stdList[i] === "},{" || stdList[i] === "}]") {
+
+                    } else {
+                        if (stdDataToSend.length) {
+                            stdDataToSend += ", ";
+                        }
+                        stdDataToSend += stdList[i];
+                    }
                 }
-            })
-            document.getElementById("id_form").valid();
+
+                for (let i in teacherList) {
+                    if (teacherList[i] === "[{" || teacherList[i] === "value" || teacherList[i] === ":" || teacherList[i] === "},{" || teacherList[i] === "}]") {
+
+                    } else {
+                        if (teacherDataToSend.length) {
+                            teacherDataToSend += ", ";
+                        }
+                        teacherDataToSend += teacherList[i];
+                    }
+                }
+
+
+                console.log(project_student)
+
+
+                document.getElementById("id_preview_title").innerText = "Title: " + project_title
+                document.getElementById("id_preview_student").innerText = "Team Members: " + stdDataToSend
+                document.getElementById("id_preview_teacher").innerText = "Preferred Supervisor: " + teacherDataToSend
+                document.getElementById("id_preview_proposal").innerText = "Proposal File: " + project_file
+                $('#exampleModal').modal('show');
+            }
         }
 
     </script>
