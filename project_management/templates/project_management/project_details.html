@@ -23,6 +23,9 @@
                         </li>
                     {% endif %}
                     <li><a class="dropdown-item text-muted"
+                           href="{% url 'course-details' course.id 'all' %}">All</a>
+                    </li>
+                    <li><a class="dropdown-item text-muted"
                            href="{% url 'course-details' course.id user.teacher.initials %}">My
                         Projects</a>
                     </li>
@@ -53,6 +56,13 @@
                     > Result
                     </button>
                 {% endif %}
+                <button type="button" class="btn btn-sm btn-outline-secondary"
+                        style="
+                        white-space: nowrap;
+                        text-align: center;"
+                        onclick="location.href='{% url 'course-details' course.id 'all' %}';"
+                > All
+                </button>
                 <button type="button" class="btn btn-sm btn-outline-secondary"
                         style="
                         white-space: nowrap;
