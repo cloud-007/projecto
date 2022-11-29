@@ -6,7 +6,9 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.template.loader import get_template
 from django.views import View
+from xhtml2pdf import pisa
 
 from accounts.models import Teacher, Student
 from project_management.mixins import TeacherRequiredMixin, SuperUserMixin
@@ -58,9 +60,12 @@ class ProjectDetailsView(TeacherRequiredMixin, View):
     }
 
     def get(self, request, *args, **kwargs):
+
         print(args)
         print(kwargs)
         course_id = kwargs.get('id')
+        query = request.GET.get('query')
+
         print(course_id)
         course = Course.objects.get(id=course_id)
         filter_by = kwargs.get('filter_by')
@@ -73,6 +78,31 @@ class ProjectDetailsView(TeacherRequiredMixin, View):
             proposals = course.proposal.filter(assigned_supervisor=request.user.teacher)
         else:
             proposals = course.proposal.filter(assigned_supervisor__isnull=True)
+        if query:
+            proposals = proposals.filter(students__student_id__contains=query)
+
+        if request.is_ajax():
+            print("This is ajax call to download all pdf")
+            type = request.GET.get("type", None)
+            if type == "PDF":
+                print("Downloading Submission of proposals")
+                data = {
+                    'course': course,
+                    'proposals': proposals,
+                    'filter_by': filter_by,
+                    'teachers': Teacher.objects.all()
+                }
+
+                template = get_template('project_management/download_proposal_list_pdf.html')
+                html = template.render(data)
+
+                file = open('test.pdf', "w+b")
+                pisaStatus = pisa.CreatePDF(html.encode('utf-8'), dest=file,
+                                            encoding='utf-8')
+                file.seek(0)
+                pdf = file.read()
+                file.close()
+                return HttpResponse(pdf, 'application/pdf')
 
         print(course)
         self.context = {
@@ -88,7 +118,23 @@ class ProjectDetailsView(TeacherRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         print(request.POST)
         # check if it is an ajax call
+        course_id = kwargs.get('id')
+        course = Course.objects.get(id=course_id)
+        filter_by = kwargs.get('filter_by')
+        if filter_by == 'all':
+            proposals = course.proposal.all()
+        elif filter_by == 'assigned':
+            proposals = course.proposal.filter(assigned_supervisor__isnull=False)
+        else:
+            proposals = course.proposal.filter(assigned_supervisor__isnull=True)
+        self.context = {
+            'course': course,
+            'proposals': proposals,
+            'filter_by': filter_by,
+            'teachers': Teacher.objects.all()
+        }
         if request.is_ajax() and request.user.is_staff:
+
             print("Came from ajax")
             delete_proposal = request.POST.get("delete_button")
             print(delete_proposal)
@@ -106,8 +152,9 @@ class ProjectDetailsView(TeacherRequiredMixin, View):
                     next_semester = "Spring"
                     next_year = int(year) + 1
                 next_semester = next_semester + " " + str(next_year)
-                next_proposal = Proposal.objects.get(course=Course.objects.get(course_id=4801, semester=next_semester),
-                                                     team_lead=proposal.team_lead)
+                next_proposal = Proposal.objects.get(
+                    course=Course.objects.get(course_id=4801, semester=next_semester),
+                    team_lead=proposal.team_lead)
             else:
                 next_proposal = None
             if delete_proposal == 'true':
@@ -125,22 +172,6 @@ class ProjectDetailsView(TeacherRequiredMixin, View):
                     next_proposal.assigned_by = request.user.teacher
                     next_proposal.save()
                 print(proposal.assigned_supervisor)
-
-            course_id = kwargs.get('id')
-            course = Course.objects.get(id=course_id)
-            filter_by = kwargs.get('filter_by')
-            if filter_by == 'all':
-                proposals = course.proposal.all()
-            elif filter_by == 'assigned':
-                proposals = course.proposal.filter(assigned_supervisor__isnull=False)
-            else:
-                proposals = course.proposal.filter(assigned_supervisor__isnull=True)
-            self.context = {
-                'course': course,
-                'proposals': proposals,
-                'filter_by': filter_by,
-                'teachers': Teacher.objects.all()
-            }
 
         return render(request, self.template_name, self.context)
 
@@ -592,17 +623,38 @@ class ResultSheetView(SuperUserMixin, View):
             course = Course.objects.get(id=course_id)
             results = Result.objects.filter(proposal__in=course.proposal.all())
         if request.is_ajax():
-            response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename=Result '
+            print(request.GET)
+            type = request.GET.get("type", None)
+            if type == 'CSV':
+                print("This is csv file download request")
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename=Result '
 
-            writer = csv.writer(response)
-            writer.writerow(['Name', 'ID', 'Marks', 'Date'])
+                writer = csv.writer(response)
+                writer.writerow(['Name', 'ID', 'Marks', 'Date'])
 
-            for result in results:
-                writer.writerow(
-                    [result.student.full_name, result.student.student_id, result.marks, result.created_date])
-            print(response)
-            return response
+                for result in results:
+                    writer.writerow(
+                        [result.student.full_name, result.student.student_id, result.marks, result.created_date])
+                print(response)
+                return response
+            else:
+                print("From pdf button")
+                data = {
+                    'results': results,
+                    'course': course
+                }
+
+                template = get_template('project_management/download_course_result_pdf.html')
+                html = template.render(data)
+
+                file = open('test.pdf', "w+b")
+                pisaStatus = pisa.CreatePDF(html.encode('utf-8'), dest=file,
+                                            encoding='utf-8')
+                file.seek(0)
+                pdf = file.read()
+                file.close()
+                return HttpResponse(pdf, 'application/pdf')
 
         print(results)
         context = {

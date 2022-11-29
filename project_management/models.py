@@ -104,12 +104,12 @@ class Result(AbstractTimestampModel):
     @property
     def marks(self):
         marksheets = Marksheet.objects.filter(result=self)
-        c1 = sum(marksheets.values_list('criteria_1', flat=True)) / max(1, len(marksheets.values_list('criteria_1',
-                                                                                                      flat=True)))
-        c2 = sum(marksheets.values_list('criteria_2', flat=True)) / max(1, len(marksheets.values_list('criteria_2',
-                                                                                                      flat=True)))
+        c1 = sum(marksheets.values_list('criteria_1', flat=True))
+        c2 = sum(marksheets.values_list('criteria_2', flat=True))
+        res = c1 + c2
+        res /= max(1, len(marksheets.values_list('criteria_2', flat=True)))
         s_mark = sum(marksheets.values_list('supervisor', flat=True))
-        return c1 + c2 + s_mark
+        return int(res + s_mark)
 
     def __str__(self):
         return "CSE - " + str(

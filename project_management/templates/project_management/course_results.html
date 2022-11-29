@@ -14,7 +14,9 @@
                             onclick="clicked_button ='CSV'; DownloadCSV();">CSV
                     </button>
                     <button type="button"
-                            class="btn  btn-sm btn-outline-secondary">
+                            class="btn  btn-sm btn-outline-secondary"
+                            onclick="clicked_button ='PDF'; DownloadPDF();"
+                    >
                         PDF
                     </button>
                     <button type="button"
@@ -133,6 +135,7 @@
                     data: {
                         // plus other data
                         'type': clicked_button,
+                        'button': 'csv',
                     },
                     success: function (data) {
                         console.log(data)
@@ -149,6 +152,39 @@
             )
 
         }
+
+        function DownloadPDF() {
+            course_id ={{ course.id }};
+            if (course_id === null) course_id = 594612
+            console.log(course_id)
+
+            $.ajax({
+                    type: 'GET',
+                    url: '{% url 'course-results' course.id %}',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    data: {
+                        'type': clicked_button,
+                    },
+                    success: function (data) {
+                        console.log(data)
+                        var blob = new Blob([data]);
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        console.log(link.href)
+                        link.download = "Result - {{ course.semester }}.pdf";
+                        link.click();
+                    },
+                    error: function (data) {
+                        console.log("Error Data")
+                        console.log(data)
+                    }
+                }
+            )
+
+        }
+
     </script>
 
 {% endblock %}

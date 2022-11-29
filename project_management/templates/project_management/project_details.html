@@ -3,25 +3,64 @@
 {% block content %}
     <div class="container mb-5 block-body-container" onclick="">
         {# running project and manage #}
-        <div class="d-flex justify-content-between">
-            <h5 id="id_total_submission" class="color-primary-second"
-                style="font-weight: bold">CSE
-                - {{ course.course_id }}
-                submissions({{ proposals.count }}/{{ student_count }})</h5>
-            <!-- dropdown for mobile -->
-            <div class="dropdown d-md-none">
-                <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
+        <div class="row align-items-center mb-1">
+            <div class="col-lg-11 col-md-10 col-sm-8  d-md-flex justify-content-between align-items-center">
+                <h4 id="id_total_submission" class="d-flex color-primary-second"
+                    style="font-weight: bold">CSE
+                    - {{ course.course_id }}
+                    submissions({{ proposals.count }}/{{ student_count }})</h4>
+                <div class="d-flex btn-group" role="group"
+                     aria-label="First group">
+                    <input
+                            id="id_search"
+                            type="text"
+                            class="form-control input-field bg-white"
+                            style="border-radius: 3px 0 0 3px; border: 1px solid #6c757d"
+                            placeholder="Search by student id"
+                    >
+                    <button
+                            class="btn btn-sm btn-outline-secondary"
+                            onclick="searchButtonClick()"
+                    >
+                        Search
+                    </button>
+                </div>
+            </div>
+            <div style="height: 38px;"
+                 class="col-lg-1 col-md-2 col-sm-4 dropdown d-flex justify-content-end ">
+                <button
+                        class="btn btn-sm btn-outline-secondary dropdown-toggle"
                         type="button" id="dropdownMenuButton1"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fa fa-cog"></i> Actions
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                >
+                    Actions
                 </button>
                 <ul class="dropdown-menu"
                     aria-labelledby="dropdownMenuButton1">
                     {% if user.is_superuser %}
                         <li><a class="dropdown-item text-muted"
+                               href="{% url 'course-update' course.id  course.semester %}">Update</a>
+                        </li>
+                        <li>
+                            <button type="button"
+                                    class="dropdown-item text-muted"
+                                    onclick="DownloadPDF()"
+                            >Download
+                            </button>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item text-muted"
                                href="{% url 'course-results' course.id %}">Result</a>
                         </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
                     {% endif %}
+
                     <li><a class="dropdown-item text-muted"
                            href="{% url 'course-details' course.id 'all' %}">All</a>
                     </li>
@@ -37,62 +76,9 @@
                         <li><a class="dropdown-item text-muted"
                                href="{% url 'course-details' course.id 'unassigned' %}">Unassigned</a>
                         </li>
-                        <li><a class="dropdown-item text-muted"
-                               href="{% url 'course-update' course.id  course.semester %}">Update</a>
-                        </li>
                     {% endif %}
                 </ul>
             </div>
-            <!-- button group for desktop -->
-            <div class="btn-group d-none d-md-flex"
-                 aria-label="Basic outlined example">
-                {% if user.is_superuser %}
-                    <button type="button"
-                            class="btn btn-sm btn-outline-secondary"
-                            style="
-                        white-space: nowrap;
-                        text-align: center;"
-                            onclick="location.href='{% url 'course-results' course.id %}';"
-                    > Result
-                    </button>
-                {% endif %}
-                <button type="button" class="btn btn-sm btn-outline-secondary"
-                        style="
-                        white-space: nowrap;
-                        text-align: center;"
-                        onclick="location.href='{% url 'course-details' course.id 'all' %}';"
-                > All
-                </button>
-                <button type="button" class="btn btn-sm btn-outline-secondary"
-                        style="
-                        white-space: nowrap;
-                        text-align: center;"
-                        onclick="location.href='{% url 'course-details' course.id user.teacher.initials %}';"
-                > My Projects
-                </button>
-                {% if user.is_superuser %}
-                    <button type="button"
-                            class="btn btn-sm btn-outline-secondary"
-                            onclick="location.href='{% url 'course-details' course.id 'assigned' %}';"
-                    >
-                        Assigned
-                    </button>
-                    <button type="button"
-                            class="btn btn-sm btn-outline-secondary"
-                            onclick="location.href='{% url 'course-details' course.id 'unassigned' %}';"
-                    >
-                        Unassigned
-                    </button>
-                    <button type="button"
-                            class="btn btn-sm btn-outline-secondary"
-                            onclick="location.href='{% url 'course-update' course.id  course.semester %}';"
-                    >
-                        Update
-                    </button>
-                {% endif %}
-
-            </div>
-
         </div>
         {% include 'divider.html' %}
         {# submission details of a project body #}
@@ -109,4 +95,46 @@
         {% endif %}
 
     </div>
+    <script type="text/javascript">
+        function searchButtonClick() {
+            const searchText = document.getElementById("id_search").value
+            if (searchText.length === 0) {
+                return
+            }
+            location.href = '{% url 'course-details' course.id 'all' %}?query=' + searchText;
+        }
+
+        function DownloadPDF() {
+            course_id ={{ course.id }};
+            if (course_id === null) course_id = 594612
+            console.log(course_id)
+
+            $.ajax({
+                    type: 'GET',
+                    url: '{% url 'course-details' course.id filter_by %}',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    data: {
+                        'type': "PDF",
+                    },
+                    success: function (data) {
+                        console.log(data)
+                        var blob = new Blob([data]);
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        console.log(link.href)
+                        link.download = "Proposal Submission - {{ course.semester }}.pdf";
+                        link.click();
+                    },
+                    error: function (data) {
+                        console.log("Error Data")
+                        console.log(data)
+                    }
+                }
+            )
+
+        }
+
+    </script>
 {% endblock %}

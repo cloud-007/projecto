@@ -47,7 +47,6 @@
                                                 <input class="form-check-input"
                                                        type="checkbox"
                                                        name="detailed_marking{{ student.student_id }}"
-                                                       checked
                                                        id="assignSameMarkCheck{{ student.student_id }}"
                                                        onclick="selectedStudent = {{ student.student_id }};
                                                                showHideFullMarks();">
@@ -65,10 +64,11 @@
                                         </div>
                                     </div>
                                     {% include 'divider.html' %}
-                                    <label for="id_full_marks{{ student.student_id }}"
-                                           class="mt-1"
-                                           style="display:none;"
-                                    >Full Marks
+                                    <label
+                                            for="id_full_marks{{ student.student_id }}"
+                                            class="mt-1"
+                                    >
+                                        Full Marks
                                     </label>
                                     <input
                                             type="number"
@@ -76,12 +76,13 @@
                                             class="form-control input-field"
                                             id="id_full_marks{{ student.student_id }}"
                                             name="full_marks{{ student.student_id }}"
-                                            style="display: none"
+                                            required
                                     />
                                     <div>
                                         <label
                                                 for="id_criteria1{{ student.student_id }}"
-                                                class="mt-1">
+                                                class="mt-1"
+                                                style="display: none">
                                             Criteria 1(Presentation/Viva)
                                         </label>
                                         <input
@@ -90,11 +91,12 @@
                                                 class="form-control input-field"
                                                 id="id_criteria1{{ student.student_id }}"
                                                 name="criteria1{{ student.student_id }}"
-                                                required
+                                                style="display: none"
                                         />
                                         <label
                                                 for="id_criteria2{{ student.student_id }}"
                                                 class="mt-1"
+                                                style="display: none"
                                         >
                                             Criteria 2(Coding Depth)
                                         </label>
@@ -104,7 +106,7 @@
                                                 class="form-control input-field"
                                                 id="id_criteria2{{ student.student_id }}"
                                                 name="criteria2{{ student.student_id }}"
-                                                required
+                                                style="display: none"
                                         />
                                     </div>
                                     <label
@@ -144,7 +146,6 @@
                                             <input class="form-check-input"
                                                    type="checkbox"
                                                    name="detailed_marking"
-                                                   checked
                                                    id="assignSameMarkCheck"
                                                    onclick="selectedStudent = '';
                                                        showHideFullMarks();">
@@ -155,14 +156,12 @@
                                 <label
                                         for="id_full_marks"
                                         class="mt-1"
-                                        style="display:none;"
                                 >
                                     Full Marks
                                 </label>
                                 <input
                                         type="number"
                                         max="60"
-                                        style="display: none"
                                         class="form-control input-field"
                                         id="id_full_marks"
                                         name="full_marks"
@@ -171,6 +170,7 @@
                                     <label
                                             for="id_criteria1"
                                             class="mt-1"
+                                            style="display: none"
                                     >Criteria 1(Presentation/Viva)
                                     </label>
                                     <input
@@ -179,10 +179,12 @@
                                             class="form-control input-field"
                                             id="id_criteria1"
                                             name="criteria1"
+                                            style="display: none"
                                     />
                                     <label
                                             for="id_criteria2"
                                             class="mt-1"
+                                            style="display: none"
                                     >Criteria 2(Coding Depth)
                                     </label>
                                     <input
@@ -191,12 +193,15 @@
                                             class="form-control input-field"
                                             id="id_criteria2"
                                             name="criteria2"
+                                            style="display: none"
                                     />
                                 </div>
                                 <label
                                         for="id_supervisor_mark"
                                         class="mt-1"
+                                        {% if proposal.assigned_supervisor != user.teacher %}
                                         style="display: none"
+                                        {% endif %}
                                 >
                                     Supervisor Mark
                                 </label>
@@ -204,7 +209,9 @@
                                         type="number"
                                         max="40"
                                         class="form-control input-field"
+                                        {% if proposal.assigned_supervisor != user.teacher %}
                                         style="display: none"
+                                        {% endif %}
                                         id="id_supervisor_mark"
                                         name="supervisor_mark"
                                 />
@@ -256,12 +263,102 @@
         selectedStudent = '';
 
         function validate() {
+            console.log("Clicked button");
             if (document.getElementById("flexSwitchCheckDefault").checked) {
-                document.getElementById("allStudentMark").style.display = "none"
-                document.getElementById("sameMark").style.display = "block"
+                document.getElementById("allStudentMark").style.display = "none";
+                document.getElementById("sameMark").style.display = "block";
+
+                {% for student in proposal.students.all %}
+                    document.getElementById("id_full_marks" + {{ student.student_id }}).required = false;
+                    document.querySelector("label[for='id_full_marks" + {{ student.student_id }} +"']").style.display = "none";
+
+                    document.getElementById("id_criteria1" + {{ student.student_id }}).required = false;
+                    document.querySelector("label[for='id_criteria1" + {{ student.student_id }} +"']").style.display = "none";
+
+                    document.getElementById("id_criteria2" + {{ student.student_id }}).required = false;
+                    document.querySelector("label[for='id_criteria2" + {{ student.student_id }} +"']").style.display = "none";
+
+                    document.getElementById("id_supervisor_mark" + {{ student.student_id }}).required = false;
+                    document.querySelector("label[for='id_supervisor_mark" + {{ student.student_id }} +"']").style.display = "none";
+                {% endfor %}
+                let isChecked = document.getElementById("assignSameMarkCheck").checked;
+                if (isChecked) {
+                    document.getElementById("id_full_marks").required = false;
+                    document.getElementById("id_full_marks").style.display = "none";
+                    document.querySelector("label[for='id_full_marks']").style.display = "none";
+
+                    document.getElementById("id_criteria1").required = true;
+                    document.getElementById("id_criteria1").style.display = "block";
+                    document.querySelector("label[for='id_criteria1']").style.display = "block";
+
+                    document.getElementById("id_criteria2").required = true;
+                    document.getElementById("id_criteria2").style.display = "block";
+                    document.querySelector("label[for='id_criteria2']").style.display = "block";
+                } else {
+                    document.getElementById("id_full_marks").required = true;
+                    document.getElementById("id_full_marks").style.display = "block";
+                    document.querySelector("label[for='id_full_marks']").style.display = "block";
+
+                    document.getElementById("id_criteria1").required = false;
+                    document.getElementById("id_criteria1").style.display = "none";
+                    document.querySelector("label[for='id_criteria1']").style.display = "none";
+
+                    document.getElementById("id_criteria2").required = false;
+                    document.getElementById("id_criteria2").style.display = "none";
+                    document.querySelector("label[for='id_criteria2']").style.display = "none";
+                }
+
+                {% if user.teacher == proposal.assigned_supervisor %}
+                    document.getElementById("id_supervisor_mark").required = true;
+                    document.getElementById("id_supervisor_mark").style.display = "block";
+                    document.querySelector("label[for='id_supervisor_mark']").style.display = "block";
+                {% else %}
+                    document.getElementById("id_supervisor_mark").required = false;
+                    document.getElementById("id_supervisor_mark").style.display = "none";
+                    document.querySelector("label[for='id_supervisor_mark']").style.display = "none";
+                {% endif %}
             } else {
-                document.getElementById("allStudentMark").style.display = "block"
-                document.getElementById("sameMark").style.display = "none"
+                document.getElementById("allStudentMark").style.display = "block";
+                document.getElementById("sameMark").style.display = "none";
+
+                {% for student in proposal.students.all %}
+                    isChecked = document.getElementById("assignSameMarkCheck" + {{ student.student_id }}).checked;
+                    if (isChecked) {
+                        document.getElementById("id_full_marks" + {{ student.student_id }}).required = false;
+                        document.getElementById("id_full_marks" + {{ student.student_id }}).style.display = "none";
+                        document.querySelector("label[for='id_full_marks" + {{ student.student_id }} +"']").style.display = "none";
+
+                        document.getElementById("id_criteria1" + {{ student.student_id }}).required = true;
+                        document.getElementById("id_criteria1" + {{ student.student_id }}).style.display = "block";
+                        document.querySelector("label[for='id_criteria1" + {{ student.student_id }} +"']").style.display = "block";
+
+                        document.getElementById("id_criteria2" + {{ student.student_id }}).required = true;
+                        document.getElementById("id_criteria2" + {{ student.student_id }}).style.display = "block";
+                        document.querySelector("label[for='id_criteria2" + {{ student.student_id }} +"']").style.display = "block";
+                    } else {
+                        document.getElementById("id_full_marks" + {{ student.student_id }}).required = true;
+                        document.getElementById("id_full_marks" + {{ student.student_id }}).style.display = "block";
+                        document.querySelector("label[for='id_full_marks" + {{ student.student_id }} +"']").style.display = "block";
+
+                        document.getElementById("id_criteria1" + {{ student.student_id }}).required = false;
+                        document.getElementById("id_criteria1" + {{ student.student_id }}).style.display = "none";
+                        document.querySelector("label[for='id_criteria1" + {{ student.student_id }} +"']").style.display = "none";
+
+                        document.getElementById("id_criteria2" + {{ student.student_id }}).required = false;
+                        document.getElementById("id_criteria2" + {{ student.student_id }}).style.display = "none";
+                        document.querySelector("label[for='id_criteria2" + {{ student.student_id }} +"']").style.display = "none";
+                    }
+                    {% if user.teacher == proposal.assigned_supervisor %}
+                        document.getElementById("id_supervisor_mark" + {{ student.student_id }}).required = true;
+                        document.getElementById("id_supervisor_mark" + {{ student.student_id }}).style.display = "block";
+                        document.querySelector("label[for='id_supervisor_mark" + {{ student.student_id }} +"']").style.display = "block";
+                    {% else %}
+                        document.getElementById("id_supervisor_mark" + {{ student.student_id }}).required = false;
+                        document.getElementById("id_supervisor_mark" + {{ student.student_id }}).style.display = "none";
+                        document.querySelector("label[for='id_supervisor_mark" + {{ student.student_id }} +"']").style.display = "none";
+                    {% endif %}
+                {% endfor %}
+
             }
         }
 
@@ -271,6 +368,7 @@
                 console.log(document.getElementById("assignSameMarkCheck" + selectedStudent).checked)
 
                 document.getElementById("id_full_marks" + selectedStudent).required = false;
+                document.getElementById("id_full_marks" + selectedStudent).value = '';
                 document.getElementById("id_criteria1" + selectedStudent).required = true;
                 document.getElementById("id_criteria2" + selectedStudent).required = true;
 
@@ -285,7 +383,9 @@
             } else {
                 document.getElementById("id_full_marks" + selectedStudent).required = true;
                 document.getElementById("id_criteria1" + selectedStudent).required = false;
+                document.getElementById("id_criteria1" + selectedStudent).value = '';
                 document.getElementById("id_criteria2" + selectedStudent).required = false;
+                document.getElementById("id_criteria2" + selectedStudent).value = '';
 
                 document.getElementById("id_full_marks" + selectedStudent).style.display = "block";
                 document.getElementById("id_criteria1" + selectedStudent).style.display = "none";
@@ -301,9 +401,13 @@
             if (document.getElementById("isAbsent" + selectedStudent).checked) {
                 {#make field not required when a student is absent#}
                 document.getElementById("id_full_marks" + selectedStudent).required = false;
+                document.getElementById("id_full_marks" + selectedStudent).value = '';
                 document.getElementById("id_criteria1" + selectedStudent).required = false;
+                document.getElementById("id_criteria1" + selectedStudent).value = '';
                 document.getElementById("id_criteria2" + selectedStudent).required = false;
+                document.getElementById("id_criteria2" + selectedStudent).value = '';
                 document.getElementById("id_supervisor_mark" + selectedStudent).required = false;
+                document.getElementById("id_supervisor_mark" + selectedStudent).value = '';
 
 
                 {# remoding input field #}
@@ -317,28 +421,41 @@
                 document.querySelector("label[for='id_criteria1" + selectedStudent + "']").style.display = "none"
                 document.querySelector("label[for='id_criteria2" + selectedStudent + "']").style.display = "none"
                 document.querySelector("label[for='id_supervisor_mark" + selectedStudent + "']").style.display = "none"
-
-
             } else {
-                document.getElementById("id_full_marks" + selectedStudent).required = false;
-                document.getElementById("id_criteria1" + selectedStudent).required = true;
-                document.getElementById("id_criteria2" + selectedStudent).required = true;
+                isChecked = document.getElementById("assignSameMarkCheck" + selectedStudent).checked;
+                if (isChecked) {
+                    document.getElementById("id_full_marks" + selectedStudent).required = false;
+                    document.getElementById("id_full_marks" + selectedStudent).style.display = "none";
+                    document.querySelector("label[for='id_full_marks" + selectedStudent + "']").style.display = "none";
 
+                    document.getElementById("id_criteria1" + selectedStudent).required = true;
+                    document.getElementById("id_criteria1" + selectedStudent).style.display = "block";
+                    document.querySelector("label[for='id_criteria1" + selectedStudent + "']").style.display = "block";
 
-                console.log("Make absent " + selectedStudent + " :" + document.getElementById("id_supervisor_mark" + selectedStudent).required);
+                    document.getElementById("id_criteria2" + selectedStudent).required = true;
+                    document.getElementById("id_criteria2" + selectedStudent).style.display = "block";
+                    document.querySelector("label[for='id_criteria2" + selectedStudent + "']").style.display = "block"
+                } else {
+                    document.getElementById("id_full_marks" + selectedStudent).required = true;
+                    document.getElementById("id_full_marks" + selectedStudent).style.display = "block";
+                    document.querySelector("label[for='id_full_marks" + selectedStudent + "']").style.display = "block";
 
-                document.getElementById("id_criteria1" + selectedStudent).style.display = "block";
-                document.getElementById("id_criteria2" + selectedStudent).style.display = "block";
+                    document.getElementById("id_criteria1" + selectedStudent).required = false;
+                    document.getElementById("id_criteria1" + selectedStudent).style.display = "none";
+                    document.querySelector("label[for='id_criteria1" + selectedStudent + "']").style.display = "none";
 
-
-                document.querySelector("label[for='id_criteria1" + selectedStudent + "']").style.display = "block"
-                document.querySelector("label[for='id_criteria2" + selectedStudent + "']").style.display = "block"
-
-
+                    document.getElementById("id_criteria2" + selectedStudent).required = false;
+                    document.getElementById("id_criteria2" + selectedStudent).style.display = "none";
+                    document.querySelector("label[for='id_criteria2" + selectedStudent + "']").style.display = "none";
+                }
                 {% if user.teacher == proposal.assigned_supervisor %}
                     document.getElementById("id_supervisor_mark" + selectedStudent).required = true;
-                    document.querySelector("label[for='id_supervisor_mark" + selectedStudent + "']").style.display = "block"
                     document.getElementById("id_supervisor_mark" + selectedStudent).style.display = "block";
+                    document.querySelector("label[for='id_supervisor_mark" + selectedStudent + "']").style.display = "block";
+                {% else %}
+                    document.getElementById("id_supervisor_mark" + selectedStudent).required = false;
+                    document.getElementById("id_supervisor_mark" + selectedStudent).style.display = "none";
+                    document.querySelector("label[for='id_supervisor_mark" + selectedStudent + "']").style.display = "none";
                 {% endif %}
 
             }

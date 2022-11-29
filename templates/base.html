@@ -42,15 +42,20 @@
 
 {% block content %}
 {% endblock %}
-<div class="footer">
+<div id="id_footer" class="footer">
     {% include 'divider.html' %}
-    <p class="mt-1 text-muted">Copyright 2022 @<a
-            class="text-decoration-none text-muted"
-            href="{% url 'home' %}">PROJECTO</a>
-    </p>
+    <p id="footer_text" class="mt-1 text-muted">Copyright 2022 @</p>
 </div>
 
 {# all script goes here #}
+
+<script type="text/javascript">
+    const d = new Date();
+    let year = d.getFullYear();
+    document.getElementById("footer_text").innerText = "Copyright " + year + " @PROJECTO"
+
+</script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"
         integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
