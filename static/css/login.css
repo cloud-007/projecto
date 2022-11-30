@@ -175,20 +175,14 @@
 }
 
 .input-field:hover, .input-field:active, .input-field:focus {
-    outline: 1px solid #251B37 !important;
+    border: 1px solid #251B37 !important;
 }
 
 .input-field:focus {
     box-shadow: none;
-    outline: none !important;
     border: 1px solid #251B37;
 }
 
-.dropdown-input {
-    min-width: 100px;
-    height: 44px;
-    margin-top: 6px;
-}
 
 .signInBtn {
     background: #251B37;

@@ -64,22 +64,31 @@
                     <label class="mt-1">Select Semester</label>
                     <div class="input-group">
                         <input id="id_semester"
-                               class="btn btn-sm btn-secondary dropdown-toggle dropdown-input"
+                               class="btn btn-sm btn-secondary dropdown-toggle d-none"
                                type="button" data-bs-toggle="dropdown"
                                name="selected_semester"
                                aria-expanded="false"
                                value="Spring"
                         >
+                        <button id="id_button_semester"
+                                style="border-radius: 3px 0 0 3px"
+                                class="btn btn-sm btn-secondary dropdown-toggle p-2"
+                                type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                        >Spring
+                        </button>
                         <ul class="dropdown-menu">
                             <li>
                                 <a class="dropdown-item" href="#"
                                    onclick="document.getElementById('id_semester').value = 'Spring';
+                                   document.getElementById('id_button_semester').innerText = 'Spring';
                                     selectedSemester = 'Spring';
                                     ">Spring</a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="#"
                                    onclick="document.getElementById('id_semester').value = 'Summer';
+                                   document.getElementById('id_button_semester').innerText = 'Summer';
                                     selectedSemester = 'Summer';
                                     ">Summer</a>
                             </li>
@@ -242,7 +251,6 @@
             const semester = document.getElementById("id_update_semester")
             semester.value = document.getElementById("id_semester").value + " " +
                 document.getElementById("id_year").value;
-
         }
 
     </script>

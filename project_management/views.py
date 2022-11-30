@@ -214,14 +214,14 @@ class CreateNewCourse(SuperUserMixin, View):
             else:
                 next_semester = "Spring"
                 next_year = int(year) + 1
-                deadline = datetime.datetime(int(next_year), 6, 3)
+                deadline = datetime.datetime(int(next_year), 6, 30)
             next_semester = next_semester + " " + str(next_year)
             if Course.objects.filter(course_id=4801, semester=next_semester).first():
                 pass
-            course = Course(course_id=4801, title="Project 2 part ii", semester=next_semester,
-                            deadline=deadline)
-
-            course.save()
+            else:
+                course = Course(course_id=4801, title="Project 2 part ii", semester=next_semester,
+                                deadline=deadline)
+                course.save()
         return redirect('home')
 
 
