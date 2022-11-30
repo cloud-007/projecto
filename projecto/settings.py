@@ -137,3 +137,5 @@ EMAIL_HOST_USER = 'homehunt.bd@gmail.com'
 EMAIL_HOST_PASSWORD = 'tzmdhchazyiatluk'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
+DEFAULT_FROM_EMAIL = 'PROJECTO<no_reply@projecto.com>'

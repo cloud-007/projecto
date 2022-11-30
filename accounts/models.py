@@ -5,7 +5,7 @@ from django.utils.text import gettext_lazy as _
 
 # Create your models here.
 class User(AbstractUser):
-    pass
+    is_verified = models.BooleanField(default=False)
 
 
 class Student(models.Model):
@@ -39,4 +39,15 @@ class Teacher(models.Model):
     def __str__(self):
         return self.full_name
 
-    # full_name = models.CharField(verbose_name=_('Full Name'), max_length=128)
+
+class Token(models.Model):
+    user = models.ForeignKey(
+        verbose_name=_('User'),
+        to='accounts.User',
+        related_name='token',
+        on_delete=models.CASCADE
+    )
+    token = models.CharField(verbose_name=_('Token'), max_length=128)
+
+    def __str__(self):
+        return self.token

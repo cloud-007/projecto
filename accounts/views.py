@@ -3,11 +3,15 @@ import json
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
+from django.http import HttpResponse, BadHeaderError
 from django.shortcuts import render, redirect
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import View
 
-from accounts.models import User, Student, Teacher
+from accounts.models import User, Student, Teacher, Token
 from project_management.mixins import SuperUserMixin
 
 
@@ -26,13 +30,27 @@ class SignInView(View):
         storage.used = True
         messages.success(request, '')
         user = authenticate(username=username, password=password)
+        email_user = User.objects.filter(email=username).first()
+        print(user)
+        print(email_user)
         if user is not None:
-            print("successful")
-            login(request, user)
-            return redirect('home')
+            if user.is_verified:
+                print("successful")
+                login(request, user)
+                return redirect('home')
+            else:
+                messages.warning(request, 'Please verify your email address to continue to PROJECTO')
+        elif email_user is not None:
+            if email_user.is_verified:
+                if email_user.check_password(password):
+                    login(request, email_user)
+                    return redirect('home')
+                messages.warning(request, 'Your username or password is wrong! Please provide a valid credentials')
+            else:
+                messages.warning(request, 'Please verify your email address to continue to PROJECTO')
         else:
             messages.warning(request, 'Your username or password is wrong! Please provide a valid credentials')
-            return render(request, self.template_name, {})
+        return render(request, self.template_name, {})
 
 
 class SignOutView(View):
@@ -91,30 +109,58 @@ class RegisterView(View):
             return render(request, self.template_name, context=self.context)
 
         if User.objects.filter(email=email).first():
-            messages.warning(request, "This username is already taken")
+            messages.warning(request, "This email is already in use")
             return render(request, self.template_name, context=self.context)
 
         # checking if all the fields is ok or not
-        if password == confirm_password:
-            user = User.objects.create_user(username=username,
-                                            email=email,
-                                            password=password)
-            student_profile = Student.objects.create(full_name=full_name, student_id=student_id, batch=batch,
-                                                     section=section,
-                                                     user_id=user.id)
-            if student_profile:
-                student_profile.save()
-                # create user account and redirect to log in
-                print("Registration Successful")
-                messages.success(request, 'Your account has been created! Login Please')
-                return redirect('login')
-            else:
-                user.delete()
-        else:
+        if password != confirm_password:
             messages.warning(request, "Password and Confirm password isn't same!")
             return render(request, self.template_name, context=self.context)
 
-        return render(request, self.template_name, context=self.context)
+        user = User.objects.create_user(username=username,
+                                        email=email,
+                                        password=password)
+        student_profile = Student.objects.create(full_name=full_name, student_id=student_id, batch=batch,
+                                                 section=section,
+                                                 user_id=user.id)
+        if student_profile:
+            student_profile.save()
+            # create user account and redirect to log in
+            print("Registration Successful")
+
+            # email part
+
+            user_id = urlsafe_base64_encode(force_bytes(user.pk))
+            token = default_token_generator.make_token(user=user)
+
+            subject = 'Email Verification of PROJECTO'
+            message = f"Hello {full_name}\n\nPlease go to the following link to verify your account.\n\n" \
+                      f"{request.build_absolute_uri('account-confirmation/' + user_id + '/' + token)}\n\n" \
+                      f"Sincerely," \
+                      f"\nYour Projecto Team! "
+            from_email = 'homehunt.bd@gmail.com'
+            if subject and message and from_email:
+                try:
+                    token_table_date = Token(user=user, token=token)
+                    token_table_date.save()
+                    send_mail(subject, message, from_email, [email])
+                    messages.success(request,
+                                     'Your account has been created please follow the email to verify your account')
+                    return redirect('login')
+                except BadHeaderError:
+                    print("Exception Found")
+                    student_profile.delete()
+                    user.delete()
+                    messages.success(request, 'Failed to create user, please retry.')
+                    return HttpResponse('Invalid header found.')
+            else:
+                # In reality we'd use a form class
+                # to get proper validation errors.
+                return HttpResponse('Make sure all fields are entered and valid.')
+        else:
+            user.delete()
+
+        return render(request, self.template_name, context=request)
 
 
 class ProfileView(LoginRequiredMixin, View):
@@ -309,3 +355,44 @@ class AddTeacherView(SuperUserMixin, View):
             messages.success(request, full_name + " has been added")
 
         return render(request, self.template_name, context=context)
+
+
+class AccountConfirmationView(View):
+    template_name = 'accounts/account_confirmation.html'
+
+    def get(self, request, *args, **kwargs):
+        token = kwargs['token']
+        uid = kwargs['uidb64']
+
+        uid = urlsafe_base64_decode(uid).decode()
+        user = User.objects.filter(id=uid).first()
+
+        if not user.is_verified:
+            print(user)
+            backend_token = Token.objects.filter(user=user).first()
+            print(type(backend_token))
+            print(type(token))
+            if str(backend_token) == token:
+                print("Token matched")
+                user.is_verified = True
+                user.save()
+                context = {
+                    'success': True,
+                    'status': 101
+                }
+                backend_token.delete()
+            else:
+                context = {
+                    'success': False,
+                    'status': 102
+                }
+        else:
+            context = {
+                'success': False,
+                'status': 103
+            }
+
+        return render(request, self.template_name, context=context)
+
+    def post(self, request, *args, **kwargs):
+        return render(request, self.template_name, context={})

@@ -7,7 +7,7 @@ from .views import (
     RegisterView,
     ProfileView,
     TeacherManagementView,
-    AddTeacherView,
+    AddTeacherView, AccountConfirmationView,
 )
 
 urlpatterns = [
@@ -31,4 +31,7 @@ urlpatterns = [
          auth_view.PasswordResetCompleteView.as_view(
              template_name='accounts/password_reset_complete.html'),
          name='password_reset_complete'),
+    path('register/account-confirmation/<uidb64>/<token>/',
+         AccountConfirmationView.as_view(),
+         name='account-confirmation'),
 ]
