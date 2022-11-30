@@ -21,13 +21,13 @@ class User(BaseUserAdmin):
 
 @admin.register(Student)
 class Student(admin.ModelAdmin):
-    list_display = ['student_id', 'full_name', 'batch', 'section']
+    list_display = ['id', 'student_id', 'full_name', 'batch', 'section']
     search_fields = ['student_id', 'full_name', 'batch', 'section']
 
 
 @admin.register(Teacher)
 class Teacher(admin.ModelAdmin):
-    list_display = ['full_name', 'initials']
+    list_display = ['id', 'full_name', 'initials']
     search_fields = ['full_name', 'initials']
 
 

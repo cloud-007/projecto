@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="{% static 'css/project_details.css' %}">
     <link rel="stylesheet" href="{% static 'css/proposal_submission.css' %}">
     <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
+    <link rel="stylesheet" href="{% static 'css/loading_spinner.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css"
           rel="stylesheet" type="text/css"/>
     {# CSS File ends here #}
@@ -47,14 +48,33 @@
     <p id="footer_text" class="mt-1 text-muted">Copyright 2022 @</p>
 </div>
 
+{#here is the spinner div#}
+<!-- Modal -->
+<div
+        style="border:none !important;"
+        class="modal fade" id="staticBackdrop"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog border-0 bg-transparent">
+        <div style="background: none !important;"
+             class="modal-content border-0 d-flex justify-content-center align-items-center">
+            <div class="d-flex justify-content-center">
+                <div class="row">
+                    <div class="spinner-grow"
+                         role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div class="row ms-1 mt-1">
+                    <span>Please wait...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {# all script goes here #}
 
-<script type="text/javascript">
-    const d = new Date();
-    let year = d.getFullYear();
-    document.getElementById("footer_text").innerText = "Copyright " + year + " @PROJECTO"
-
-</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"
         integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA=="
@@ -72,6 +92,19 @@
         crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
 <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
+
+
+<script type="text/javascript">
+    const d = new Date();
+    let year = d.getFullYear();
+    document.getElementById("footer_text").innerText = "Copyright " + year + " @PROJECTO"
+
+    function clickSpinner() {
+        console.log("ButtonClicked")
+        document.getElementById("id_overlay").style.display = "Block"
+        document.getElementById("id_spanner").style.display = "Block"
+    }
+</script>
 
 </body>
 

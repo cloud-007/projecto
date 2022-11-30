@@ -60,12 +60,9 @@ class ProjectDetailsView(TeacherRequiredMixin, View):
     }
 
     def get(self, request, *args, **kwargs):
-
-        print(args)
-        print(kwargs)
         course_id = kwargs.get('id')
         query = request.GET.get('query')
-
+        print("Printing from submission page")
         print(course_id)
         course = Course.objects.get(id=course_id)
         filter_by = kwargs.get('filter_by')
@@ -116,9 +113,9 @@ class ProjectDetailsView(TeacherRequiredMixin, View):
         return render(request, self.template_name, self.context)
 
     def post(self, request, *args, **kwargs):
-        print(request.POST)
         # check if it is an ajax call
         course_id = kwargs.get('id')
+        print(course_id)
         course = Course.objects.get(id=course_id)
         filter_by = kwargs.get('filter_by')
         if filter_by == 'all':
@@ -603,8 +600,10 @@ class ResultSheetView(SuperUserMixin, View):
 
     def get(self, request, *args, **kwargs):
         course_id = kwargs.get('id')
+        print("Printing query")
         print(course_id)
         if course_id == 594612:
+            print("I am inside query")
             cur_date = datetime.datetime.now().date()
 
             if cur_date.month <= 6:
@@ -623,6 +622,7 @@ class ResultSheetView(SuperUserMixin, View):
             course = Course.objects.get(id=course_id)
             results = Result.objects.filter(proposal__in=course.proposal.all())
         if request.is_ajax():
+            print("This is an ajax call")
             print(request.GET)
             type = request.GET.get("type", None)
             if type == 'CSV':

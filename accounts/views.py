@@ -30,22 +30,12 @@ class SignInView(View):
         storage.used = True
         messages.success(request, '')
         user = authenticate(username=username, password=password)
-        email_user = User.objects.filter(email=username).first()
         print(user)
-        print(email_user)
         if user is not None:
             if user.is_verified:
                 print("successful")
                 login(request, user)
                 return redirect('home')
-            else:
-                messages.warning(request, 'Please verify your email address to continue to PROJECTO')
-        elif email_user is not None:
-            if email_user.is_verified:
-                if email_user.check_password(password):
-                    login(request, email_user)
-                    return redirect('home')
-                messages.warning(request, 'Your username or password is wrong! Please provide a valid credentials')
             else:
                 messages.warning(request, 'Please verify your email address to continue to PROJECTO')
         else:

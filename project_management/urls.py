@@ -6,7 +6,7 @@ from .views import ProjectDetailsView, CreateNewCourse, UpdateCourseView, Propos
 urlpatterns = [
     path('create_new/', CreateNewCourse.as_view(), name='create-new-course'),
     path('<int:id>/<str:filter_by>/', ProjectDetailsView.as_view(), name='course-details'),
-    path('<int:id>/results/', ResultSheetView.as_view(), name='course-results'),
+    path('results/<int:id>/', ResultSheetView.as_view(), name='course-results'),
     path('<int:id>/<str:semester>/update/', UpdateCourseView.as_view(), name='course-update'),
     path('<int:id>/<str:semester>/<int:proposal_id>/update/', ProposalUpdateView.as_view(),
          name='proposal-update'),

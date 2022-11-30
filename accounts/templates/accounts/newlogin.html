@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-    <div class="container mt-5 block-login-container justify-content-center">
+    <div id="id_block_content"
+         class="container mt-5 block-login-container justify-content-center">
         {% for message in messages %}
             {% if message.tags == 'warning' %}
                 <p class="alert alert-warning"
@@ -54,6 +55,7 @@
                         </p>
                         <button
                                 type="submit"
+                                onclick="showloader()"
                                 class="signInBtn btn btn-primary"
                                 style="width: 100%; margin-top: -5px;"
                         >
@@ -74,5 +76,15 @@
         </div>
 
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"
+            integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript">
+        function showloader() {
+            if (document.getElementById("id_username").value.length === 0) return;
+            if (document.getElementById("id_password").value.length === 0) return;
+            $('#staticBackdrop').modal('show');
+        }
+    </script>
 
 {% endblock %}

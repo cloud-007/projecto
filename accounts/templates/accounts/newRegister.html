@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-    <div class="container mt-5 block-login-container">
+    <div id="id_block_content" class="container mt-5 block-login-container">
         {% for message in messages %}
             {% if message.tags == 'warning' %}
                 <p class="alert alert-warning"
@@ -88,8 +88,10 @@
                                 name="section"
                         >
                         <button
+                                id="id_button_register"
                                 type="submit"
                                 class="btn btn-primary signInBtn mt-4"
+                                onclick="showRegisterLoader()"
                                 style="width: 100%; margin-top: -5px;"
                         >
                             Sign Up
@@ -104,11 +106,18 @@
                 </div>
             </div>
         </div>
-
     </div>
 
     <script type="text/javascript">
-
+        function showRegisterLoader() {
+            if (document.getElementById("id_student_id").value.length === 0) return;
+            if (document.getElementById("id_email").value.length === 0) return;
+            if (document.getElementById("id_password").value.length === 0) return;
+            if (document.getElementById("id_confirm_password").value.length === 0) return;
+            if (document.getElementById("id_full_name").value.length === 0) return;
+            if (document.getElementById("id_batch").value.length === 0) return;
+            $('#staticBackdrop').modal('show');
+        }
     </script>
 
 {% endblock %}
