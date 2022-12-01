@@ -131,6 +131,7 @@
                                             <button type="submit"
                                                     class="btn btn-sm btn-warning"
                                                     name="delete_button"
+                                                    onclick="$('#staticBackdrop').modal('show');"
                                             >
                                                 Submit
                                             </button>
@@ -333,7 +334,6 @@
                 document.getElementById("id_preview_student").innerText = "Team Members: " + stdDataToSend
                 document.getElementById("id_preview_teacher").innerText = "Preferred Supervisor: " + teacherDataToSend
                 document.getElementById("id_preview_proposal").innerText = "Proposal File: " + project_file
-                $('#exampleModal').modal('show');
             }
         }
 

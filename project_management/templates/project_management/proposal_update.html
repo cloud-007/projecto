@@ -51,14 +51,18 @@
                     >
                     {# proposal file #}
                     <label for="id_proposal_file"
-                           class="form-label mt-2" style="margin-bottom: 0">Upload
+                           class="form-label mt-2" style="margin-bottom: 0">Update
                         proposal</label>
                     <input id="id_proposal_file"
-                           class="form-control input-field" type="file"
+                           class="form-control input-field"
+                           type="file"
                            name="proposal_file"
-                           value="{{ proposal.file }}"
+                           title="foo"
                            accept=".doc, .docx, .pdf"
                     />
+                    <p class="mt-2">Current: <a
+                            href="{{ proposal.file.url }}">{{ proposal.file }}</a>
+                    </p>
                     {# submit proposal with warning Button #}
                     <div class="mt-4">
                         <!-- Button trigger modal -->
@@ -106,7 +110,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
             </form>
 
@@ -117,7 +120,16 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
     <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"
+            integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="text/javascript">
+
+
+        $("#id_proposal_file").change(function () {
+            filename = this.files[0].name;
+            console.log(filename);
+        });
 
 
         const student_list = [

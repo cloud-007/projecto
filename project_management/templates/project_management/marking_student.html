@@ -236,7 +236,7 @@
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script type="text/javascript">
-
+        curStudent = ''
         $(document).ready(function () {
             {% if proposal.assigned_supervisor == user.teacher %}
                 {% for student in proposal.students.all %}
@@ -258,7 +258,32 @@
                 document.querySelector("label[for='id_supervisor_mark']").style.display = "none"
                 console.log("Here")
             {% endif %}
+
+            {% for student in proposal.students.all %}
+                $.ajax({
+                        type: 'GET',
+                        url: '{% url 'marking-student' course.id proposal.id %}',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        data: {
+                            // plus other data
+                            'student_id': {{ student.student_id }}
+                        },
+                        success: function (data) {
+                            jsonData = JSON.parse(data['result'])
+                            const criteria_1 = jsonData[0]['fields'].criteria_1
+                            const criteria_2 = jsonData[0]['fields'].criteria_2
+                            console.log({{ student.student_id }} +': ' + criteria_1 + ' ' + criteria_2)
+                            document.getElementById("id_full_marks{{ student.student_id }}").value = criteria_1
+                            document.getElementById("id_criteria1{{ student.student_id }}").value = criteria_1
+                            document.getElementById("id_criteria2{{ student.student_id }}").value = '0'
+                        }
+                    }
+                )
+            {% endfor %}
         });
+
 
         selectedStudent = '';
 

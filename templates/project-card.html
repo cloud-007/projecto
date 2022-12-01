@@ -1,6 +1,6 @@
 {% load static %}
 <div class="card-block mb-3">
-    <a href="{% if user.teacher %}
+    <a href="{% if user.is_staff or user.teacher %}
                     {% url 'course-details' course.id 'all' %}
                 {% else %}
                         {% url 'proposal-submission' course.id course.semester %}

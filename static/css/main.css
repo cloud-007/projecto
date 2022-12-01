@@ -107,6 +107,21 @@ header {
 }
 
 
+/* Ripple effect */
+.ripple {
+
+}
+
+.ripple:hover {
+
+}
+
+.ripple:active {
+    background-color: #6eb9f7;
+    background-size: 100%;
+    transition: background 0s;
+}
+
 
 
 

@@ -9,6 +9,9 @@
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
           crossorigin="anonymous">
 
+    <link rel="icon" href="{% static 'icons/favicon.ico' %}">
+
+
     {# fonts #}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -95,15 +98,12 @@
 
 
 <script type="text/javascript">
-    const d = new Date();
-    let year = d.getFullYear();
-    document.getElementById("footer_text").innerText = "Copyright " + year + " @PROJECTO"
 
-    function clickSpinner() {
-        console.log("ButtonClicked")
-        document.getElementById("id_overlay").style.display = "Block"
-        document.getElementById("id_spanner").style.display = "Block"
-    }
+    $(document).ready(function () {
+        const d = new Date();
+        let year = d.getFullYear();
+        document.getElementById("footer_text").innerText = "Copyright " + year + " @PROJECTO"
+    });
 </script>
 
 </body>

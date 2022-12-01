@@ -17,6 +17,8 @@ class TeacherRequiredMixin(AccessMixin):
         print('i am inside')
         if not request.user.is_authenticated:
             return self.handle_no_permission()
+        if not request.user.is_verified:
+            return self.handle_no_permission()
         if not self.is_student(request.user):
             return self.handle_no_permission()
         return super().dispatch(request, *args, **kwargs)
@@ -30,8 +32,9 @@ class SuperUserMixin(AccessMixin):
         return user.is_superuser
 
     def dispatch(self, request, *args, **kwargs):
-        print('i am inside')
         if not request.user.is_authenticated:
+            return self.handle_no_permission()
+        if not request.user.is_verified:
             return self.handle_no_permission()
         if not self.superuser(request.user):
             return self.handle_no_permission()

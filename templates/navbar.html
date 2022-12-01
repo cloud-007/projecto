@@ -35,14 +35,14 @@
                         <a class="custom-nav-item me-2"
                            style="text-decoration: none !important;"
                            href="{% url 'profile' %}">Profile</a>
-                        <button class="sign-in-btn sign-out-btn"
+                        <button class="btn btn-sm btn-danger"
                                 name="signInButton"
                                 onclick="location.href = '{% url 'logout' %}'"
                         >
                             Sign Out
                         </button>
                     {% else %}
-                        <button type="submit" class="sign-in-btn"
+                        <button type="button" class="btn signInBtn"
                                 name="signOutButton"
                                 onclick="location.href = '{% url 'login' %}'"
                         >

@@ -38,6 +38,7 @@
                                 class="form-control input-field"
                                 id="id_username"
                                 name="username"
+                                value="{{ username }}"
                                 required
                         >
                         <label class="mt-2 text-muted" for="id_password">Password</label>
@@ -46,6 +47,7 @@
                                 class="form-control input-field"
                                 id="id_password"
                                 name="password"
+                                value="{{ password }}"
                                 required
                         />
                         <p class="mt-2">
@@ -63,12 +65,12 @@
                         </button>
                     </form>
                     <p style="margin-top: -10px;">
+                        New User?
                         <a
                                 style="text-decoration: none !important;"
-                                class="text-muted "
                                 href="{% url 'register' %}"
                         >
-                            New User? Sign Up Here.
+                            Sign Up Here.
                         </a>
                     </p>
                 </div>

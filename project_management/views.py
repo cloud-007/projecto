@@ -4,6 +4,7 @@ import json
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core import serializers
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.template.loader import get_template
@@ -56,7 +57,7 @@ class ProjectDetailsView(TeacherRequiredMixin, View):
         'course': Course(),
         'proposals': Proposal(),
         'filter_by': 'all',
-        'teachers': Teacher.objects.all()
+        'teachers': Teacher.objects.exclude(initials="admin")
     }
 
     def get(self, request, *args, **kwargs):
@@ -76,7 +77,7 @@ class ProjectDetailsView(TeacherRequiredMixin, View):
         else:
             proposals = course.proposal.filter(assigned_supervisor__isnull=True)
         if query:
-            proposals = proposals.filter(students__student_id__contains=query)
+            proposals = proposals.filter(students__student_id=query)
 
         if request.is_ajax():
             print("This is ajax call to download all pdf")
@@ -87,7 +88,7 @@ class ProjectDetailsView(TeacherRequiredMixin, View):
                     'course': course,
                     'proposals': proposals,
                     'filter_by': filter_by,
-                    'teachers': Teacher.objects.all()
+                    'teachers': Teacher.objects.exclude(initials="admin")
                 }
 
                 template = get_template('project_management/download_proposal_list_pdf.html')
@@ -107,7 +108,7 @@ class ProjectDetailsView(TeacherRequiredMixin, View):
             'proposals': proposals,
             'student_count': len(proposals.values_list('students', flat=True)),
             'filter_by': filter_by,
-            'teachers': Teacher.objects.all()
+            'teachers': Teacher.objects.exclude(initials="admin")
         }
 
         return render(request, self.template_name, self.context)
@@ -128,9 +129,9 @@ class ProjectDetailsView(TeacherRequiredMixin, View):
             'course': course,
             'proposals': proposals,
             'filter_by': filter_by,
-            'teachers': Teacher.objects.all()
+            'teachers': Teacher.objects.exclude(initials="admin")
         }
-        if request.is_ajax() and request.user.is_staff:
+        if request.is_ajax() and request.user.is_superuser:
 
             print("Came from ajax")
             delete_proposal = request.POST.get("delete_button")
@@ -283,7 +284,7 @@ class ProposalSubmissionView(LoginRequiredMixin, View):
 
         context = {
             'students': Student.objects.exclude(proposal__course=course),
-            'teachers': Teacher.objects.all(),
+            'teachers': Teacher.objects.exclude(initials="admin"),
             'proposal': proposal
         }
 
@@ -347,6 +348,7 @@ class ProposalSubmissionView(LoginRequiredMixin, View):
 
             new_proposal = proposal
             new_proposal.id = None
+            new_proposal.file = request.FILES['proposal_file']
             new_proposal.course = Course.objects.get(course_id=4801, semester=semester)
             new_proposal.save()
             print(new_proposal)
@@ -373,7 +375,7 @@ class ProposalUpdateView(SuperUserMixin, View):
 
         context = {
             'students': Student.objects.exclude(proposal__course=course),
-            'teachers': Teacher.objects.all(),
+            'teachers': Teacher.objects.exclude(initials="admin"),
             'proposal': proposal
         }
 
@@ -397,6 +399,9 @@ class ProposalUpdateView(SuperUserMixin, View):
         else:
             next_proposal = None
 
+        print("Check the file attribute")
+        print(request.FILES.get('proposal_file', None))
+
         '''Removing results of previously set student'''
         for student in proposal.students.all():
             result = Result.objects.get(proposal=proposal, course=proposal.course, student=student)
@@ -409,6 +414,8 @@ class ProposalUpdateView(SuperUserMixin, View):
                 result.delete()
 
         proposal.title = request.POST.get("title")
+        if request.FILES.get('proposal_file', None):
+            proposal.file = request.FILES.get('proposal_file', None)
         print(proposal.file)
         proposal.save()
         student_list = []
@@ -420,6 +427,8 @@ class ProposalUpdateView(SuperUserMixin, View):
         proposal.students.set(students)
 
         if next_proposal:
+            if request.FILES.get('proposal_file', None):
+                next_proposal.file = request.FILES.get('proposal_file', None)
             next_proposal.students.set(students)
 
         '''Add resultsheet for the updated student'''
@@ -451,7 +460,7 @@ class ProposalUpdateView(SuperUserMixin, View):
 
         context = {
             'students': Student.objects.exclude(proposal__course=proposal.course),
-            'teachers': Teacher.objects.all(),
+            'teachers': Teacher.objects.exclude(initials="admin"),
             'proposal': proposal
         }
 
@@ -466,6 +475,18 @@ class MarkingStudentView(TeacherRequiredMixin, View):
         proposal_id = kwargs.get('proposal_id')
         course = Course.objects.get(id=course_id)
         proposal = Proposal.objects.get(id=proposal_id)
+        if request.is_ajax():
+            print(request.GET.get('student_id'))
+            print(request.user.teacher)
+            result = Marksheet.objects.filter(teacher=request.user.teacher,
+                                              result__proposal=proposal,
+                                              result__student__student_id=request.GET.get('student_id'))
+            print("Printing serialized data")
+            print(serializers.serialize("json", result))
+            dict = {
+                'result': serializers.serialize("json", result),
+            }
+            return HttpResponse(json.dumps(dict), content_type='application/json')
         context = {
             'course': course,
             'proposal': proposal

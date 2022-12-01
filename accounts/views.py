@@ -40,7 +40,7 @@ class SignInView(View):
                 messages.warning(request, 'Please verify your email address to continue to PROJECTO')
         else:
             messages.warning(request, 'Your username or password is wrong! Please provide a valid credentials')
-        return render(request, self.template_name, {})
+        return render(request, self.template_name, {'username': username, 'password': password})
 
 
 class SignOutView(View):
@@ -71,7 +71,7 @@ class RegisterView(View):
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return redirect('home')
-        return render(request, self.template_name, {})
+        return render(request, self.template_name, self.context)
 
     def post(self, request, *args, **kwargs):
         username = request.POST.get("student_id")
@@ -150,7 +150,7 @@ class RegisterView(View):
         else:
             user.delete()
 
-        return render(request, self.template_name, context=request)
+        return render(request, self.template_name, self.context)
 
 
 class ProfileView(LoginRequiredMixin, View):
@@ -229,7 +229,7 @@ class TeacherManagementView(SuperUserMixin, View):
 
     def get(self, request, *args, **kwargs):
         context = {
-            'teachers': Teacher.objects.all()
+            'teachers': Teacher.objects.exclude(initials='admin')
         }
         return render(request, self.template_name, context)
 
@@ -291,7 +291,7 @@ class TeacherManagementView(SuperUserMixin, View):
             return HttpResponse(json.dumps(dict), content_type='application/json')
 
         context = {
-            'teachers': Teacher.objects.all()
+            'teachers': Teacher.objects.exclude(initials='admin')
         }
         return render(request, self.template_name, context)
 
@@ -338,7 +338,7 @@ class AddTeacherView(SuperUserMixin, View):
             messages.warning(request, "Password and confirm password should be same")
         else:
             user = User.objects.create_user(username=username, password=password, email=email)
-            user.is_staff = True
+            user.is_verified = True
             user.save()
             teacher = Teacher(full_name=full_name, initials=initials, user=user, email=email, phone=phone)
             teacher.save()
@@ -372,15 +372,11 @@ class AccountConfirmationView(View):
                 }
                 backend_token.delete()
             else:
-                context = {
-                    'success': False,
-                    'status': 102
-                }
+                messages.warning(request, "Invalid Link")
+                return redirect('login')
         else:
-            context = {
-                'success': False,
-                'status': 103
-            }
+            messages.warning(request, "Your account is already verified. Please Login.")
+            return redirect('login')
 
         return render(request, self.template_name, context=context)
 

@@ -101,6 +101,7 @@
                                style="border-radius: 0 3px 3px 0 !important;"
                                min="2000" max="9999"
                                required
+
                         >
                         <input type="hidden" id="id_update_semester"
                                name="semester">
@@ -160,6 +161,7 @@
                                                 data-bs-dismiss="modal">Cancel
                                         </button>
                                         <button type="submit"
+                                                onclick="makeFieldNotRequired()"
                                                 class="btn btn-sm btn-danger"
                                                 name="delete_button"
                                         >
@@ -251,6 +253,12 @@
             const semester = document.getElementById("id_update_semester")
             semester.value = document.getElementById("id_semester").value + " " +
                 document.getElementById("id_year").value;
+        }
+
+        function makeFieldNotRequired() {
+            document.getElementById("id_course_title").required = false;
+            document.getElementById("id_year").required = false;
+            document.getElementById("id_deadline").required = false;
         }
 
     </script>

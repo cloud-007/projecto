@@ -185,7 +185,8 @@
 
 
 .signInBtn {
-    background: #251B37;
+    background: #251B37 center;
+    transition: background 0.8s;
     color: #ffffff;
     box-shadow: none;
     border: none;
@@ -198,10 +199,15 @@
 }
 
 .signInBtn:hover, .signInBtn:focus {
-    /*height: 40px;*/
-    background: #3e2e5b;
     color: #ffffff;
     border-radius: 5px;
+    background: #251B37 radial-gradient(circle, transparent 1%, #312444 1%) center/15000%;
+}
+
+.signInBtn:active {
+    background-color: #7c63a8;
+    background-size: 100%;
+    transition: background 0s;
 }
 
 @media (max-width: 991px) {

@@ -38,16 +38,16 @@
                 </button>
                 <ul class="dropdown-menu"
                     aria-labelledby="dropdownMenuButton1">
+                    <li>
+                        <button type="button"
+                                class="dropdown-item text-muted"
+                                onclick="DownloadPDF()"
+                        >Download
+                        </button>
+                    </li>
                     {% if user.is_superuser %}
                         <li><a class="dropdown-item text-muted"
                                href="{% url 'course-update' course.id  course.semester %}">Update</a>
-                        </li>
-                        <li>
-                            <button type="button"
-                                    class="dropdown-item text-muted"
-                                    onclick="DownloadPDF()"
-                            >Download
-                            </button>
                         </li>
                         <li>
                             <hr class="dropdown-divider">

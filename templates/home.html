@@ -46,21 +46,22 @@
         {% if user.is_superuser %}
             {# archieved projects #}
             {% if archived %}
-                <h3 class="color-primary-second mt-3">Archived Project</h3>
-            {% endif %}
+                <h3 class="color-primary-second mt-3">Past Project</h3>
 
-            {# archieved project body #}
-            <div class="row mt-3 row-cols-lg-4 row-cols-md-1 row-cols-sm-1 row-cols-xs-1 d-flex justify-content-start">
-                {% if courses %}
-                    {% for course in archived %}
-                        {% include 'project-card.html' with course=course course_list=course_list %}
-                    {% endfor %}
-                {% else %}
-                    <h3 style="height: 40%"
-                        class="mt-5 container text-muted d-flex align-items-center justify-content-center">
-                        No archived projects</h3>
-                {% endif %}
-            </div>
+
+                {# archieved project body #}
+                <div class="row mt-3 row-cols-lg-4 row-cols-md-1 row-cols-sm-1 row-cols-xs-1 d-flex justify-content-start">
+                    {% if courses %}
+                        {% for course in archived %}
+                            {% include 'project-card.html' with course=course course_list=course_list %}
+                        {% endfor %}
+                    {% else %}
+                        <h3 style="height: 40%"
+                            class="mt-5 container text-muted d-flex align-items-center justify-content-center">
+                            No archived projects</h3>
+                    {% endif %}
+                </div>
+            {% endif %}
         {% endif %}
 
     </div>

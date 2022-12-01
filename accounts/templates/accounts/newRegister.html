@@ -29,6 +29,7 @@
                                 class="form-control input-field"
                                 id="id_student_id"
                                 name="student_id"
+                                value="{{ username }}"
                                 required
                         >
                         <label for="id_email"
@@ -39,6 +40,7 @@
                                 class="form-control input-field"
                                 id="id_email"
                                 name="email"
+                                value="{{ email }}"
                                 required
                         >
                         <label class="mt-2 text-muted" for="id_password">Password</label>
@@ -48,6 +50,7 @@
                                 id="id_password"
                                 name="password"
                                 minlength="8"
+                                value="{{ password }}"
                                 required
                         />
                         <label class="mt-2 text-muted"
@@ -58,6 +61,7 @@
                                 class="form-control input-field"
                                 id="id_confirm_password"
                                 name="confirm_password"
+                                value="{{ confirm_password }}"
                                 minlength="8"
                                 required
                         />
@@ -68,6 +72,7 @@
                                 class="form-control input-field"
                                 id="id_full_name"
                                 name="full_name"
+                                value="{{ full_name }}"
                                 required
                         >
                         <label for="id_batch"
@@ -77,6 +82,7 @@
                                 class="form-control input-field"
                                 id="id_batch"
                                 name="batch"
+                                value="{{ batch }}"
                                 required
                         >
                         <label for="id_section"
@@ -86,6 +92,7 @@
                                 class="form-control input-field"
                                 id="id_section"
                                 name="section"
+                                value="{{ section }}"
                         >
                         <button
                                 id="id_button_register"
@@ -112,11 +119,15 @@
         function showRegisterLoader() {
             if (document.getElementById("id_student_id").value.length === 0) return;
             if (document.getElementById("id_email").value.length === 0) return;
-            if (document.getElementById("id_password").value.length === 0) return;
-            if (document.getElementById("id_confirm_password").value.length === 0) return;
+            if (document.getElementById("id_password").value.length < 8) return;
+            if (document.getElementById("id_confirm_password").value.length < 8) return;
             if (document.getElementById("id_full_name").value.length === 0) return;
             if (document.getElementById("id_batch").value.length === 0) return;
             $('#staticBackdrop').modal('show');
+        }
+
+        function ValidateEmail(mail) {
+            return /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(mail);
         }
     </script>
 
