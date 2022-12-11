@@ -131,7 +131,7 @@
                                             <button type="submit"
                                                     class="btn btn-sm btn-warning"
                                                     name="delete_button"
-                                                    onclick="$('#staticBackdrop').modal('show');"
+                                                    onclick="$('#exampleModal').modal('hide');$('#staticBackdrop').modal('show');"
                                             >
                                                 Submit
                                             </button>
@@ -269,36 +269,37 @@
             console.log(project_title.length)
             if (project_title.length === 0) {
                 errorFound = true;
-                document.getElementById("id_title_error").style.display = "block"
+                document.getElementById("id_title_error").style.display = "block";
             } else {
-                document.getElementById("id_title_error").style.display = "none"
+                document.getElementById("id_title_error").style.display = "none";
             }
 
             if (project_student.length === 0) {
                 errorFound = true;
-                document.getElementById("id_student_error").style.display = "block"
+                document.getElementById("id_student_error").style.display = "block";
             } else {
-                document.getElementById("id_student_error").style.display = "none"
+                document.getElementById("id_student_error").style.display = "none";
             }
 
             if (project_teacher.length === 0) {
                 errorFound = true;
-                document.getElementById("id_teacher_error").style.display = "block"
+                document.getElementById("id_teacher_error").style.display = "block";
             } else {
-                document.getElementById("id_teacher_error").style.display = "none"
+                document.getElementById("id_teacher_error").style.display = "none";
             }
 
             if (project_file.length === 0) {
                 errorFound = true;
-                document.getElementById("id_proposal_error").style.display = "block"
+                document.getElementById("id_proposal_error").style.display = "block";
             } else {
-                document.getElementById("id_proposal_error").style.display = "none"
+                document.getElementById("id_proposal_error").style.display = "none";
             }
 
 
             if (!errorFound) {
-                const stdList = project_student.split('"')
-                const teacherList = project_teacher.split('"')
+                console.log("No Error Found");
+                const stdList = project_student.split('"');
+                const teacherList = project_teacher.split('"');
 
 
                 let stdDataToSend = "";
@@ -330,10 +331,11 @@
                 console.log(project_student)
 
 
-                document.getElementById("id_preview_title").innerText = "Title: " + project_title
-                document.getElementById("id_preview_student").innerText = "Team Members: " + stdDataToSend
-                document.getElementById("id_preview_teacher").innerText = "Preferred Supervisor: " + teacherDataToSend
-                document.getElementById("id_preview_proposal").innerText = "Proposal File: " + project_file
+                document.getElementById("id_preview_title").innerText = "Title: " + project_title;
+                document.getElementById("id_preview_student").innerText = "Team Members: " + stdDataToSend;
+                document.getElementById("id_preview_teacher").innerText = "Preferred Supervisor: " + teacherDataToSend;
+                document.getElementById("id_preview_proposal").innerText = "Proposal File: " + project_file;
+                $('#exampleModal').modal('show');
             }
         }
 

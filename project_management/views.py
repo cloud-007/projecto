@@ -686,3 +686,7 @@ class ResultSheetView(SuperUserMixin, View):
 
     def post(self, request, *args, **kwargs):
         return render(request, self.template_name, {})
+
+
+def test(request):
+    return HttpResponse("Done")

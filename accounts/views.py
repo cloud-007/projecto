@@ -1,11 +1,11 @@
 import json
+import os
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import send_mail
-from django.http import HttpResponse, BadHeaderError
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -13,12 +13,48 @@ from django.views import View
 
 from accounts.models import User, Student, Teacher, Token
 from project_management.mixins import SuperUserMixin
+from projecto.task import send_registration_email
 
 
 class SignInView(View):
-    template_name = 'accounts/newlogin.html'
+    template_name = 'accounts/login.html'
 
     def get(self, request, *args, **kwargs):
+        resend_email = request.GET.get('resend_email', None)
+        username = request.GET.get('username', None)
+
+        if resend_email:
+
+            user = User.objects.filter(username=username).first()
+            user_id = urlsafe_base64_encode(force_bytes(user.pk))
+
+            pre_token = Token.objects.filter(user=user)
+            pre_token.delete()
+
+            token = default_token_generator.make_token(user=user)
+            token_table_data = Token(user=user, token=token)
+            token_table_data.save()
+            subject = 'Email Verification of PROJECTO'
+            prefix = request.build_absolute_uri('account-confirmation/' + user_id + '/' + token)
+            print(prefix)
+            prefix = prefix.replace("login", "register")
+            print(prefix)
+            message = f"Hello {user.student.full_name}\n\nPlease go to the following link to verify your account.\n\n" \
+                      f"{prefix}\n\n" \
+                      f"Sincerely," \
+                      f"\nYour Projecto Team! "
+            from_email = os.environ.get('EMAIL_HOST_USER')
+            if subject and message and from_email:
+                send_registration_email.delay(user_id=user_id, subject=subject, message=message,
+                                              email=user.email)
+                messages.success(request,
+                                 'An email will be send shortly. Follow the link to '
+                                 'verify your account.')
+                print("Email has been sent")
+                return redirect('login')
+            else:
+                token_table_data.delete()
+                return HttpResponse('Make sure all fields are entered and valid.')
         if request.user.is_authenticated:
             return redirect('home')
         return render(request, self.template_name, {})
@@ -55,7 +91,7 @@ class SignOutView(View):
 
 
 class RegisterView(View):
-    template_name = 'accounts/newRegister.html'
+    template_name = 'accounts/register.html'
 
     context = {
         'username': '',
@@ -74,6 +110,7 @@ class RegisterView(View):
         return render(request, self.template_name, self.context)
 
     def post(self, request, *args, **kwargs):
+        print("Post method")
         username = request.POST.get("student_id")
         student_id = request.POST.get("student_id")
         email = request.POST.get("email")
@@ -102,9 +139,12 @@ class RegisterView(View):
             messages.warning(request, "This email is already in use")
             return render(request, self.template_name, context=self.context)
 
-        # checking if all the fields is ok or not
+        if Student.objects.filter(student_id=student_id).first():
+            messages.warning(request, "There is already a student with this ID")
+            return render(request, self.template_name, context=self.context)
+
         if password != confirm_password:
-            messages.warning(request, "Password and Confirm password isn't same!")
+            messages.warning(request, "Password and confirm password should be same")
             return render(request, self.template_name, context=self.context)
 
         user = User.objects.create_user(username=username,
@@ -115,14 +155,12 @@ class RegisterView(View):
                                                  user_id=user.id)
         if student_profile:
             student_profile.save()
-            # create user account and redirect to log in
-            print("Registration Successful")
-
             # email part
 
             user_id = urlsafe_base64_encode(force_bytes(user.pk))
             token = default_token_generator.make_token(user=user)
-
+            token_table_data = Token(user=user, token=token)
+            token_table_data.save()
             subject = 'Email Verification of PROJECTO'
             message = f"Hello {full_name}\n\nPlease go to the following link to verify your account.\n\n" \
                       f"{request.build_absolute_uri('account-confirmation/' + user_id + '/' + token)}\n\n" \
@@ -130,22 +168,14 @@ class RegisterView(View):
                       f"\nYour Projecto Team! "
             from_email = 'homehunt.bd@gmail.com'
             if subject and message and from_email:
-                try:
-                    token_table_date = Token(user=user, token=token)
-                    token_table_date.save()
-                    send_mail(subject, message, from_email, [email])
-                    messages.success(request,
-                                     'Your account has been created please follow the email to verify your account')
-                    return redirect('login')
-                except BadHeaderError:
-                    print("Exception Found")
-                    student_profile.delete()
-                    user.delete()
-                    messages.success(request, 'Failed to create user, please retry.')
-                    return HttpResponse('Invalid header found.')
+                send_registration_email.delay(user_id=user_id, subject=subject, message=message,
+                                              email=email)
+                messages.success(request,
+                                 'Your account has been created, an email will be send shortly. Follow the link to '
+                                 'verify your account.')
+                return redirect('login')
             else:
-                # In reality we'd use a form class
-                # to get proper validation errors.
+                token_table_data.delete()
                 return HttpResponse('Make sure all fields are entered and valid.')
         else:
             user.delete()

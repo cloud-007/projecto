@@ -1,69 +1,105 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-    <div class="mt-5">
-        <div class="row d-flex justify-content-center">
-
-            <div class="login-padding col-md-6 col-lg-6">
-                <div class="leftImage card border-0">
-                    <img class="rounded-circle account-img"
-                         src={% static 'media/loginimg.png' %} alt=''>
-                </div>
+    <div id="id_block_content"
+         class="container mt-5 block-login-container justify-content-center">
+        {% for message in messages %}
+            {% if message.tags == 'warning' %}
+                <p id="id_login_message" class="alert alert-warning"
+                   style="padding-left: 10px !important;">
+                    {{ message }} <a id="id_resent_email"
+                                     style="text-decoration: none; display: none;"
+                                     href="{% url 'login' %}?resend_email=True&username={{ username }}">resend
+                    email?</a>
+                </p>
+            {% elif message.tags == 'success' %}
+                <p class="alert alert-success"
+                   style="padding-left: 10px !important;"
+                >
+                    {{ message }}
+                </p>
+            {% endif %}
+        {% endfor %}
+        <div class="row row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-xs-1">
+            <div class="leftImage card border-0 d-none d-lg-flex justify-content-center">
+                <img
+                        style="margin: 5%"
+                        class=""
+                        src={% static 'media/loginimg.png' %} alt='{% static 'media/defaultProfile.png' %}'>
             </div>
-            <form class="fade-in login-padding loginForm col-md-6 col-lg-6"
-                  method="post">
-                {% csrf_token %}
-                <div class="block-login">
-                    {% for message in messages %}
-                        {% if message.tags == 'warning' %}
-                            <p class="alert alert-warning">
-                                {{ message }}
-                            </p>
-                        {% elif message.tags == 'success' %}
-                            <p class="alert alert-success">
-                                {{ message }}
-                            </p>
-                        {% endif %}
-                    {% endfor %}
-
-                    <h3 class="loginHeading">Login</h3>
-                    <div class="form-group col-lg-6 col-md-8 col-sm-6">
-                        <label>Username</label>
+            <div class="rightDiv d-flex justify-content-center align-items-center">
+                <div class="block-login-form">
+                    <h4 style="font-weight: bold" class="color-primary">
+                        Login</h4>
+                    <form method="post"
+                          class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
+                        {% csrf_token %}
+                        <label for="id_username"
+                               class="text-muted">Username/Student ID</label>
                         <input
                                 type="text"
-                                class="form-control loginInputField"
-                                id="emailField"
-                                name="email"
+                                class="form-control input-field"
+                                id="id_username"
+                                name="username"
+                                value="{{ username }}"
                                 required
-                        />
-                    </div>
-                    <div class="form-group col-lg-6 col-md-8 col-sm-6 ">
-                        <label>Password</label>
+                        >
+                        <label class="mt-2 text-muted" for="id_password">Password</label>
                         <input
                                 type="password"
-                                class="form-control loginInputField"
-                                id="passwordField"
+                                class="form-control input-field"
+                                id="id_password"
                                 name="password"
+                                value="{{ password }}"
                                 required
                         />
-                    </div>
-                    <button
-                            type="submit"
-                            class="mt-4 col-lg-6 col-md-8 col-sm-6 col-8 signInBtn"
-                    >
-                        Login
-                    </button>
-                    <div class="mt-2">
-                        <p class="text-muted newUser">
-                            New user? <a class="ml-2 register"
-                                         href="{% url 'register' %}">Sign
-                            Up</a>
+                        <p class="mt-2">
+                            <a style="text-decoration: none" class="text-muted"
+                               href="{% url 'password-reset' %}">Forgot your
+                                password?</a>
                         </p>
-                    </div>
+                        <button
+                                type="submit"
+                                onclick="showloader()"
+                                class="signInBtn btn btn-primary"
+                                style="width: 100%; margin-top: -5px;"
+                        >
+                            Login
+                        </button>
+                    </form>
+                    <p style="margin-top: -10px;">
+                        New to PROJECTO?
+                        <a
+                                style="text-decoration: none !important;"
+                                href="{% url 'register' %}"
+                        >
+                            Sign Up.
+                        </a>
+                    </p>
                 </div>
-            </form>
+            </div>
         </div>
 
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"
+            integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript">
+        const elem = document.getElementById("id_login_message")
+        let subs = elem.innerText
+        subs = subs.substring(0, 4)
+        console.log(subs)
+        if (subs !== 'Your') {
+            document.getElementById("id_resent_email").style.display = "block"
+        } else {
+            document.getElementById("id_resent_email").style.display = "none"
+        }
+
+        function showloader() {
+            if (document.getElementById("id_username").value.length === 0) return;
+            if (document.getElementById("id_password").value.length === 0) return;
+            $('#staticBackdrop').modal('show');
+        }
+    </script>
 
 {% endblock %}
