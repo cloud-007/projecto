@@ -166,7 +166,7 @@ class RegisterView(View):
                       f"{request.build_absolute_uri('account-confirmation/' + user_id + '/' + token)}\n\n" \
                       f"Sincerely," \
                       f"\nYour Projecto Team! "
-            from_email = 'homehunt.bd@gmail.com'
+            from_email = os.environ.get('EMAIL_HOST_USER')
             if subject and message and from_email:
                 send_registration_email.delay(user_id=user_id, subject=subject, message=message,
                                               email=email)

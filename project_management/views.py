@@ -14,6 +14,7 @@ from xhtml2pdf import pisa
 from accounts.models import Teacher, Student
 from project_management.mixins import TeacherRequiredMixin, SuperUserMixin
 from project_management.models import Course, Proposal, Result, Marksheet
+from projecto.task import assigned_supervisor_email
 
 
 class HomeView(View):
@@ -164,6 +165,18 @@ class ProjectDetailsView(TeacherRequiredMixin, View):
                 print("Assign Supervisor")
                 proposal.assigned_supervisor = Teacher.objects.get(id=request.POST.get("teacher_id"))
                 proposal.assigned_by = request.user.teacher
+
+                subject = 'Supervisor Assigned ' + proposal.title
+                message = f"Hello {proposal.team_lead.full_name},\n\nYou're receiving this email, because you are the " \
+                          f"team lead of the project titled {proposal.title}.\nSupervisor has been assigned " \
+                          f"to your project.\n" \
+                          f"Assigned Supervisor: {proposal.assigned_supervisor.full_name}.\n" \
+                          f"Please contact your supervisor as soon as possible\n\n" \
+                          f"Sincerely," \
+                          f"\nYour Projecto Team! "
+                assigned_supervisor_email.delay(subject=subject, message=message,
+                                                email=proposal.team_lead.user.email)
+
                 proposal.save()
                 if next_proposal:
                     next_proposal.assigned_supervisor = proposal.assigned_supervisor
