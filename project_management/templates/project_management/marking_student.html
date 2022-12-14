@@ -280,12 +280,15 @@
                         },
                         success: function (data) {
                             jsonData = JSON.parse(data['result'])
+
                             const criteria_1 = jsonData[0]['fields'].criteria_1
                             const criteria_2 = jsonData[0]['fields'].criteria_2
-                            console.log({{ student.student_id }} +': ' + criteria_1 + ' ' + criteria_2)
+                            const supervisorMark = jsonData[0]['fields'].supervisor
+                            console.log({{ student.student_id }} +': ' + criteria_1 + ' ' + criteria_2 + ' ' + supervisorMark)
                             document.getElementById("id_full_marks{{ student.student_id }}").value = criteria_1
                             document.getElementById("id_criteria1{{ student.student_id }}").value = criteria_1
                             document.getElementById("id_criteria2{{ student.student_id }}").value = '0'
+                            document.getElementById("id_supervisor_mark{{ student.student_id }}").value = supervisorMark
                         }
                     }
                 )

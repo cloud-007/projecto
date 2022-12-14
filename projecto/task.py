@@ -1,17 +1,24 @@
+import datetime
 import os
 
+from dateutil.relativedelta import relativedelta
 from django.core.mail import send_mail
 from django.http import BadHeaderError
 from django.utils.http import urlsafe_base64_decode
 
 from accounts.models import User, Student
+from project_management.admin import Course
 from projecto.celery import app
 
 
-@app.task(name='test')
-def test_function():
-    print("Say Hello in every thirty seconds")
-    return "Done"
+@app.task(name='delete_course')
+def delete_course():
+    three_yrs_ago = datetime.datetime.now() - relativedelta(years=3)
+    courses = Course.objects.filter(
+        deadline__range=(
+            datetime.date(2000, 1, 1), three_yrs_ago))
+    courses.delete()
+    return "Course Deleted Successfully"
 
 
 @app.task(name='send_registration_email')
