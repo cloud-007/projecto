@@ -29,14 +29,16 @@ class HomeView(View):
         else:
             semester = "Summer " + str(cur_date.year)
 
-        running_courses = Course.objects.filter(semester=semester,
-                                                deadline__range=(
-                                                    datetime.datetime.now().date(),
-                                                    datetime.date(2500, 1, 1))).order_by(
-            'deadline')
+        running_courses = Course.objects.filter(
+            deadline__range=(
+                datetime.datetime.now().date(),
+                datetime.date(2500, 1, 1))).order_by(
+            'deadline'
+        )
         archived_courses = Course.objects.filter(
             deadline__range=(
-                datetime.date(2000, 1, 1), datetime.datetime.now().date() - datetime.timedelta(1))).order_by('deadline')
+                datetime.date(2000, 1, 1), datetime.datetime.now().date() - datetime.timedelta(1))
+        ).order_by('deadline')
 
         try:
             course_list = request.user.student.proposal.values_list('course', flat=True)
@@ -102,6 +104,20 @@ class ProjectDetailsView(TeacherRequiredMixin, View):
                 pdf = file.read()
                 file.close()
                 return HttpResponse(pdf, 'application/pdf')
+            else:
+                print("This is csv file download request")
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename=Result '
+
+                writer = csv.writer(response)
+                writer.writerow(['Id', 'Name', 'Course Code', 'Title'])
+
+                for proposal in proposals:
+                    for student in proposal.students.all():
+                        writer.writerow(
+                            [student.student_id, student.full_name, proposal.course.course_id, proposal.title])
+                print(response)
+                return response
 
         print(course)
         self.context = {
@@ -665,11 +681,11 @@ class ResultSheetView(SuperUserMixin, View):
                 response['Content-Disposition'] = 'attachment; filename=Result '
 
                 writer = csv.writer(response)
-                writer.writerow(['Name', 'ID', 'Marks', 'Date'])
+                writer.writerow(['Id', 'Name', 'Marks'])
 
                 for result in results:
                     writer.writerow(
-                        [result.student.full_name, result.student.student_id, result.marks, result.created_date])
+                        [result.student.student_id, result.student.full_name, result.marks])
                 print(response)
                 return response
             else:

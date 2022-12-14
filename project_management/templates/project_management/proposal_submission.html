@@ -210,7 +210,9 @@
 
         const student_list = [
             {% for student in students %}
-                "{{student.student_id}}",
+                {% if student.user.is_verified %}
+                    "{{student.student_id}}",
+                {% endif %}
             {% endfor %}
         ];
 

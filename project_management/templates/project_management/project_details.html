@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_tags %}
 {% block content %}
     <div class="container mb-5 block-body-container" onclick="">
         {# running project and manage #}
@@ -42,7 +43,14 @@
                         <button type="button"
                                 class="dropdown-item text-muted"
                                 onclick="DownloadPDF()"
-                        >Download
+                        >PDF
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button"
+                                class="dropdown-item text-muted"
+                                onclick="DownloadCSV()"
+                        >CSV
                         </button>
                     </li>
                     {% if user.is_superuser %}
@@ -82,10 +90,40 @@
         {% include 'divider.html' %}
         {# submission details of a project body #}
         {% if proposals %}
-            <div class="row mt-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-1 row-cols-xs-1 d-flex justify-content-start">
-                {% for proposal in proposals %}
-                    {% include 'project_management/project_details_card_new.html' with proposal=proposal teachers=teachers id=proposal.id %}
-                {% endfor %}
+            <div class="row">
+                <div class="col col-lg-8">
+                    <div class="row mt-3 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-xs-1 d-flex justify-content-start">
+                        {% for proposal in proposals %}
+                            {% include 'project_management/project_details_card_new.html' with proposal=proposal teachers=teachers id=proposal.id %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col col-lg-4 d-lg-block d-none">
+                    <table id="data-table"
+                           class="table table-striped mt-2 text-muted">
+                        <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">3300</th>
+                            <th scope="col">4800</th>
+                            <th scope="col">4801</th>
+                            <th scope="col">Total</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for teacher in teachers %}
+                            <tr>
+                                <td>{{ teacher.full_name }}</td>
+                                <td id="id_cnt_3300{{ teacher.initials }}">{{ proposals|proposal_3300_count:teacher.initials }}</td>
+                                <td id="id_cnt_4800{{ teacher.initials }}">{{ proposals|proposal_4800_count:teacher.initials }}</td>
+                                <td id="id_cnt_4801{{ teacher.initials }}">{{ proposals|proposal_4801_count:teacher.initials }}</td>
+                                <td id="id_cnt_full{{ teacher.initials }}">0
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         {% else %}
             <h3 style="height: 40%"
@@ -95,6 +133,19 @@
 
     </div>
     <script type="text/javascript">
+        $(document).ready(function () {
+            let cnt3300
+            let cnt4800
+            let cnt4801
+            {% for teacher in teachers %}
+                cnt3300 = document.getElementById("id_cnt_3300{{ teacher.initials }}").innerText
+                cnt4800 = document.getElementById("id_cnt_4800{{ teacher.initials }}").innerText
+                cnt4801 = document.getElementById("id_cnt_4801{{ teacher.initials }}").innerText
+                document.getElementById("id_cnt_full{{ teacher.initials }}").innerText = parseInt(cnt3300) + parseInt(cnt4800) + parseInt(cnt4801)
+                console.log(cnt3300 + ' ' + cnt4800 + ' ' + cnt4801)
+            {% endfor %}
+        });
+
         function searchButtonClick() {
             const searchText = document.getElementById("id_search").value
             if (searchText.length === 0) {
@@ -128,6 +179,36 @@
                     },
                     error: function (data) {
                         console.log("Error Data")
+                        console.log(data)
+                    }
+                }
+            )
+
+        }
+
+        function DownloadCSV() {
+            course_id ={{ course.id }};
+            if (course_id === null) course_id = 594612
+            console.log(course_id)
+
+            $.ajax({
+                    type: 'GET',
+                    url: '{% url 'course-details' course.id filter_by %}',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    data: {
+                        'type': "CSV",
+                    },
+                    success: function (data) {
+                        console.log(data)
+                        var blob = new Blob([data]);
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = "Proposal  " + '{{ course.title }} ' + '{{ course.semester }}' + '.csv';
+                        link.click();
+                    },
+                    error: function (data) {
                         console.log(data)
                     }
                 }
