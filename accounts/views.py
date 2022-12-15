@@ -233,12 +233,14 @@ class ProfileView(LoginRequiredMixin, View):
         else:
             full_name = request.POST.get("full_name")
             initials = request.POST.get("initials")
+            designation = request.POST.get("designation")
             email = request.POST.get("email")
             phone = request.POST.get("phone")
             if len(str(phone)) == 0:
                 phone = 880
             teacher_profile.full_name = full_name
             teacher_profile.initials = initials
+            teacher_profile.designation = designation
             teacher_profile.email = email
             teacher_profile.phone = phone
             check_teacher = Teacher.objects.filter(initials=initials).first()
@@ -337,6 +339,7 @@ class AddTeacherView(SuperUserMixin, View):
             'confirm_password': '',
             'full_name': '',
             'initials': '',
+            'designation': '',
             'phone': ''
         }
         return render(request, self.template_name, context=context)
@@ -348,6 +351,7 @@ class AddTeacherView(SuperUserMixin, View):
         confirm_password = request.POST.get("confirm_password")
         full_name = request.POST.get("full_name")
         initials = request.POST.get("initials")
+        designation = request.POST.get("designation")
         phone = request.POST.get("phone")
         if len(str(phone)) == 0:
             phone = 880
@@ -359,6 +363,7 @@ class AddTeacherView(SuperUserMixin, View):
             'confirm_password': confirm_password,
             'full_name': full_name,
             'initials': initials,
+            'designation': designation,
             'phone': phone
         }
 
@@ -370,11 +375,12 @@ class AddTeacherView(SuperUserMixin, View):
             user = User.objects.create_user(username=username, password=password, email=email)
             user.is_verified = True
             user.save()
-            teacher = Teacher(full_name=full_name, initials=initials, user=user, email=email, phone=phone)
+            teacher = Teacher(full_name=full_name, initials=initials, designation=designation, user=user, email=email,
+                              phone=phone)
             teacher.save()
             messages.success(request, full_name + " has been added")
 
-        return render(request, self.template_name, context=context)
+        return redirect('teacher-management')
 
 
 class AccountConfirmationView(View):

@@ -2,6 +2,17 @@
 {% load static %}
 {% block content %}
     <div class="container block-body-container mb-5">
+        {% for message in messages %}
+            {% if  message.tags == 'success' %}
+                <p class="alert alert-success">
+                    {{ message }}
+                </p>
+            {% else %}
+                <p class="alert alert-warning">
+                    {{ message }}
+                </p>
+            {% endif %}
+        {% endfor %}
         <p id="message-print" class="alert" style="display: none"></p>
         <div class="d-flex justify-content-between">
             <h3 class="color-primary-second">Teacher List</h3>

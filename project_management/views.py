@@ -22,13 +22,6 @@ class HomeView(View):
 
     def get(self, request, *args, **kwargs):
 
-        cur_date = datetime.datetime.now().date()
-
-        if cur_date.month <= 6:
-            semester = "Spring " + str(cur_date.year)
-        else:
-            semester = "Summer " + str(cur_date.year)
-
         running_courses = Course.objects.filter(
             deadline__range=(
                 datetime.datetime.now().date(),
