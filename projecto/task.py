@@ -13,10 +13,10 @@ from projecto.celery import app
 
 @app.task(name='delete_course')
 def delete_course():
-    three_yrs_ago = datetime.datetime.now() - relativedelta(years=3)
+    one_yrs_ago = datetime.datetime.now() - relativedelta(years=1)
     courses = Course.objects.filter(
         deadline__range=(
-            datetime.date(2000, 1, 1), three_yrs_ago))
+            datetime.date(2000, 1, 1), one_yrs_ago))
     courses.delete()
     return "Course Deleted Successfully"
 

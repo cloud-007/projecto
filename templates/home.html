@@ -12,6 +12,11 @@
             <h3 class="color-primary-second">Running Project</h3>
             {% if user.is_superuser %}
                 <div>
+                    <button type="button"
+                            class="btn btn-sm btn-outline-secondary"
+                            onclick="DownloadCSV()"
+                    >CSV
+                    </button>
                     <a style="text-decoration: none; color: white"
                        href="{% url 'course-results' 594612 %}">
                         <button class="btn btn-sm btn-outline-secondary ">
@@ -63,4 +68,33 @@
         {% endif %}
 
     </div>
+    <script type="text/javascript">
+        function DownloadCSV() {
+            course_id = 594612
+
+            $.ajax({
+                    type: 'GET',
+                    url: '{% url 'home'%}',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    data: {
+                        'type': "CSV",
+                    },
+                    success: function (data) {
+                        console.log(data)
+                        var blob = new Blob([data]);
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = "Proposal  " + '{{ course.semester }}' + '.csv';
+                        link.click();
+                    },
+                    error: function (data) {
+                        console.log(data)
+                    }
+                }
+            )
+
+        }
+    </script>
 {% endblock %}

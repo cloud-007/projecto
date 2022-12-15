@@ -43,6 +43,22 @@ class HomeView(View):
             'course_list': course_list
         }
 
+        if request.is_ajax():
+            proposal_list = Proposal.objects.filter(course__in=running_courses).order_by('course_id')
+            print("This is csv file download request")
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename=Result '
+
+            writer = csv.writer(response)
+            writer.writerow(['Id', 'Name', 'Course Code', 'Title'])
+
+            for proposal in proposal_list:
+                for student in proposal.students.all():
+                    writer.writerow(
+                        [str(student.student_id), student.full_name, str(proposal.course.course_id), proposal.title])
+            print(response)
+            return response
+
         return render(request, self.template_name, context)
 
 
