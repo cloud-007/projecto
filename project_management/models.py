@@ -51,14 +51,14 @@ class Proposal(AbstractTimestampModel):
         to='accounts.Teacher',
         related_name='assigned_proposals',
         null=True,
-        on_delete=models.PROTECT
+        on_delete=models.CASCADE
     )
     # assigned_by = models.CharField(verbose_name=_('Assigned By'), max_length=16)
     assigned_by = models.ForeignKey(
         verbose_name=_('Assigned By'),
         to='accounts.Teacher',
         related_name='+',
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         null=True,
         blank=True
     )
@@ -67,16 +67,16 @@ class Proposal(AbstractTimestampModel):
         verbose_name=_('Submitted By'),
         to='accounts.Student',
         related_name='proposal_submitted',
-        on_delete=models.PROTECT
+        on_delete=models.CASCADE
     )
     team_lead = models.ForeignKey(
         verbose_name=_('Team Lead'),
         to='accounts.Student',
         related_name='+',
-        on_delete=models.PROTECT
+        on_delete=models.CASCADE
     )
 
-    file = models.FileField(upload_to='proposals/')
+    file = models.FileField(verbose_name=_('Proposal File'), upload_to='proposals/')
 
     def __str__(self):
         return self.title
@@ -134,7 +134,7 @@ class Result(AbstractTimestampModel):
         verbose_name=_('Student'),
         to='accounts.Student',
         related_name='result',
-        on_delete=models.PROTECT
+        on_delete=models.CASCADE
     )
 
     @property
@@ -164,7 +164,7 @@ class Marksheet(AbstractTimestampModel):
         verbose_name=_('Teacher'),
         to='accounts.Teacher',
         related_name='marksheets',
-        on_delete=models.PROTECT
+        on_delete=models.CASCADE
     )
 
     # add marks field

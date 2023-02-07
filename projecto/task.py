@@ -8,10 +8,10 @@ from django.utils.http import urlsafe_base64_decode
 
 from accounts.models import User, Student
 from project_management.admin import Course
-from projecto.celery import app
+from projecto.celery import app as celery_app
 
 
-@app.task(name='delete_course')
+@celery_app.task(name='delete_course')
 def delete_course():
     one_yrs_ago = datetime.datetime.now() - relativedelta(years=1)
     courses = Course.objects.filter(
@@ -21,7 +21,7 @@ def delete_course():
     return "Course Deleted Successfully"
 
 
-@app.task(name='send_registration_email')
+@celery_app.task(name='send_registration_email')
 def send_registration_email(user_id, subject, message, email):
     print("Hello from send email in celery")
     uid = urlsafe_base64_decode(user_id).decode()
@@ -43,7 +43,7 @@ def send_registration_email(user_id, subject, message, email):
         return "Email sending Failed"
 
 
-@app.task(name='assigned_supervisor_email')
+@celery_app.task(name='assigned_supervisor_email')
 def assigned_supervisor_email(subject, message, email):
     from_email = os.environ.get('EMAIL_HOST_USER')
 

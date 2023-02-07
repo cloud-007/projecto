@@ -17,7 +17,7 @@ class Student(models.Model):
         verbose_name=_('User'),
         to='accounts.User',
         related_name='student',
-        on_delete=models.PROTECT
+        on_delete=models.CASCADE
     )
 
     def __str__(self):
@@ -34,7 +34,7 @@ class Teacher(models.Model):
         verbose_name=_('User'),
         to='accounts.User',
         related_name='teacher',
-        on_delete=models.PROTECT
+        on_delete=models.CASCADE
     )
 
     def __str__(self):
