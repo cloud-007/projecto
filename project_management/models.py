@@ -17,10 +17,22 @@ class AbstractTimestampModel(models.Model):
 
 
 class Course(AbstractTimestampModel):
+    class CourseState(models.TextChoices):
+        RUNNING = 'RUNNING', _('Running')
+        ARCHIVED = 'ARCHIVED', _('Archived')
+        DELETED = 'DELETED', _('Deleted')
+
     course_id = models.IntegerField(verbose_name=_('Course ID'))
     title = models.CharField(verbose_name=_('Course Title'), max_length=64)
     semester = models.CharField(verbose_name=_('Semester'), max_length=32)
-    deadline = models.DateField(verbose_name=_('Deadline'))
+    state = models.CharField(
+        verbose_name=_('State'),
+        max_length=32,
+        choices=CourseState.choices,
+        default=CourseState.RUNNING
+    )
+    start_time = models.DateTimeField(verbose_name=_('Start Time'))
+    end_time = models.DateTimeField(verbose_name=_('End Time'))
 
     def __str__(self):
         return self.title
@@ -39,13 +51,13 @@ class Proposal(AbstractTimestampModel):
         to='accounts.Student',
         related_name='proposal',
     )
-    # preferred_supervisors = models.CharField(verbose_name=_('Preferred Supervisor'), max_length=128)
+
     preferred_supervisors = models.ManyToManyField(
         verbose_name=_('Preferred Supervisor'),
         to='accounts.Teacher',
         related_name='proposals',
     )
-    # assigned_supervisor = models.ForeignKey(Teacher)
+
     assigned_supervisor = models.ForeignKey(
         verbose_name=_('Assigned Supervisor'),
         to='accounts.Teacher',
@@ -53,7 +65,7 @@ class Proposal(AbstractTimestampModel):
         null=True,
         on_delete=models.CASCADE
     )
-    # assigned_by = models.CharField(verbose_name=_('Assigned By'), max_length=16)
+
     assigned_by = models.ForeignKey(
         verbose_name=_('Assigned By'),
         to='accounts.Teacher',
@@ -62,7 +74,7 @@ class Proposal(AbstractTimestampModel):
         null=True,
         blank=True
     )
-    # submitted_by = models.CharField(verbose_name=_('Submitted By'), max_length=32)
+
     submitted_by = models.ForeignKey(
         verbose_name=_('Submitted By'),
         to='accounts.Student',
