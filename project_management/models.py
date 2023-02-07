@@ -22,8 +22,18 @@ class Course(AbstractTimestampModel):
         ARCHIVED = 'ARCHIVED', _('Archived')
         DELETED = 'DELETED', _('Deleted')
 
+    class TitleState(models.TextChoices):
+        CSE_3300 = 'CSE_3300', _('CSE 3300')
+        CSE_4800 = 'CSE_4800', _('CSE 4800')
+        CSE_4801 = 'CSE_4801', _('CSE 4801')
+
     course_id = models.IntegerField(verbose_name=_('Course ID'))
-    title = models.CharField(verbose_name=_('Course Title'), max_length=64)
+    title = models.CharField(
+        verbose_name=_('Title'),
+        max_length=32,
+        choices=TitleState.choices,
+        default=TitleState.CSE_3300
+    )
     semester = models.CharField(verbose_name=_('Semester'), max_length=32)
     state = models.CharField(
         verbose_name=_('State'),
