@@ -16,24 +16,38 @@ class AbstractTimestampModel(models.Model):
         ordering = ['-id']
 
 
+class CourseState(models.TextChoices):
+    RUNNING = 'RUNNING', _('Running')
+    ARCHIVED = 'ARCHIVED', _('Archived')
+    DELETED = 'DELETED', _('Deleted')
+
+
+class CourseCodeState(models.TextChoices):
+    CSE_3300 = 'CSE_3300', _('CSE 3300')
+    CSE_4800 = 'CSE_4800', _('CSE 4800')
+    CSE_4801 = 'CSE_4801', _('CSE 4801')
+
+
+class TitleState(models.TextChoices):
+    CSE_3300 = 'Project I', _('CSE 3300')
+    CSE_4800 = 'Project II part I', _('CSE 4800')
+    CSE_4801 = 'Project II part II', _('CSE 4801')
+
+
 class Course(AbstractTimestampModel):
-    class CourseState(models.TextChoices):
-        RUNNING = 'RUNNING', _('Running')
-        ARCHIVED = 'ARCHIVED', _('Archived')
-        DELETED = 'DELETED', _('Deleted')
-
-    class TitleState(models.TextChoices):
-        CSE_3300 = 'CSE_3300', _('CSE 3300')
-        CSE_4800 = 'CSE_4800', _('CSE 4800')
-        CSE_4801 = 'CSE_4801', _('CSE 4801')
-
-    course_id = models.IntegerField(verbose_name=_('Course ID'))
+    course_code = models.CharField(
+        verbose_name=_('Title'),
+        max_length=32,
+        choices=CourseCodeState.choices,
+        default=CourseCodeState.CSE_3300
+    )
     title = models.CharField(
         verbose_name=_('Title'),
         max_length=32,
         choices=TitleState.choices,
         default=TitleState.CSE_3300
     )
+
     semester = models.CharField(verbose_name=_('Semester'), max_length=32)
     state = models.CharField(
         verbose_name=_('State'),

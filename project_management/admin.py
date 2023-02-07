@@ -5,7 +5,7 @@ from .models import Course, Proposal, Result, Marksheet
 
 @admin.register(Course)
 class Course(admin.ModelAdmin):
-    list_display = ['id', 'title', 'state', 'course_id', 'semester']
+    list_display = ['id', 'title', 'state', 'course_code', 'semester']
     search_fields = ['title', 'course_id', 'semester']
 
 
