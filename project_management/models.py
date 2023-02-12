@@ -23,29 +23,29 @@ class CourseState(models.TextChoices):
 
 
 class CourseCodeState(models.TextChoices):
-    CSE_3300 = 'CSE_3300', _('CSE 3300')
-    CSE_4800 = 'CSE_4800', _('CSE 4800')
-    CSE_4801 = 'CSE_4801', _('CSE 4801')
+    CSE_3300 = '3300', _('CSE 3300')
+    CSE_4800 = '4800', _('CSE 4800')
+    CSE_4801 = '4801', _('CSE 4801')
 
 
 class TitleState(models.TextChoices):
-    CSE_3300 = 'Project I', _('CSE 3300')
-    CSE_4800 = 'Project II part I', _('CSE 4800')
-    CSE_4801 = 'Project II part II', _('CSE 4801')
+    CSE_3300 = 'CSE 3300', _('Project I')
+    CSE_4800 = 'CSE 4800', _('Project II part I')
+    CSE_4801 = 'CSE 4801', _('Project II part II')
 
 
 class Course(AbstractTimestampModel):
     course_code = models.CharField(
-        verbose_name=_('Title'),
+        verbose_name=_('Course Code'),
         max_length=32,
         choices=CourseCodeState.choices,
         default=CourseCodeState.CSE_3300
     )
+
     title = models.CharField(
         verbose_name=_('Title'),
         max_length=32,
-        choices=TitleState.choices,
-        default=TitleState.CSE_3300
+        default="Project I"
     )
 
     semester = models.CharField(verbose_name=_('Semester'), max_length=32)
@@ -185,7 +185,7 @@ class Result(AbstractTimestampModel):
 
     def __str__(self):
         return "CSE - " + str(
-            self.proposal.course.course_id) + " | " + self.proposal.course.semester + " | " + self.student.student_id
+            self.proposal.course.course_code) + " | " + self.proposal.course.semester + " | " + self.student.student_id
 
 
 class Marksheet(AbstractTimestampModel):
