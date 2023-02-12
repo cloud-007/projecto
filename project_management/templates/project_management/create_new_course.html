@@ -42,17 +42,17 @@
                                style="width: 100%"
                                name="course_code" value="CSE 3300">
                     </div>
-                    <label for="id_course_title" class="mt-1">Course
-                        Title
-                    </label>
-                    <input
-                            type="text"
-                            class="form-control input-field"
-                            id="id_course_title"
-                            name="course_title"
-                            required
-                            value="Project i"
-                    />
+                    {#                    <label for="id_course_title" class="mt-1">Course#}
+                    {#                        Title#}
+                    {#                    </label>#}
+                    {#                    <input#}
+                    {#                            type="text"#}
+                    {#                            class="form-control input-field"#}
+                    {#                            id="id_course_title"#}
+                    {#                            name="course_title"#}
+                    {#                            required#}
+                    {#                            value="Project i"#}
+                    {#                    />#}
                     <label class="mt-1">Select Semester</label>
                     <div class="input-group">
                         <input id="id_semester"
@@ -96,17 +96,29 @@
                         <input type="hidden" id="id_update_semester"
                                name="semester">
                     </div>
-                    <label for="id_deadline"
-                           class="mt-1">Deadline</label>
+                    <label for="id_start_time"
+                           class="mt-1">Start Time</label>
                     <input
-                            type="date"
+                            type="datetime-local"
                             class="form-control input-field"
                             style="display: block"
-                            id="id_deadline"
-                            name="deadline"
+                            id="id_start_time"
+                            name="start_time"
                             placeholder="Pick a date"
                             required
-                            value="{{ course.deadline }}"
+                            value="{{ course.start_time }}"
+                    />
+                    <label for="id_end_time"
+                           class="mt-1">End Time</label>
+                    <input
+                            type="datetime-local"
+                            class="form-control input-field"
+                            style="display: block"
+                            id="id_end_time"
+                            name="end_time"
+                            placeholder="Pick a date"
+                            required
+                            value="{{ course.start_time }}"
                     />
                     <button
                             type="submit"
@@ -124,61 +136,62 @@
             integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="text/javascript">
-        selectedCourse = 'CSE 3300'
-        courseTitle = 'Project i'
-        selectedSemester = 'Spring'
+        selectedCourse = 'CSE 3300';
+        courseTitle = 'Project i';
+        selectedSemester = 'Spring';
 
         function toggleCourse(courseCode) {
-            const cse3300 = document.getElementById("id_cse3300")
-            const cse4800 = document.getElementById("id_cse4800")
-            const cse4801 = document.getElementById("id_cse4801")
+            const cse3300 = document.getElementById("id_cse3300");
+            const cse4800 = document.getElementById("id_cse4800");
+            const cse4801 = document.getElementById("id_cse4801");
             if (courseCode === "3300") {
                 this.selectedCourse = "CSE 3300";
-                this.courseTitle = 'Project i'
+                this.courseTitle = 'Project i';
 
-                cse3300.style.background = "#6C757D"
-                cse3300.style.color = "white"
+                cse3300.style.background = "#6C757D";
+                cse3300.style.color = "white";
 
-                cse4800.style.background = "white"
-                cse4800.style.color = "black"
-                cse4801.style.background = "white"
-                cse4801.style.color = "black"
+                cse4800.style.background = "white";
+                cse4800.style.color = "black";
+                cse4801.style.background = "white";
+                cse4801.style.color = "black";
 
-                document.getElementById("id_course_title").value = "Project i"
-                document.getElementById("id_course_code").value = "CSE 3300"
+                {#document.getElementById("id_course_title").value = "Project i";#}
+                document.getElementById("id_course_code").value = "CSE 3300";
             } else if (courseCode === "4800") {
                 this.selectedCourse = "CSE 4800";
-                this.courseTitle = 'Project 2 Part i'
+                this.courseTitle = 'Project 2 Part i';
 
-                cse4800.style.background = "#6C757D"
-                cse4800.style.color = "white"
+                cse4800.style.background = "#6C757D";
+                cse4800.style.color = "white";
 
-                cse3300.style.background = "white"
-                cse3300.style.color = "black"
-                cse4801.style.background = "white"
-                cse4801.style.color = "black"
+                cse3300.style.background = "white";
+                cse3300.style.color = "black";
+                cse4801.style.background = "white";
+                cse4801.style.color = "black";
 
-                document.getElementById("id_course_title").value = "Project 2 Part i"
-                document.getElementById("id_course_code").value = "CSE 4800"
+                {#document.getElementById("id_course_title").value = "Project 2 Part i";#}
+                document.getElementById("id_course_code").value = "CSE 4800";
             } else {
                 this.selectedCourse = "CSE 4801";
-                this.courseTitle = 'Project 2 Part ii'
+                this.courseTitle = 'Project 2 Part ii';
 
-                cse4801.style.background = "#6C757D"
-                cse4801.style.color = "white"
+                cse4801.style.background = "#6C757D";
+                cse4801.style.color = "white";
 
-                cse3300.style.background = "white"
-                cse3300.style.color = "black"
-                cse4800.style.background = "white"
-                cse4800.style.color = "black"
+                cse3300.style.background = "white";
+                cse3300.style.color = "black";
+                cse4800.style.background = "white";
+                cse4800.style.color = "black";
 
-                document.getElementById("id_course_title").value = "Project 2 Part ii"
-                document.getElementById("id_course_code").value = "CSE 4801"
+                {#document.getElementById("id_course_title").value = "Project 2 Part ii";#}
+                document.getElementById("id_course_code").value = "CSE 4801";
             }
+            console.log(this.selectedCourse);
         }
 
         function updateValue() {
-            const semester = document.getElementById("id_update_semester")
+            const semester = document.getElementById("id_update_semester");
             semester.value = document.getElementById("id_semester").value + " " +
                 document.getElementById("id_year").value;
 
