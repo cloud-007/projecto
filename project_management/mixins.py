@@ -6,7 +6,6 @@ class TeacherRequiredMixin(AccessMixin):
 
     @staticmethod
     def is_student(user) -> bool:
-        print('is student')
         try:
             user = user.teacher
             return True
@@ -14,7 +13,6 @@ class TeacherRequiredMixin(AccessMixin):
             return False
 
     def dispatch(self, request, *args, **kwargs):
-        print('i am inside')
         if not request.user.is_authenticated:
             return self.handle_no_permission()
         if not request.user.is_verified:
