@@ -82,7 +82,7 @@
                         'type': "CSV",
                     },
                     success: function (data) {
-                        console.log(data)
+                        {#console.log(data)#}
                         var blob = new Blob([data]);
                         var link = document.createElement('a');
                         link.href = window.URL.createObjectURL(blob);
