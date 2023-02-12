@@ -13,7 +13,7 @@ from xhtml2pdf import pisa
 
 from accounts.models import Teacher, Student
 from project_management.mixins import TeacherRequiredMixin, SuperUserMixin
-from project_management.models import Course, Proposal, Result, Marksheet
+from project_management.models import Course, Proposal, Result, Marksheet, CourseState, TitleState
 from projecto.task import assigned_supervisor_email
 
 
@@ -22,21 +22,21 @@ class HomeView(View):
 
     def get(self, request, *args, **kwargs):
 
+        current_time = datetime.datetime.now()
+
         running_courses = Course.objects.filter(
-            deadline__range=(
-                datetime.datetime.now().date(),
-                datetime.date(2500, 1, 1))).order_by(
-            'deadline'
-        )
-        archived_courses = Course.objects.filter(
-            deadline__range=(
-                datetime.date(2000, 1, 1), datetime.datetime.now().date() - datetime.timedelta(1))
-        ).order_by('deadline')
+            state=CourseState.RUNNING,
+            start_time__lte=current_time,
+            end_time__gte=current_time
+        ).order_by('title')
+
+        archived_courses = Course.objects.filter(state=CourseState.ARCHIVED).order_by('start_time')
 
         try:
             course_list = request.user.student.proposal.values_list('course', flat=True)
         except (Exception,) as e:
             course_list = None
+            print(e)
         context = {
             'courses': running_courses,
             'archived': archived_courses,
@@ -44,7 +44,7 @@ class HomeView(View):
         }
 
         if request.is_ajax():
-            proposal_list = Proposal.objects.filter(course__in=running_courses).order_by('course_id')
+            proposal_list = Proposal.objects.filter(course__in=running_courses)
             print("This is csv file download request")
             response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'] = 'attachment; filename=Result '
@@ -55,7 +55,7 @@ class HomeView(View):
             for proposal in proposal_list:
                 for student in proposal.students.all():
                     writer.writerow(
-                        [str(student.student_id), student.full_name, str(proposal.course.course_id), proposal.title])
+                        [str(student.student_id), student.full_name, str(proposal.course.course_code), proposal.title])
             print(response)
             return response
 
@@ -73,11 +73,10 @@ class ProjectDetailsView(TeacherRequiredMixin, View):
     }
 
     def get(self, request, *args, **kwargs):
-        course_id = kwargs.get('id')
+        pk = kwargs.get('id')
         query = request.GET.get('query')
-        print("Printing from submission page")
-        print(course_id)
-        course = Course.objects.get(id=course_id)
+
+        course = Course.objects.get(id=pk)
         filter_by = kwargs.get('filter_by')
 
         if filter_by == 'all':
@@ -93,8 +92,8 @@ class ProjectDetailsView(TeacherRequiredMixin, View):
 
         if request.is_ajax():
             print("This is ajax call to download all pdf")
-            type = request.GET.get("type", None)
-            if type == "PDF":
+            download_type = request.GET.get("type", None)
+            if download_type == "PDF":
                 print("Downloading Submission of proposals")
                 data = {
                     'course': course,
@@ -107,8 +106,8 @@ class ProjectDetailsView(TeacherRequiredMixin, View):
                 html = template.render(data)
 
                 file = open('test.pdf', "w+b")
-                pisaStatus = pisa.CreatePDF(html.encode('utf-8'), dest=file,
-                                            encoding='utf-8')
+                pisa.CreatePDF(html.encode('utf-8'), dest=file,
+                               encoding='utf-8')
                 file.seek(0)
                 pdf = file.read()
                 file.close()
@@ -124,7 +123,7 @@ class ProjectDetailsView(TeacherRequiredMixin, View):
                 for proposal in proposals:
                     for student in proposal.students.all():
                         writer.writerow(
-                            [student.student_id, student.full_name, proposal.course.course_id, proposal.title])
+                            [student.student_id, student.full_name, proposal.course.course_code, proposal.title])
                 print(response)
                 return response
 
@@ -141,9 +140,9 @@ class ProjectDetailsView(TeacherRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         # check if it is an ajax call
-        course_id = kwargs.get('id')
-        print(course_id)
-        course = Course.objects.get(id=course_id)
+        pk = kwargs.get('id')
+        print(pk)
+        course = Course.objects.get(id=pk)
         filter_by = kwargs.get('filter_by')
         if filter_by == 'all':
             proposals = course.proposal.all()
@@ -165,7 +164,7 @@ class ProjectDetailsView(TeacherRequiredMixin, View):
             proposal_id = request.POST.get("proposal_id")
             proposal = Proposal.objects.get(id=proposal_id)
             # if the admin is requesting to delete the proposal
-            if proposal.course.course_id == 4800:
+            if proposal.course.course_code == '4800':
                 sem = proposal.course.semester.split(" ")
                 semester = sem[0]
                 year = sem[1]
@@ -177,7 +176,7 @@ class ProjectDetailsView(TeacherRequiredMixin, View):
                     next_year = int(year) + 1
                 next_semester = next_semester + " " + str(next_year)
                 next_proposal = Proposal.objects.get(
-                    course=Course.objects.get(course_id=4801, semester=next_semester),
+                    course=Course.objects.get(course_code='4801', semester=next_semester),
                     team_lead=proposal.team_lead)
             else:
                 next_proposal = None
@@ -219,44 +218,57 @@ class CreateNewCourse(SuperUserMixin, View):
         return render(request, self.template_name, {})
 
     def post(self, request, *args, **kwargs):
-        print(request.POST)
         course = Course()
         code = request.POST.get("course_code")
         val = code.split(" ")
-        course.course_id = val[1]
-        course.title = request.POST.get("course_title")
+        course.course_code = val[1]
+        print(course.course_code)
+        if val[1] == "3300":
+            course.title = TitleState.CSE_3300
+        elif val[1] == "4800":
+            course.title = TitleState.CSE_4800
+        else:
+            course.title = TitleState.CSE_4801
         course.semester = request.POST.get("semester")
-        course.deadline = request.POST.get("deadline")
+        course.start_time = request.POST.get("start_time")
+        course.end_time = request.POST.get("end_time")
 
         context = {
             'course': course
         }
 
-        if Course.objects.filter(course_id=course.course_id, semester=course.semester).first():
+        if Course.objects.filter(course_code=course.course_code, semester=course.semester).first():
             messages.warning(request, "This course for this semester already exists")
             return render(request, self.template_name, context=context)
 
         course.save()
         messages.success(request, course.title + " has been added successfully")
-        print(type(course.course_id))
-        if course.course_id == "4800":
+
+        if course.course_code == "4800":
             sem = course.semester.split(" ")
             semester = sem[0]
             year = sem[1]
             if semester == "Spring":
                 next_semester = "Summer"
                 next_year = year
-                deadline = datetime.datetime(int(next_year), 12, 31)
+                end_time = datetime.datetime(int(next_year), 12, 31)
+                start_time = course.end_time
             else:
                 next_semester = "Spring"
                 next_year = int(year) + 1
-                deadline = datetime.datetime(int(next_year), 6, 30)
+                end_time = datetime.datetime(int(next_year), 6, 30)
+                start_time = course.end_time
             next_semester = next_semester + " " + str(next_year)
-            if Course.objects.filter(course_id=4801, semester=next_semester).first():
+            if Course.objects.filter(course_code='4801', semester=next_semester).first():
                 pass
             else:
-                course = Course(course_id=4801, title="Project 2 part ii", semester=next_semester,
-                                deadline=deadline)
+                course = Course(
+                    course_code='4801',
+                    title="Project 2 part ii",
+                    semester=next_semester,
+                    start_time=start_time,
+                    end_time=end_time
+                )
                 course.save()
         return redirect('home')
 
@@ -290,18 +302,20 @@ class UpdateCourseView(SuperUserMixin, View):
         print("Updating course")
         code = request.POST.get("course_code")
         val = code.split(" ")
-        check_course = Course.objects.filter(course_id=val[1], semester=request.POST.get("semester")).first()
+        check_course = Course.objects.filter(course_code=val[1], semester=request.POST.get("semester")).first()
         if check_course is not None and (
-                check_course.course_id != course.course_id or check_course.semester != course.semester):
+                check_course.course_code != course.course_code or check_course.semester != course.semester):
             messages.warning(request, "There is already a course for this semester")
             context = {
                 'course': course
             }
         else:
-            course.course_id = val[1]
+            course.course_code = val[1]
             course.title = request.POST.get("course_title")
             course.semester = request.POST.get("semester")
-            course.deadline = request.POST.get("deadline")
+            print(course.semester)
+            course.start_time = request.POST.get("start_time")
+            course.end_time = request.POST.get("end_time")
             course.save()
             context = {
                 'course': Course.objects.get(id=pk)
@@ -317,8 +331,10 @@ class ProposalSubmissionView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('id')
+        print(pk)
         course = Course.objects.get(id=pk)
-        proposal = Proposal.objects.filter(students=request.user.student, course_id=course.id).first()
+
+        proposal = Proposal.objects.filter(students=request.user.student, course=course).first()
 
         context = {
             'students': Student.objects.exclude(proposal__course=course),
@@ -328,8 +344,8 @@ class ProposalSubmissionView(LoginRequiredMixin, View):
 
         return render(request, self.template_name, context=context)
 
+    # noinspection PyMethodMayBeStatic
     def post(self, request, *args, **kwargs):
-        print(request.POST)
         pk = kwargs.get('id')
         course = Course.objects.get(id=pk)
 
@@ -340,7 +356,6 @@ class ProposalSubmissionView(LoginRequiredMixin, View):
         proposal.submitted_by = request.user.student
         proposal.team_lead = request.user.student
         proposal.file = request.FILES['proposal_file']
-        print(proposal.file)
         proposal.save()
         student_list = []
 
@@ -365,8 +380,8 @@ class ProposalSubmissionView(LoginRequiredMixin, View):
         messages.success(request, "Your response has been recorded")
 
         proposal.save()
-        print(proposal.course.course_id)
-        if proposal.course.course_id == 4800:
+        print(proposal.course.course_code)
+        if proposal.course.course_code == '4800':
             print("Creating new proposal for 4801")
 
             sem = proposal.course.semester
@@ -381,13 +396,11 @@ class ProposalSubmissionView(LoginRequiredMixin, View):
                 next_year = int(year) + 1
 
             semester = str(next_semester) + " " + str(next_year)
-            print(course)
-            print(semester)
 
             new_proposal = proposal
             new_proposal.id = None
             new_proposal.file = request.FILES['proposal_file']
-            new_proposal.course = Course.objects.get(course_id=4801, semester=semester)
+            new_proposal.course = Course.objects.get(course_code='4801', semester=semester)
             new_proposal.save()
             print(new_proposal)
             new_proposal.students.set(students),
@@ -421,7 +434,7 @@ class ProposalUpdateView(SuperUserMixin, View):
 
     def post(self, request, *args, **kwargs):
         proposal = Proposal.objects.get(id=kwargs.get('proposal_id'))
-        if proposal.course.course_id == 4800:
+        if proposal.course.course_code == '4800':
             sem = proposal.course.semester.split(" ")
             semester = sem[0]
             year = sem[1]
@@ -432,7 +445,7 @@ class ProposalUpdateView(SuperUserMixin, View):
                 next_semester = "Spring"
                 next_year = int(year) + 1
             next_semester = next_semester + " " + str(next_year)
-            next_proposal = Proposal.objects.get(course=Course.objects.get(course_id=4801, semester=next_semester),
+            next_proposal = Proposal.objects.get(course=Course.objects.get(course_code='4801', semester=next_semester),
                                                  team_lead=proposal.team_lead)
         else:
             next_proposal = None
@@ -509,22 +522,18 @@ class MarkingStudentView(TeacherRequiredMixin, View):
     template_name = 'project_management/marking_student.html'
 
     def get(self, request, *args, **kwargs):
-        course_id = kwargs.get('id')
+        course_code = kwargs.get('id')
         proposal_id = kwargs.get('proposal_id')
-        course = Course.objects.get(id=course_id)
+        course = Course.objects.get(id=course_code)
         proposal = Proposal.objects.get(id=proposal_id)
         if request.is_ajax():
-            print(request.GET.get('student_id'))
-            print(request.user.teacher)
             result = Marksheet.objects.filter(teacher=request.user.teacher,
                                               result__proposal=proposal,
                                               result__student__student_id=request.GET.get('student_id'))
-            print("Printing serialized data")
-            print(serializers.serialize("json", result))
-            dict = {
+            context_dict = {
                 'result': serializers.serialize("json", result),
             }
-            return HttpResponse(json.dumps(dict), content_type='application/json')
+            return HttpResponse(json.dumps(context_dict), content_type='application/json')
         context = {
             'course': course,
             'proposal': proposal
@@ -532,16 +541,17 @@ class MarkingStudentView(TeacherRequiredMixin, View):
         return render(request, self.template_name, context=context)
 
     def post(self, request, *args, **kwargs):
+        print("Printing the post request")
         print(request.POST)
 
-        course_id = kwargs.get('id')
+        course_code = kwargs.get('id')
         proposal_id = kwargs.get('proposal_id')
-        course = Course.objects.get(id=course_id)
+        course = Course.objects.get(id=course_code)
         proposal = Proposal.objects.get(id=proposal_id)
 
-        full_marks = request.POST.get('full_marks')
-        criteria1 = request.POST.get('criteria1')
-        is_absent = request.POST.get('isAbsent')
+        full_marks = request.POST.get('full_marks', None)
+        criteria1 = request.POST.get('criteria1', None)
+        is_absent = request.POST.get('isAbsent', None)
 
         # marking the student one by one
         if len(str(full_marks)) == 0 and len(str(criteria1)) == 0 and is_absent is None:
@@ -594,6 +604,7 @@ class MarkingStudentView(TeacherRequiredMixin, View):
                         marksheet.supervisor = 0
                         marksheet.save()
         else:
+            print("Printing the post request")
             # if everyone is absent don't create any marksheet
             if is_absent == 'on':
                 # set zero in his marksheet
@@ -610,14 +621,19 @@ class MarkingStudentView(TeacherRequiredMixin, View):
             # otherwise create a marksheet for every student
             else:
                 # marked in details
-                if len(str(full_marks)) == 0:
-                    criteria1 = request.POST.get('criteria1')
-                    criteria2 = request.POST.get('criteria2')
+                detailed = request.POST.get('detailed_marking', None)
+                if detailed is not None:
+                    criteria1 = request.POST.get('criteria1', 0)
+                    criteria2 = request.POST.get('criteria2', 0)
                 # marked in full marks
                 else:
                     full_marks = request.POST.get('full_marks')
                     criteria1 = full_marks
-                    criteria2 = 0
+                    if full_marks > 30:
+                        criteria2 = full_marks - 30
+                        criteria1 = 30
+                    else:
+                        criteria2 = 0
                 s_mark = request.POST.get('supervisor_mark')
                 # check supervisor mark
                 if len(str(s_mark)) == 0:
@@ -658,10 +674,9 @@ class ResultSheetView(SuperUserMixin, View):
     template_name = 'project_management/course_results.html'
 
     def get(self, request, *args, **kwargs):
-        course_id = kwargs.get('id')
-        print("Printing query")
-        print(course_id)
-        if course_id == 594612:
+        pk = kwargs.get('id')
+        print(pk)
+        if pk == 594612:
             print("I am inside query")
             cur_date = datetime.datetime.now().date()
 
@@ -670,21 +685,17 @@ class ResultSheetView(SuperUserMixin, View):
             else:
                 semester = "Summer " + str(cur_date.year)
 
-            running_courses = Course.objects.filter(semester=semester,
-                                                    deadline__range=(
-                                                        datetime.datetime.now().date(),
-                                                        datetime.date(2500, 1, 1))).order_by(
-                'deadline')
+            running_courses = Course.objects.filter(semester=semester, state=CourseState.RUNNING).order_by('start_time')
             results = Result.objects.filter(course__in=running_courses.all())
             course = Course(id=594612)
         else:
-            course = Course.objects.get(id=course_id)
+            course = Course.objects.get(id=pk)
             results = Result.objects.filter(proposal__in=course.proposal.all())
         if request.is_ajax():
             print("This is an ajax call")
             print(request.GET)
-            type = request.GET.get("type", None)
-            if type == 'CSV':
+            download_type = request.GET.get("type", None)
+            if download_type == 'CSV':
                 print("This is csv file download request")
                 response = HttpResponse(content_type='text/csv')
                 response['Content-Disposition'] = 'attachment; filename=Result '
@@ -708,8 +719,8 @@ class ResultSheetView(SuperUserMixin, View):
                 html = template.render(data)
 
                 file = open('test.pdf', "w+b")
-                pisaStatus = pisa.CreatePDF(html.encode('utf-8'), dest=file,
-                                            encoding='utf-8')
+                pisa.CreatePDF(html.encode('utf-8'), dest=file,
+                               encoding='utf-8')
                 file.seek(0)
                 pdf = file.read()
                 file.close()
