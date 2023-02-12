@@ -93,6 +93,7 @@
                                                 class="form-control input-field"
                                                 id="id_criteria1{{ student.student_id }}"
                                                 name="criteria1{{ student.student_id }}"
+                                                onchange="criteria_1 = this.value;"
                                                 style="display: none"
                                         />
                                         <label
@@ -109,6 +110,7 @@
                                                 class="form-control input-field"
                                                 id="id_criteria2{{ student.student_id }}"
                                                 name="criteria2{{ student.student_id }}"
+                                                onchange="criteria_2 = this.value;"
                                                 style="display: none"
                                         />
                                     </div>
@@ -186,6 +188,7 @@
                                             id="id_criteria1"
                                             name="criteria1"
                                             style="display: none"
+                                            onchange="criteria_1 = this.value;"
                                     />
                                     <label
                                             for="id_criteria2"
@@ -201,6 +204,7 @@
                                             id="id_criteria2"
                                             name="criteria2"
                                             style="display: none"
+                                            onchange="criteria_2 = this.value;"
                                     />
                                 </div>
                                 <label
@@ -245,6 +249,7 @@
 
     <script type="text/javascript">
         curStudent = ''
+        let criteria_1 = 0, criteria_2 = 0;
         $(document).ready(function () {
             {% if proposal.assigned_supervisor == user.teacher %}
                 {% for student in proposal.students.all %}
@@ -280,14 +285,19 @@
                         },
                         success: function (data) {
                             jsonData = JSON.parse(data['result'])
+                            criteria_1 = jsonData[0]['fields'].criteria_1
+                            criteria_2 = jsonData[0]['fields'].criteria_2
 
-                            const criteria_1 = jsonData[0]['fields'].criteria_1
-                            const criteria_2 = jsonData[0]['fields'].criteria_2
+                            if (criteria_2 === 0 && criteria_1 > 30) {
+                                criteria_2 = criteria_1 - 30;
+                                criteria_1 = 30;
+                            }
+
                             const supervisorMark = jsonData[0]['fields'].supervisor
                             console.log({{ student.student_id }} +': ' + criteria_1 + ' ' + criteria_2 + ' ' + supervisorMark)
-                            document.getElementById("id_full_marks{{ student.student_id }}").value = criteria_1
+                            document.getElementById("id_full_marks{{ student.student_id }}").value = criteria_1 + criteria_2
                             document.getElementById("id_criteria1{{ student.student_id }}").value = criteria_1
-                            document.getElementById("id_criteria2{{ student.student_id }}").value = '0'
+                            document.getElementById("id_criteria2{{ student.student_id }}").value = criteria_2
                             document.getElementById("id_supervisor_mark{{ student.student_id }}").value = supervisorMark
                         }
                     }
@@ -399,12 +409,11 @@
         }
 
         function showHideFullMarks() {
-            console.log(selectedStudent)
             if (document.getElementById("assignSameMarkCheck" + selectedStudent).checked) {
                 console.log(document.getElementById("assignSameMarkCheck" + selectedStudent).checked)
 
                 document.getElementById("id_full_marks" + selectedStudent).required = false;
-                document.getElementById("id_full_marks" + selectedStudent).value = '';
+                document.getElementById("id_full_marks" + selectedStudent).value = parseInt(criteria_1) + parseInt(criteria_2);
                 document.getElementById("id_criteria1" + selectedStudent).required = true;
                 document.getElementById("id_criteria2" + selectedStudent).required = true;
 
@@ -417,11 +426,13 @@
                 document.querySelector("label[for='id_criteria2" + selectedStudent + "']").style.display = "block"
 
             } else {
+
+
                 document.getElementById("id_full_marks" + selectedStudent).required = true;
                 document.getElementById("id_criteria1" + selectedStudent).required = false;
-                document.getElementById("id_criteria1" + selectedStudent).value = '';
+                document.getElementById("id_criteria1" + selectedStudent).value = criteria_1;
                 document.getElementById("id_criteria2" + selectedStudent).required = false;
-                document.getElementById("id_criteria2" + selectedStudent).value = '';
+                document.getElementById("id_criteria2" + selectedStudent).value = criteria_2;
 
                 document.getElementById("id_full_marks" + selectedStudent).style.display = "block";
                 document.getElementById("id_criteria1" + selectedStudent).style.display = "none";
