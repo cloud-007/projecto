@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_tags %}
 {% block content %}
     <div class=" d-flex justify-content-center">
         <div class="profile-block p-3">
@@ -22,8 +23,7 @@
                 {% include 'divider.html' %}
 
                 <div class="form-group ">
-                    <label>Select
-                        Course</label>
+                    <label>Select Course</label>
                     <div class="btn-group d-flex">
                         <input type="button"
                                class="btn btn-secondary input-field"
@@ -66,9 +66,9 @@
                         <input id="id_semester"
                                class="btn btn-sm btn-secondary dropdown-toggle d-none"
                                type="button" data-bs-toggle="dropdown"
-                               name="selected_semester"
+                               name="semester"
                                aria-expanded="false"
-                               value="Spring"
+                               value="{{ course.semester }}"
                         >
                         <button id="id_button_semester"
                                 style="border-radius: 3px 0 0 3px"
@@ -106,15 +106,25 @@
                         <input type="hidden" id="id_update_semester"
                                name="semester">
                     </div>
-                    <label for="id_deadline"
-                           class="mt-1 label-naming d-block">Deadline</label>
+                    <label for="id_start_time"
+                           class="mt-1 label-naming d-block">Start Time</label>
                     <input
                             type="date"
                             class="form-control input-field d-block"
-                            id="id_deadline"
-                            name="deadline"
+                            id="id_start_time"
+                            name="start_time"
                             required
-                            value="{{ course.deadline|date:'Y-m-d' }}"
+                            value="{{ course.start_time|date:'Y-m-d' }}"
+                    />
+                    <label for="id_end_time"
+                           class="mt-1 label-naming d-block">End Time</label>
+                    <input
+                            type="date"
+                            class="form-control input-field d-block"
+                            id="id_end_time"
+                            name="end_time"
+                            required
+                            value="{{ course.end_time|date:'Y-m-d' }}"
                     />
                     <button
                             type="submit"
@@ -180,14 +190,15 @@
             integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="text/javascript">
-        selectedCourse = 'CSE 3300'
+        console.log("{{ course.semester }}")
+        selectedCourse = '{{ course.semester }}';
         courseTitle = 'Project i'
         selectedSemester = 'Spring'
 
         $(document).ready(function () {
-            {% if course.course_id == 3300 %}
+            {% if course.course_code == '3300' %}
                 toggleCourse("3300")
-            {% elif course.course_id == 4800 %}
+            {% elif course.course_code == '4800' %}
                 toggleCourse("4800")
             {% else %}
                 toggleCourse("4801")
@@ -198,6 +209,7 @@
 
             document.getElementById('id_semester').value = arr[0];
             document.getElementById('id_year').value = arr[1];
+            console.log('course code is ' + arr[0]);
         });
 
         function toggleCourse(courseCode) {

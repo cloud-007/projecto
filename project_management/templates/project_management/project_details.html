@@ -8,7 +8,7 @@
             <div class="col-lg-11 col-md-10 col-sm-8  d-md-flex justify-content-between align-items-center">
                 <h4 id="id_total_submission" class="d-flex color-primary-second"
                     style="font-weight: bold">CSE
-                    - {{ course.course_id }}
+                    - {{ course.course_code }}
                     submissions({{ proposals.count }}/{{ student_count }})</h4>
                 <div class="d-flex btn-group" role="group"
                      aria-label="First group">
@@ -155,9 +155,9 @@
         }
 
         function DownloadPDF() {
-            course_id ={{ course.id }};
-            if (course_id === null) course_id = 594612
-            console.log(course_id)
+            course_code ={{ course.id }};
+            if (course_code === null) course_code = 594612
+            console.log(course_code)
 
             $.ajax({
                     type: 'GET',
@@ -187,10 +187,8 @@
         }
 
         function DownloadCSV() {
-            course_id ={{ course.id }};
-            if (course_id === null) course_id = 594612
-            console.log(course_id)
-
+            course_code ={{ course.id }};
+            if (course_code === null) course_code = 594612
             $.ajax({
                     type: 'GET',
                     url: '{% url 'course-details' course.id filter_by %}',
