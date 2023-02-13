@@ -29,6 +29,10 @@
                                 Management</a>
                         </li>
                     {% endif %}
+                    <li class="nav-item nav-item-margin-right">
+                        <a class="nav-link custom-nav-item"
+                           href="{% url 'notice-list' %}">Notice Board</a>
+                    </li>
                 </ul>
                 <div class="navbar-nav d-flex">
                     {% if user.is_authenticated %}

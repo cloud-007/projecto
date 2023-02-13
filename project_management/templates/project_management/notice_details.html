@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+    <div class="container mb-5 block-body-container" onclick="">
+        {# running project and manage #}
+        <div class="d-md-flex justify-content-between align-items-center">
+            <h4 id="id_total_submission" class="d-flex color-primary-second"
+                style="font-weight: bold">{{ notice.title }}</h4>
+            <h6>Published: {{ notice.created_date }}</h6>
+        </div>
+        {% include 'divider.html' %}
+        <div id="" class="mt-3">
+            <p>{{ notice.description }}</p>
+        </div>
+    </div>
+{% endblock %}

@@ -8,12 +8,14 @@ from django.core import serializers
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.template.loader import get_template
+from django.utils import timezone
 from django.views import View
+from django.views.generic import ListView, DetailView
 from xhtml2pdf import pisa
 
 from accounts.models import Teacher, Student
 from project_management.mixins import TeacherRequiredMixin, SuperUserMixin
-from project_management.models import Course, Proposal, Result, Marksheet, CourseState, TitleState
+from project_management.models import Course, Proposal, Result, Marksheet, CourseState, TitleState, Notice
 from projecto.task import assigned_supervisor_email
 
 
@@ -735,6 +737,37 @@ class ResultSheetView(SuperUserMixin, View):
 
     def post(self, request, *args, **kwargs):
         return render(request, self.template_name, {})
+
+
+class NoticeBoardView(ListView):
+    model = Notice
+    template_name = 'project_management/notice_board.html'
+    context_object_name = 'notices'
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['now'] = timezone.now()
+        return context
+
+    def get_queryset(self):
+        return Notice.objects.all().order_by('-created_date')
+
+
+class NoticeDetailView(DetailView):
+    model = Notice
+    template_name = 'project_management/notice_details.html'
+    context_object_name = 'notice'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['now'] = timezone.now()
+        return context
+
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset=queryset)
+        obj.save()
+        return obj
 
 
 def test(request):

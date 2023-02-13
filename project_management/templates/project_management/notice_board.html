@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+    <div class="container mb-5 block-body-container" onclick="">
+        {# running project and manage #}
+        <div class="row align-items-center mb-1">
+            <div class="col-lg-11 col-md-10 col-sm-8  d-md-flex justify-content-between align-items-center">
+                <h4 id="id_total_submission" class="d-flex color-primary-second"
+                    style="font-weight: bold">Notices</h4>
+
+            </div>
+
+        </div>
+        {% include 'divider.html' %}
+        <div id="" class="table-responsive mt-3">
+            <table id="data-table" class="table table-striped mt-2">
+                <thead>
+                <tr>
+                    <th scope="col" style="width: 15%">Title</th>
+                    <th scope="col" style="width: 55%">Description</th>
+                    <th scope="col" style="width: 15%">Course</th>
+                    <th scope="col" style="width: 15%">Published</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for notice in object_list %}
+                    <tr>
+                        <td><a style="text-decoration: none"
+                               href="{% url 'notice-detail' notice.id %}">
+                            {{ notice.title }}
+                        </a></td>
+                        <td>{{ notice.description }}</td>
+                        <td>CSE-{{ notice.course.course_code }}</td>
+                        <td>{{ notice.created_date|date }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

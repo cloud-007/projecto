@@ -44,6 +44,7 @@ class Course(AbstractTimestampModel):
 
     title = models.CharField(
         verbose_name=_('Title'),
+        choices=TitleState.choices,
         max_length=32,
         default="Project I"
     )
@@ -210,3 +211,17 @@ class Marksheet(AbstractTimestampModel):
 
     def __str__(self):
         return self.result.proposal.title + " - " + self.result.student.student_id
+
+
+class Notice(AbstractTimestampModel):
+    title = models.CharField(verbose_name=_('Title'), max_length=256)
+    description = models.TextField(verbose_name=_('Description'))
+    course = models.ForeignKey(
+        verbose_name=_('Course'),
+        to='Course',
+        related_name='notice',
+        on_delete=models.CASCADE
+    )
+
+    def __str__(self):
+        return self.title

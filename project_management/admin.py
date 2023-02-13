@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Course, Proposal, Result, Marksheet
+from .models import Course, Proposal, Result, Marksheet, Notice
 
 
 @admin.register(Course)
@@ -26,3 +26,9 @@ class Result(admin.ModelAdmin):
 class Marksheet(admin.ModelAdmin):
     list_display = ['id', 'teacher', 'result', 'criteria_1', 'criteria_2', 'supervisor']
     search_fields = ['teacher__full_name', 'result__course__course_id', 'criteria_1', 'criteria_2', 'supervisor']
+
+
+@admin.register(Notice)
+class Notice(admin.ModelAdmin):
+    list_display = ['id', 'title', 'description']
+    search_fields = ['title', 'description']
