@@ -15,7 +15,16 @@ from xhtml2pdf import pisa
 
 from accounts.models import Teacher, Student
 from project_management.mixins import TeacherRequiredMixin, SuperUserMixin
-from project_management.models import Course, Proposal, Result, Marksheet, CourseState, TitleState, Notice
+from project_management.models import (
+    Course,
+    Proposal,
+    Result,
+    Marksheet,
+    CourseState,
+    CourseCodeState,
+    TitleState,
+    Notice
+)
 from projecto.task import assigned_supervisor_email
 
 
@@ -768,6 +777,42 @@ class NoticeDetailView(DetailView):
         obj = super().get_object(queryset=queryset)
         obj.save()
         return obj
+
+
+# no inspection PyMethodMayBeStatic
+class NoticeCreateView(SuperUserMixin, View):
+    template_name = 'project_management/notice_form.html'
+
+    def get(self, request, *args, **kwargs):
+        print(Course.objects.filter(state=CourseState.RUNNING))
+        context = {
+            'courses': Course.objects.filter(state=CourseState.RUNNING),
+        }
+
+        return render(request, self.template_name, context=context)
+
+    def post(self, request, *args, **kwargs):
+        title = request.POST.get('title', None)
+        description = request.POST.get('description', None)
+        course = request.POST.get('course', None)
+
+        if course == '3300':
+            updated_course = CourseCodeState.CSE_3300
+        elif course == '4800':
+            updated_course = CourseCodeState.CSE_4800
+        else:
+            updated_course = CourseCodeState.CSE_4801
+
+        Notice.objects.create(
+            title=title,
+            description=description,
+            course=Course.objects.get(
+                state=CourseState.RUNNING,
+                course_code=updated_course
+            )
+        )
+
+        return redirect('notice-list')
 
 
 def test(request):
