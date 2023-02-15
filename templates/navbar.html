@@ -1,8 +1,11 @@
+{% load static %}
 <div id="id_navbar" class="" style="padding-bottom: 70px">
     <nav class="navbar fixed-top navbar-expand-lg navbar-light navbar-main">
         <div class="container-fluid">
-            <a class="navbar-brand project-name"
-               href="{% url 'home' %}">PROJECTO</a>
+            <a class="navbar-brand project-name" href="{% url 'home' %}">
+                <img src="{% static 'img/logo.png' %}" alt="Projecto"
+                     width="20%" height="auto">
+            </a>
             <button class="navbar-toggler" type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent"
@@ -10,12 +13,10 @@
                     aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse"
-                 id="navbarSupportedContent">
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mx-auto ms-2 mb-lg-0 nav-item-margin-right">
                     <li class="nav-item nav-item-margin-right">
-                        <a class="nav-link  custom-nav-item"
-                           aria-current="page"
+                        <a class="nav-link custom-nav-item" aria-current="page"
                            href="{% url 'home' %}">Home</a>
                     </li>
                     <li class="nav-item nav-item-margin-right">
@@ -38,18 +39,20 @@
                     {% if user.is_authenticated %}
                         <a class="custom-nav-item me-2"
                            style="text-decoration: none !important;"
-                           href="{% url 'profile' %}">Profile</a>
+                           href="{% url 'profile' %}">
+                            <img src="{% static 'img/defaultProfile.png' %}"
+                                 alt="Profile"
+                                 width="24" height="24">
+                        </a>
                         <button class="btn btn-sm btn-danger"
                                 name="signInButton"
-                                onclick="location.href = '{% url 'logout' %}'"
-                        >
+                                onclick="location.href = '{% url 'logout' %}'">
                             Sign Out
                         </button>
                     {% else %}
                         <button type="button" class="btn signInBtn"
                                 name="signOutButton"
-                                onclick="location.href = '{% url 'login' %}'"
-                        >
+                                onclick="location.href = '{% url 'login' %}'">
                             Sign In
                         </button>
                     {% endif %}
