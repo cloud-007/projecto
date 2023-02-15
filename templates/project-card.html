@@ -20,10 +20,15 @@
                     <i class=" text-muted fa-regular fa-circle-check fa-xl"></i>
                 {% endif %}
             </div>
-            <h6 class="text-muted pt-2">{{ course.title }}</h6>
-            <h6 class="mt-4 text-muted">Semester: {{ course.semester }}</h6>
-            <h6 class="text-muted">
-                Deadline: {{ course.end_time | date }}</h6>
+            <h6 class="text-muted card-subtitle pt-2">{{ course.title }}</h6>
+            <p class="card-text text-muted mb-2 mt-4">
+                <i class="far fa-calendar-alt mr-2"></i>
+                Semester: {{ course.semester }}
+            </p>
+            <p class="card-text text-muted ">
+                <i class="far fa-clock mr-2"></i>
+                Deadline: {{ course.end_time | date }}
+            </p>
         </div>
     </a>
 </div>
