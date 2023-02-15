@@ -2,12 +2,11 @@
 {% load static %}
 {% block content %}
 
-    <div class="container mb-5 block-body-container" onclick="">
-        {# running project and manage #}
+    <div class="container mb-5 block-body-container">
         <div class="row align-items-center mb-1">
-            <div class="col-lg-12 col-md-10 col-sm-8  d-md-flex justify-content-between align-items-center">
-                <h4 id="id_total_submission" class="d-flex color-primary-second"
-                    style="font-weight: bold">Notices</h4>
+            <div class="col-lg-12 col-md-10 col-sm-8 d-md-flex justify-content-between align-items-center">
+                <h4 class="d-flex color-primary-second font-weight-bold">
+                    Notices</h4>
                 {% if user.is_superuser %}
                     <button type="button"
                             class="btn btn-sm btn-outline-secondary"
@@ -15,15 +14,13 @@
                     >Create New
                     </button>
                 {% endif %}
-
             </div>
-
         </div>
         {% include 'divider.html' %}
-        <div id="" class="table-responsive mt-3">
-            <table id="data-table" class="table table-striped mt-2">
-                <thead>
-                <tr>
+        <div class="table-responsive mt-3">
+            <table class="table table-striped table-hover mt-2">
+                <thead class="thead-light">
+                <tr class="table-row">
                     <th scope="col" style="width: 15%">Title</th>
                     <th scope="col" style="width: 55%">Description</th>
                     <th scope="col" style="width: 15%">Course</th>
@@ -32,11 +29,9 @@
                 </thead>
                 <tbody>
                 {% for notice in object_list %}
-                    <tr>
-                        <td><a style="text-decoration: none"
-                               href="{% url 'notice-detail' notice.id %}">
-                            {{ notice.title }}
-                        </a></td>
+                    <tr class="table-row"
+                        onclick="window.location='{% url 'notice-detail' notice.id %}';">
+                        <td> {{ notice.title }}</td>
                         <td>{{ notice.description }}</td>
                         <td>CSE-{{ notice.course.course_code }}</td>
                         <td>{{ notice.created_date|date }}</td>
@@ -46,4 +41,25 @@
             </table>
         </div>
     </div>
+
 {% endblock %}
+
+{% block extra_css %}
+    <style>
+        .table-hover tbody tr:hover {
+            background-color: #f6f6f6;
+            cursor: pointer;
+        }
+
+        .table-row {
+            transition: all .2s ease-in-out;
+        }
+
+        .table-row:hover {
+            transform: scale(1.02);
+            box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+{% endblock %}
+
+
