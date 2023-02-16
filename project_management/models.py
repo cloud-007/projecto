@@ -88,14 +88,14 @@ class Proposal(AbstractTimestampModel):
         to='accounts.Teacher',
         related_name='assigned_proposals',
         null=True,
-        on_delete=models.CASCADE
+        on_delete=models.SET_NULL
     )
 
     assigned_by = models.ForeignKey(
         verbose_name=_('Assigned By'),
         to='accounts.Teacher',
         related_name='+',
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True
     )
