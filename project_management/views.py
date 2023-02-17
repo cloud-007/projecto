@@ -21,7 +21,6 @@ from project_management.models import (
     Result,
     Marksheet,
     CourseState,
-    CourseCodeState,
     TitleState,
     Notice
 )
@@ -696,7 +695,7 @@ class ResultSheetView(SuperUserMixin, View):
             else:
                 semester = "Summer " + str(cur_date.year)
 
-            running_courses = Course.objects.filter(semester=semester, state=CourseState.RUNNING).order_by('start_time')
+            running_courses = Course.objects.filter(state=CourseState.RUNNING).order_by('start_time')
             results = Result.objects.filter(course__in=running_courses.all())
             course = Course(id=594612)
         else:
@@ -784,32 +783,22 @@ class NoticeCreateView(SuperUserMixin, View):
     template_name = 'project_management/notice_form.html'
 
     def get(self, request, *args, **kwargs):
-        print(Course.objects.filter(state=CourseState.RUNNING))
-        context = {
-            'courses': Course.objects.filter(state=CourseState.RUNNING),
-        }
-
-        return render(request, self.template_name, context=context)
+        return render(request, self.template_name, context={})
 
     def post(self, request, *args, **kwargs):
         title = request.POST.get('title', None)
         description = request.POST.get('description', None)
-        course = request.POST.get('course', None)
+        course_code = request.POST.get('course', None)
+        semester = request.POST.get('semester', None)
 
-        if course == '3300':
-            updated_course = CourseCodeState.CSE_3300
-        elif course == '4800':
-            updated_course = CourseCodeState.CSE_4800
-        else:
-            updated_course = CourseCodeState.CSE_4801
+        if title is None or description is None or course_code is None or semester is None:
+            return redirect('notice-list')
 
         Notice.objects.create(
             title=title,
             description=description,
-            course=Course.objects.get(
-                state=CourseState.RUNNING,
-                course_code=updated_course
-            )
+            course_code=course_code,
+            semester=semester
         )
 
         return redirect('notice-list')

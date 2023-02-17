@@ -22,7 +22,8 @@
                 <thead class="thead-light">
                 <tr class="table-row">
                     <th scope="col" style="width: 15%">Title</th>
-                    <th scope="col" style="width: 55%">Description</th>
+                    <th scope="col" style="width: 40%">Description</th>
+                    <th scope="col" style="width: 15%">Semester</th>
                     <th scope="col" style="width: 15%">Course</th>
                     <th scope="col" style="width: 15%">Published</th>
                 </tr>
@@ -33,7 +34,8 @@
                         onclick="window.location='{% url 'notice-detail' notice.id %}';">
                         <td> {{ notice.title }}</td>
                         <td>{{ notice.description }}</td>
-                        <td>CSE-{{ notice.course.course_code }}</td>
+                        <td>{{ notice.semester }}</td>
+                        <td>{{ notice.course_code }}</td>
                         <td>{{ notice.created_date|date }}</td>
                     </tr>
                 {% endfor %}

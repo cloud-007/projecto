@@ -223,13 +223,6 @@ class Notice(AbstractTimestampModel):
         default=CourseCodeState.CSE_3300
     )
     semester = models.CharField(verbose_name=_('Semester'), max_length=32, blank=True)
-    course = models.ForeignKey(
-        verbose_name=_('Course'),
-        to='Course',
-        related_name='notice',
-        on_delete=models.SET_NULL,
-        null=True
-    )
 
     def __str__(self):
         return self.title
