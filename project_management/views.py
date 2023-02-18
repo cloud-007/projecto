@@ -1,6 +1,7 @@
 import csv
 import datetime
 import json
+from io import BytesIO
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -114,14 +115,11 @@ class ProjectDetailsView(TeacherRequiredMixin, View):
 
                 template = get_template('project_management/download_proposal_list_pdf.html')
                 html = template.render(data)
-
-                file = open('test.pdf', "w+b")
-                pisa.CreatePDF(html.encode('utf-8'), dest=file,
-                               encoding='utf-8')
-                file.seek(0)
-                pdf = file.read()
-                file.close()
-                return HttpResponse(pdf, 'application/pdf')
+                result = BytesIO()
+                pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
+                if not pdf.err:
+                    return HttpResponse(result.getvalue(), content_type='application/pdf')
+                return None
             else:
                 print("This is csv file download request")
                 response = HttpResponse(content_type='text/csv')

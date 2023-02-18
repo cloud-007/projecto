@@ -1,104 +1,84 @@
-<style>
-    th, td {
-        padding: 5px;
-        border: 1px solid #a2a2a2;
-        text-align: left;
-    }
-</style>
-<div class="container block-body-container mb-5">
+<div style="display: flex; flex-direction: column; margin-bottom: 5rem;">
     <div id="id_design_print"
-         style="border-bottom: 1px solid #d2d2d2"
-         class="d-flex justify-content-center">
-        <h2 style="font-size: 24px" id="id_heading"
-            class="color-primary-second">Result Sheets</h2>
+         style="display: flex; justify-content: center; margin-bottom: 2rem;">
+        <div>
+            <h1 id="id_heading"
+                style="color: #0047AB; width: 100%; text-align: center; font-weight: bold; margin-bottom: 0;">
+                Leading University, Sylhet</h1>
+            <h3 style="color: #0047AB; width: 100%; text-align: center; margin-top: 0; margin-bottom: 0;">
+                Department of Computer Science & Engineering</h3>
+            <h3 style="color: #0047AB; width: 100%; text-align: center; margin-bottom: 0; margin-top: 0;">
+                Program: B.Sc. in CSE</h3>
+            <h3 style="color: #0047AB; width: 100%; text-align: center;  margin-bottom: 0;margin-top: 0;">
+                Semester: {{ course.semester }}</h3>
+            <h3 style="color: #0047AB; width: 100%; text-align: center; margin-top: 0; margin-bottom: 1rem; border-bottom: 1px solid #d2d2d2">
+                Result Sheet: CSE-{{ results.first.course.course_code }}</h3>
+        </div>
     </div>
-    {% if results.count > 0 %}
-        <div class="table-responsive">
-            <table id="data-table"
-                   class="table mt-2">
-                <thead>
+    <div style="overflow-x: auto; margin-top: 2rem;">
+        <table id="data-table"
+               style="width: 100%; border-collapse: collapse; border-spacing: 0; margin-bottom: 0;">
+            <thead>
+            <tr>
+                <th style="font-size: 12px; text-align: start; width: 35%;  padding: 0.5rem; border: 1px solid #d2d2d2; margin-bottom: 0;margin-top: 0;">
+                    Full Name
+                </th>
+                <th style="font-size: 12px; text-align: start; width: 20%; padding: 0.5rem; border: 1px solid #d2d2d2; margin-bottom: 0;margin-top: 0;">
+                    Student ID
+                </th>
+                <th style="font-size: 12px; text-align: start; width: 15%;  padding: 0.5rem; border: 1px solid #d2d2d2; margin-bottom: 0;margin-top: 0;">
+                    Course
+                </th>
+                <th style="font-size: 12px; text-align: start; width: 15%;  padding: 0.5rem; border: 1px solid #d2d2d2; margin-bottom: 0;margin-top: 0;">
+                    Mark
+                </th>
+                <th style="font-size: 12px; text-align: start; width: 15%;  padding: 0.5rem; border: 1px solid #d2d2d2; margin-bottom: 0;margin-top: 0;">
+                    Grade
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for result in results %}
                 <tr>
-                    <th style="font-size: 14px; text-align: start;"
-                        scope="col">
-                        Full Name
-                    </th>
-                    <th style="font-size: 14px; text-align: start; width: 160px;"
-                        scope="col">
-                        Student Id
-                    </th>
-                    <th style="font-size: 14px; text-align: start; width: 160px;"
-                        scope="col">
-                        Course
-                    </th>
-                    <th style="font-size: 14px; text-align: start; width: 80px;"
-                        scope="col">
-                        Mark
-                    </th>
-                    <th style="font-size: 14px; text-align: start; width: 80px;"
-                        scope="col">
-                        Grade
-                    </th>
+                    <td style="font-size: 12px; padding: 0.3rem; border: 1px solid #d2d2d2; margin-bottom: 0;margin-top: 0;">{{ result.student.full_name }}</td>
+                    <td style="font-size: 12px; padding: 0.5rem; border: 1px solid #d2d2d2; margin-bottom: 0;margin-top: 0;">{{ result.student.student_id }}</td>
+                    <td style="font-size: 12px; padding: 0.5rem; border: 1px solid #d2d2d2; margin-bottom: 0;margin-top: 0;">
+                        CSE-{{ result.course.course_code }}</td>
+                    <td style="font-size: 12px; padding: 0.5rem; border: 1px solid #d2d2d2;margin-bottom: 0;margin-top: 0;">{{ result.marks }}</td>
+                    <td style="font-size: 12px; padding: 0.5rem; border: 1px solid #d2d2d2;margin-bottom: 0;margin-top: 0;">
+
+                        {% if result.marks >= 80 %}
+                            A+
+                        {% elif result.marks >= 75 %}
+                            A
+                        {% elif result.marks >= 75 %}
+                            A
+                        {% elif result.marks >= 70 %}
+                            A-
+                        {% elif result.marks >= 65 %}
+                            B+
+                        {% elif result.marks >= 60 %}
+                            B
+                        {% elif result.marks >= 55 %}
+                            B-
+                        {% elif result.marks >= 50 %}
+                            C+
+                        {% elif result.marks >= 45 %}
+                            C
+                        {% elif result.marks >= 40 %}
+                            D
+                        {% else %}
+                            F
+                        {% endif %}
+                    </td>
                 </tr>
-                </thead>
-                <tbody>
-                {% for result in results %}
-                    <tr>
-                        <td style="font-size: 14px;">{{ result.student.full_name }}</td>
-                        <td style="font-size: 14px;">{{ result.student.student_id }}</td>
-                        <td style="font-size: 14px;">
-                            CSE-{{ result.course.course_code }}</td>
-                        <td style="font-size: 14px;">{{ result.marks }}</td>
-                        <td style="font-size: 14px;">
-                            {% if result.marks >= 80 %}
-                                A+
-                            {% elif result.marks >= 75 %}
-                                A
-                            {% elif result.marks >= 75 %}
-                                A
-                            {% elif result.marks >= 70 %}
-                                A-
-                            {% elif result.marks >= 65 %}
-                                B+
-                            {% elif result.marks >= 60 %}
-                                B
-                            {% elif result.marks >= 55 %}
-                                B-
-                            {% elif result.marks >= 50 %}
-                                C+
-                            {% elif result.marks >= 45 %}
-                                C
-                            {% elif result.marks >= 40 %}
-                                D
-                            {% else %}
-                                F
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% else %}
-        <div class="mt-5 d-flex justify-content-center align-items-center">
-            No result found
-        </div>
-    {% endif %}
+            {% endfor %}
 
-    <div id="id_footer" class="footer"
-         style="position:absolute; bottom: 0; left: 0;">
-        {% include 'divider.html' %}
-        <p id="footer_text" class="mt-1 text-muted">Copyright 2022 @PROJECTO</p>
+
+            </tbody>
+        </table>
     </div>
-
 </div>
-<link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-        crossorigin="anonymous">
 
-<script type="text/javascript">
-    const d = new Date();
-    let year = d.getFullYear();
-    document.getElementById("footer_text").innerText = "Copyright " + year + " Projecto"
-</script>
+
+
