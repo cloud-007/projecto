@@ -19,6 +19,7 @@ class AbstractTimestampModel(models.Model):
 class CourseState(models.TextChoices):
     RUNNING = 'RUNNING', _('Running')
     ARCHIVED = 'ARCHIVED', _('Archived')
+    UPCOMING = 'UPCOMING', _('Upcoming')
     DELETED = 'DELETED', _('Deleted')
 
 
