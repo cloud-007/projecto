@@ -1,2 +1,1 @@
-// setup this Procfile
-web: python manage.py runserver
+web: gunicorn projecto.wsgi --log-file -
