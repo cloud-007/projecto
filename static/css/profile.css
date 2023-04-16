@@ -1,0 +1,80 @@
+.profile-block {
+    width: 35%;
+    background: white;
+    margin-bottom: 60px;
+    border-radius: 5px;
+}
+
+.marks-block {
+    width: 50%;
+    margin-top: 30px;
+    border-radius: 5px;
+}
+
+.profile-image {
+    width: 150px;
+    height: 150px;
+    transition: .5s;
+}
+
+@media screen and (min-width: 0) {
+    .profile-block {
+        width: 90%;
+        margin-top: 50px
+    }
+
+    .marks-block {
+        width: 90%;
+    }
+}
+
+@media screen and (min-width: 400px) {
+    .profile-block {
+        width: 90%;
+        margin-top: 50px
+    }
+
+    .marks-block {
+        width: 90%;
+    }
+
+    .profile-image {
+        width: 100px;
+        height: 100px;
+        transition: .5s;
+    }
+}
+
+@media screen and (min-width: 991px) {
+    .profile-block {
+        width: 50%;
+        margin-top: 50px;
+        margin-bottom: 50px
+    }
+
+    .marks-block {
+        width: 100%;
+    }
+
+    .profile-image {
+        width: 100px;
+        height: 100px;
+        transition: .5s;
+    }
+}
+
+
+@media screen and (min-width: 1320px) {
+    .profile-block {
+        width: 35%;
+    }
+
+    .marks-block {
+        width: 50%;
+    }
+
+}
+
+
+
+
